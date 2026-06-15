@@ -29,7 +29,7 @@ const ProductListPage = () => {
 
       <div className="flex gap-8">
         {/* Sidebar Filters — Desktop */}
-        <aside className={`${showFilters ? 'block' : 'hidden'} lg:block w-full lg:w-72 hrink-0`}>
+        <aside className={`${showFilters ? 'block' : 'hidden'} lg:block w-full lg:w-72 shrink-0`}>
           <ProductFilters filters={filters} onFilterChange={handleFilterChange} />
         </aside>
 

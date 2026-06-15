@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../hooks/useAuth.js';
+import useAuth from '../../hooks/useAuth.js';
 import Button from '../common/Button.jsx';
 import ROUTES from '../../constants/ROUTES.js';
 

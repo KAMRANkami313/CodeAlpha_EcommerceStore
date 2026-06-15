@@ -1,4 +1,4 @@
-import { ShoppingBag, ExternalLink } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import ROUTES from '../../constants/ROUTES.js';
 
 const Footer = () => {
@@ -54,3 +54,5 @@ const Footer = () => {
     </footer>
   );
 };
+
+export default Footer;

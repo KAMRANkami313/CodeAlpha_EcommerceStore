@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar.jsx';
-import {Footer} from './Footer.jsx';
+import Footer from './Footer.jsx';
 import { Toaster } from 'react-hot-toast';
 
 const Layout = () => {

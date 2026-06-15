@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Minus, Plus, ChevronLeft, Truck, Shield, RotateCcw } from 'lucide-react';
 import useFetch from '../hooks/useFetch.js';
-import { useCart } from '../hooks/useCart.js';
+import useCart from '../hooks/useCart.js';
 import productService from '../services/productService.js';
 import StarRating from '../components/common/StarRating.jsx';
 import Badge from '../components/common/Badge.jsx';
@@ -75,7 +75,6 @@ const ProductDetailPage = () => {
           </div>
           <p className="text-surface-600 leading-relaxed">{product.description}</p>
 
-          {/* Stock */}
           <div>
             {product.stock > 0 ? (
               <Badge variant="success">In Stock ({product.stock} available)</Badge>
@@ -84,7 +83,6 @@ const ProductDetailPage = () => {
             )}
           </div>
 
-          {/* Quantity + Add to Cart */}
           {product.stock > 0 && (
             <div className="flex items-center gap-4 pt-4">
               <div className="flex items-center gap-2 bg-surface-100 rounded-xl">
@@ -98,7 +96,6 @@ const ProductDetailPage = () => {
             </div>
           )}
 
-          {/* Perks */}
           <div className="grid grid-cols-3 gap-4 pt-6 border-t border-surface-200">
             <div className="text-center"><Truck className="w-5 h-5 mx-auto text-primary-600 mb-1" /><p className="text-xs text-surface-500">Free Shipping</p></div>
             <div className="text-center"><Shield className="w-5 h-5 mx-auto text-primary-600 mb-1" /><p className="text-xs text-surface-500">Secure Payment</p></div>

@@ -52,10 +52,11 @@ const cartSchema = new mongoose.Schema(
 );
 
 // Recalculate totals before saving
-cartSchema.pre('save', function (next) {
+// Mongoose 7+: sync middleware no longer receives `next` callback.
+// Just let the function complete — Mongoose auto-advances.
+cartSchema.pre('save', function () {
   this.totalQuantity = this.items.reduce((sum, item) => sum + item.quantity, 0);
   this.totalPrice = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  next();
 });
 
 const Cart = mongoose.model('Cart', cartSchema);

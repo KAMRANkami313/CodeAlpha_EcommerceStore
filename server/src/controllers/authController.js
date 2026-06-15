@@ -1,0 +1,58 @@
+import asyncHandler from '../utils/asyncHandler.js';
+import ApiResponse from '../utils/ApiResponse.js';
+import env from '../config/env.js';
+import * as authService from '../services/authService.js';
+
+const setTokenCookies = (res, accessToken, refreshToken) => {
+  const cookieOptions = {
+    httpOnly: true,
+    secure: env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: parseInt(env.COOKIE_EXPIRE) * 24 * 60 * 60 * 1000,
+  };
+
+  res.cookie('accessToken', accessToken, cookieOptions);
+  res.cookie('refreshToken', refreshToken, cookieOptions);
+};
+
+const register = asyncHandler(async (req, res) => {
+  const { user, accessToken, refreshToken } = await authService.registerUser(req.body);
+
+  setTokenCookies(res, accessToken, refreshToken);
+
+  res.status(201).json(
+    new ApiResponse(201, { user, accessToken }, 'User registered successfully')
+  );
+});
+
+const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const { user, accessToken, refreshToken } = await authService.loginUser(email, password);
+
+  setTokenCookies(res, accessToken, refreshToken);
+
+  res.status(200).json(
+    new ApiResponse(200, { user, accessToken }, 'User logged in successfully')
+  );
+});
+
+const logout = asyncHandler(async (req, res) => {
+  res.cookie('accessToken', '', { maxAge: 0 });
+  res.cookie('refreshToken', '', { maxAge: 0 });
+
+  res.status(200).json(new ApiResponse(200, null, 'User logged out successfully'));
+});
+
+const getProfile = asyncHandler(async (req, res) => {
+  const user = await authService.getUserProfile(req.user._id);
+
+  res.status(200).json(new ApiResponse(200, user, 'Profile fetched successfully'));
+});
+
+const updateProfile = asyncHandler(async (req, res) => {
+  const user = await authService.updateUserProfile(req.user._id, req.body);
+
+  res.status(200).json(new ApiResponse(200, user, 'Profile updated successfully'));
+});
+
+export { register, login, logout, getProfile, updateProfile };

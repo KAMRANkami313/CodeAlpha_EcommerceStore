@@ -1,0 +1,15 @@
+import express from 'express';
+import { register, login, logout, getProfile, updateProfile } from '../controllers/authController.js';
+import { isAuthenticated } from '../middleware/authMiddleware.js';
+import { registerValidator, loginValidator, updateProfileValidator } from '../validators/authValidator.js';
+import validate from '../middleware/validateMiddleware.js';
+
+const router = express.Router();
+
+router.post('/register', registerValidator, validate, register);
+router.post('/login', loginValidator, validate, login);
+router.post('/logout', logout);
+router.get('/profile', isAuthenticated, getProfile);
+router.put('/profile', isAuthenticated, updateProfileValidator, validate, updateProfile);
+
+export default router;

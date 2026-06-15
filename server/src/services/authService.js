@@ -1,0 +1,80 @@
+import User from '../models/User.js';
+import ApiError from '../utils/ApiError.js';
+import { generateAccessToken, generateRefreshToken } from '../utils/generateToken.js';
+import env from '../config/env.js';
+
+const registerUser = async (userData) => {
+  const { name, email, password } = userData;
+
+  // Check if user already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new ApiError(409, 'User with this email already exists');
+  }
+
+  // Create user
+  const user = await User.create({ name, email, password });
+
+  // Generate tokens
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
+
+  // Save refresh token
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  // Get user without password
+  const safeUser = await User.findById(user._id).select('-password -refreshToken');
+
+  return { user: safeUser, accessToken, refreshToken };
+};
+
+const loginUser = async (email, password) => {
+  // Find user with password
+  const user = await User.findOne({ email }).select('+password');
+
+  if (!user) {
+    throw new ApiError(401, 'Invalid email or password');
+  }
+
+  // Compare password
+  const isPasswordCorrect = await user.comparePassword(password);
+  if (!isPasswordCorrect) {
+    throw new ApiError(401, 'Invalid email or password');
+  }
+
+  // Generate tokens
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
+
+  // Save refresh token
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  // Get user without password
+  const safeUser = await User.findById(user._id).select('-password -refreshToken');
+
+  return { user: safeUser, accessToken, refreshToken };
+};
+
+const getUserProfile = async (userId) => {
+  const user = await User.findById(userId).select('-password -refreshToken');
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+  return user;
+};
+
+const updateUserProfile = async (userId, updateData) => {
+  const user = await User.findByIdAndUpdate(userId, updateData, {
+    new: true,
+    runValidators: true,
+  }).select('-password -refreshToken');
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+  return user;
+};
+
+export { registerUser, loginUser, getUserProfile, updateUserProfile };

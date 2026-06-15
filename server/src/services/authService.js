@@ -6,52 +6,48 @@ import env from '../config/env.js';
 const registerUser = async (userData) => {
   const { name, email, password } = userData;
 
-  // Check if user already exists
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new ApiError(409, 'User with this email already exists');
   }
 
-  // Create user
   const user = await User.create({ name, email, password });
 
-  // Generate tokens
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
 
-  // Save refresh token
-  user.refreshToken = refreshToken;
-  await user.save({ validateBeforeSave: false });
+  // Use updateOne instead of save() to avoid re-triggering the password pre-save hook
+  await User.updateOne(
+    { _id: user._id },
+    { $set: { refreshToken: refreshToken } }
+  );
 
-  // Get user without password
   const safeUser = await User.findById(user._id).select('-password -refreshToken');
 
   return { user: safeUser, accessToken, refreshToken };
 };
 
 const loginUser = async (email, password) => {
-  // Find user with password
   const user = await User.findOne({ email }).select('+password');
 
   if (!user) {
     throw new ApiError(401, 'Invalid email or password');
   }
 
-  // Compare password
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
     throw new ApiError(401, 'Invalid email or password');
   }
 
-  // Generate tokens
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
 
-  // Save refresh token
-  user.refreshToken = refreshToken;
-  await user.save({ validateBeforeSave: false });
+  // Use updateOne instead of save() to avoid re-triggering the password pre-save hook
+  await User.updateOne(
+    { _id: user._id },
+    { $set: { refreshToken: refreshToken } }
+  );
 
-  // Get user without password
   const safeUser = await User.findById(user._id).select('-password -refreshToken');
 
   return { user: safeUser, accessToken, refreshToken };

@@ -5,19 +5,18 @@ import { fileURLToPath } from 'url';
 import connectDB from '../config/db.js';
 import User from '../models/User.js';
 import Product from '../models/Product.js';
-import env from '../config/env.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load env from server root - try multiple paths
+// Load env — try server root first, then project root
 dotenv.config({ path: path.join(__dirname, '../../.env'), override: true });
 dotenv.config({ path: path.join(__dirname, '../../../.env'), override: true });
 
 const products = [
   {
     name: 'Wireless Bluetooth Headphones',
-    description: 'Premium over-ear wireless headphones with active noise cancellation, 30-hour battery life, and crystal-clear sound quality. Features comfortable memory foam ear cushions and foldable design for easy portability.',
+    description: 'Premium over-ear wireless headphones with active noise cancellation, 30-hour battery life, and crystal-clear sound quality.',
     price: 4999,
     compareAtPrice: 7999,
     category: 'Electronics',
@@ -31,7 +30,7 @@ const products = [
   },
   {
     name: 'Classic Leather Jacket',
-    description: 'Genuine leather jacket with a timeless design. Features a smooth zip-up front, multiple pockets, and a comfortable inner lining. Perfect for casual and semi-formal occasions.',
+    description: 'Genuine leather jacket with a timeless design. Features a smooth zip-up front, multiple pockets, and a comfortable inner lining.',
     price: 8499,
     compareAtPrice: 12999,
     category: 'Clothing',
@@ -45,7 +44,7 @@ const products = [
   },
   {
     name: 'Running Shoes Pro',
-    description: 'Lightweight and responsive running shoes with breathable mesh upper, cushioned midsole, and durable rubber outsole. Designed for both road and trail running.',
+    description: 'Lightweight and responsive running shoes with breathable mesh upper, cushioned midsole, and durable rubber outsole.',
     price: 5999,
     compareAtPrice: 8499,
     category: 'Footwear',
@@ -59,7 +58,7 @@ const products = [
   },
   {
     name: 'Smart Watch Ultra',
-    description: 'Feature-packed smartwatch with AMOLED display, heart rate monitoring, GPS tracking, and 7-day battery life. Water-resistant up to 50 meters with customizable watch faces.',
+    description: 'Feature-packed smartwatch with AMOLED display, heart rate monitoring, GPS tracking, and 7-day battery life.',
     price: 12999,
     compareAtPrice: 17999,
     category: 'Electronics',
@@ -73,7 +72,7 @@ const products = [
   },
   {
     name: 'Cotton Casual T-Shirt',
-    description: '100% premium cotton t-shirt with a relaxed fit. Soft, breathable fabric perfect for everyday wear. Available in multiple colors with reinforced stitching for durability.',
+    description: '100% premium cotton t-shirt with a relaxed fit. Soft, breathable fabric perfect for everyday wear.',
     price: 1299,
     compareAtPrice: 1999,
     category: 'Clothing',
@@ -87,7 +86,7 @@ const products = [
   },
   {
     name: 'Wireless Charging Pad',
-    description: 'Fast wireless charging pad compatible with all Qi-enabled devices. Sleek, compact design with LED indicator and overheat protection. Supports up to 15W fast charging.',
+    description: 'Fast wireless charging pad compatible with all Qi-enabled devices. Sleek, compact design with LED indicator.',
     price: 2499,
     compareAtPrice: 3499,
     category: 'Electronics',
@@ -101,7 +100,7 @@ const products = [
   },
   {
     name: 'Stainless Steel Water Bottle',
-    description: 'Double-walled vacuum insulated water bottle that keeps drinks cold for 24 hours or hot for 12 hours. BPA-free, leak-proof lid with a sleek matte finish.',
+    description: 'Double-walled vacuum insulated water bottle that keeps drinks cold for 24 hours or hot for 12 hours.',
     price: 1899,
     compareAtPrice: 2499,
     category: 'Sports',
@@ -115,7 +114,7 @@ const products = [
   },
   {
     name: 'Laptop Backpack',
-    description: 'Water-resistant laptop backpack with padded compartment for up to 15.6-inch laptops. Multiple organizer pockets, USB charging port, and ergonomic shoulder straps.',
+    description: 'Water-resistant laptop backpack with padded compartment for up to 15.6-inch laptops. USB charging port.',
     price: 3499,
     compareAtPrice: 4999,
     category: 'Accessories',
@@ -129,7 +128,7 @@ const products = [
   },
   {
     name: 'Sunglasses Aviator',
-    description: 'Classic aviator-style sunglasses with UV400 protection and polarized lenses. Lightweight metal frame with adjustable nose pads for a comfortable fit.',
+    description: 'Classic aviator-style sunglasses with UV400 protection and polarized lenses.',
     price: 2999,
     compareAtPrice: 4499,
     category: 'Accessories',
@@ -143,7 +142,7 @@ const products = [
   },
   {
     name: 'Home Decor Ceramic Vase',
-    description: 'Handcrafted ceramic vase with minimalist design. Perfect for fresh or dried flower arrangements. Adds a touch of elegance to any room.',
+    description: 'Handcrafted ceramic vase with minimalist design. Perfect for fresh or dried flower arrangements.',
     price: 1999,
     compareAtPrice: 2999,
     category: 'Home & Garden',
@@ -157,7 +156,7 @@ const products = [
   },
   {
     name: 'Mechanical Keyboard RGB',
-    description: 'Full-size mechanical keyboard with hot-swappable switches, per-key RGB lighting, and PBT keycaps. Features a premium aluminum frame and detachable USB-C cable.',
+    description: 'Full-size mechanical keyboard with hot-swappable switches, per-key RGB lighting, and PBT keycaps.',
     price: 7999,
     compareAtPrice: 10999,
     category: 'Electronics',
@@ -171,7 +170,7 @@ const products = [
   },
   {
     name: 'Yoga Mat Premium',
-    description: 'Extra-thick 6mm yoga mat with non-slip textured surface. Made from eco-friendly TPE material with alignment markings. Includes carrying strap.',
+    description: 'Extra-thick 6mm yoga mat with non-slip textured surface. Made from eco-friendly TPE material.',
     price: 2499,
     compareAtPrice: 3499,
     category: 'Sports',
@@ -189,28 +188,25 @@ const seedDatabase = async () => {
   try {
     await connectDB();
 
-    // Clear existing data
     await Product.deleteMany({});
-    console.log('🗑️  Cleared existing products');
+    console.log('Cleared existing products');
 
-    // Insert products
     const createdProducts = await Product.insertMany(products);
-    console.log(`✅ Seeded ${createdProducts.length} products`);
+    console.log(`Seeded ${createdProducts.length} products`);
 
-    // Create admin user if not exists
     const adminExists = await User.findOne({ email: 'admin@shopverse.com' });
     if (!adminExists) {
-      const User = (await import('../models/User.js')).default;
       await User.create({
         name: 'Admin User',
         email: 'admin@shopverse.com',
         password: 'admin123',
         role: 'admin',
       });
-      console.log('✅ Created admin user (admin@shopverse.com / admin123)');
+      console.log('Created admin user (admin@shopverse.com / admin123)');
+    } else {
+      console.log('Admin user already exists');
     }
 
-    // Create test user if not exists
     const testExists = await User.findOne({ email: 'test@shopverse.com' });
     if (!testExists) {
       await User.create({
@@ -219,13 +215,15 @@ const seedDatabase = async () => {
         password: 'test123',
         role: 'user',
       });
-      console.log('✅ Created test user (test@shopverse.com / test123)');
+      console.log('Created test user (test@shopverse.com / test123)');
+    } else {
+      console.log('Test user already exists');
     }
 
-    console.log('\n🎉 Database seeding completed!');
+    console.log('\nDatabase seeding completed!');
     process.exit(0);
   } catch (error) {
-    console.error('❌ Seeding failed:', error);
+    console.error('Seeding failed:', error);
     process.exit(1);
   }
 };

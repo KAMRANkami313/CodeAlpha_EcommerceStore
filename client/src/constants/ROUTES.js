@@ -8,6 +8,7 @@ const ROUTES = {
   CHECKOUT: '/checkout',
   ORDER_SUCCESS: '/order-success',
   PROFILE: '/profile',
+  ORDER_DETAIL: '/orders/:id',
 };
 
 export default ROUTES;

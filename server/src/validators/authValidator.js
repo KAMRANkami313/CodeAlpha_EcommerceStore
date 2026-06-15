@@ -37,14 +37,14 @@ export const loginValidator = [
 
 export const updateProfileValidator = [
   body('name')
-    .optional()
+    .optional({ values: 'falsy' })
     .trim()
     .isLength({ min: 2, max: 50 })
     .withMessage('Name must be between 2 and 50 characters'),
 
   body('phone')
-    .optional()
+    .optional({ values: 'falsy' })
     .trim()
-    .isMobilePhone()
-    .withMessage('Please provide a valid phone number'),
+    .isLength({ max: 20 })
+    .withMessage('Phone number cannot exceed 20 characters'),
 ];

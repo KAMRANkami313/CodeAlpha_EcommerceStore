@@ -17,6 +17,10 @@ const API = {
   ORDERS: '/api/orders',
   ORDER_DETAIL: (id) => `/api/orders/${id}`,
 
+  // Reviews
+  PRODUCT_REVIEWS: (productId) => `/api/reviews/product/${productId}`,
+  REVIEW_DETAIL: (id) => `/api/reviews/${id}`,
+
   // Health
   HEALTH: '/api/health',
 };

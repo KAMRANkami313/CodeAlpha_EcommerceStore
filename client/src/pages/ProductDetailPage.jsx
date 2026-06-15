@@ -9,6 +9,7 @@ import StarRating from '../components/common/StarRating.jsx';
 import Badge from '../components/common/Badge.jsx';
 import Button from '../components/common/Button.jsx';
 import Loader from '../components/common/Loader.jsx';
+import ReviewList from '../components/product/ReviewList.jsx';
 import formatCurrency from '../utils/formatCurrency.js';
 import calculateDiscount from '../utils/calculateDiscount.js';
 
@@ -102,6 +103,15 @@ const ProductDetailPage = () => {
             <div className="text-center"><RotateCcw className="w-5 h-5 mx-auto text-primary-600 mb-1" /><p className="text-xs text-surface-500">Easy Returns</p></div>
           </div>
         </motion.div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="mt-16 pt-10 border-t border-surface-200">
+        <ReviewList
+          productId={product._id}
+          productRating={product.ratings}
+          numOfReviews={product.numOfReviews}
+        />
       </div>
     </div>
   );

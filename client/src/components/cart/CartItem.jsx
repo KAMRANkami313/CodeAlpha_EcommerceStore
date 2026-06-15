@@ -1,6 +1,6 @@
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import formatCurrency from '../../utils/formatCurrency.js';
-import { useCart } from '../../hooks/useCart.js';
+import useCart from '../../hooks/useCart.js';
 
 const CartItem = ({ item }) => {
   const { updateQuantity, removeItem } = useCart();

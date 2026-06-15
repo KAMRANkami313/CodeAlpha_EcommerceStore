@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingBag, ArrowRight, Truck, Shield, RotateCcw, Headphones } from 'lucide-react';
-import { useCart } from '../hooks/useCart.js';
+import useCart from '../hooks/useCart.js';
 import useProducts from '../hooks/useProducts.js';
 import ProductCard from '../components/product/ProductCard.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';

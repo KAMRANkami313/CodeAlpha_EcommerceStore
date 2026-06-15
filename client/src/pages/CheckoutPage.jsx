@@ -1,6 +1,6 @@
 import CheckoutForm from '../components/checkout/CheckoutForm.jsx';
 import OrderSummary from '../components/checkout/OrderSummary.jsx';
-import { useCart } from '../hooks/useCart.js';
+import useCart from '../hooks/useCart.js';
 
 const CheckoutPage = () => {
   const { cart } = useCart();

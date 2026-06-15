@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { User, Phone, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import orderService from '../../services/orderService.js';
-import { useCart } from '../../hooks/useCart.js';
+import useCart from '../../hooks/useCart.js';
 import { useNavigate } from 'react-router-dom';
 import Button from '../common/Button.jsx';
 import ROUTES from '../../constants/ROUTES.js';

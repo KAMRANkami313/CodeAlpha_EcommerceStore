@@ -5,7 +5,7 @@ import StarRating from '../common/StarRating.jsx';
 import Badge from '../common/Badge.jsx';
 import formatCurrency from '../../utils/formatCurrency.js';
 import calculateDiscount from '../../utils/calculateDiscount.js';
-import { useCart } from '../../hooks/useCart.js';
+import useCart from '../../hooks/useCart.js';
 import ROUTES from '../../constants/ROUTES.js';
 
 const ProductCard = ({ product, index = 0 }) => {

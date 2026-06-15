@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Package, MapPin, LogOut } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth.js';
+import useAuth from '../hooks/useAuth.js';
 import useFetch from '../hooks/useFetch.js';
 import orderService from '../services/orderService.js';
 import Badge from '../components/common/Badge.jsx';

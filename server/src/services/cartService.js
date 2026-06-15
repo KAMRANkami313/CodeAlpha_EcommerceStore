@@ -12,10 +12,15 @@ const getCart = async (userId) => {
   return cart;
 };
 
+// Helper: re-populate and return cart after mutation
+const populateCart = async (cart) => {
+  await cart.populate('items.product', 'name price images stock');
+  return cart;
+};
+
 const addToCart = async (userId, productId, quantity = 1) => {
   const product = await Product.findById(productId);
   if (!product) throw new ApiError(404, 'Product not found');
-  if (product.stock < quantity) throw new ApiError(400, 'Insufficient stock');
 
   let cart = await Cart.findOne({ user: userId });
 
@@ -24,6 +29,12 @@ const addToCart = async (userId, productId, quantity = 1) => {
   }
 
   const existingItem = cart.items.find((item) => item.product.toString() === productId);
+
+  // FIX: Check stock against TOTAL quantity (existing + new), not just new quantity
+  const totalQuantity = existingItem ? existingItem.quantity + quantity : quantity;
+  if (product.stock < totalQuantity) {
+    throw new ApiError(400, `Insufficient stock. Only ${product.stock} available.`);
+  }
 
   if (existingItem) {
     existingItem.quantity += quantity;
@@ -38,7 +49,7 @@ const addToCart = async (userId, productId, quantity = 1) => {
   }
 
   await cart.save();
-  return cart;
+  return populateCart(cart);
 };
 
 const updateCartItem = async (userId, productId, quantity) => {
@@ -51,11 +62,16 @@ const updateCartItem = async (userId, productId, quantity) => {
   if (quantity <= 0) {
     cart.items = cart.items.filter((item) => item.product.toString() !== productId);
   } else {
+    // FIX: Validate stock before updating quantity
+    const product = await Product.findById(productId);
+    if (product && product.stock < quantity) {
+      throw new ApiError(400, `Insufficient stock. Only ${product.stock} available.`);
+    }
     item.quantity = quantity;
   }
 
   await cart.save();
-  return cart;
+  return populateCart(cart);
 };
 
 const removeFromCart = async (userId, productId) => {
@@ -64,7 +80,7 @@ const removeFromCart = async (userId, productId) => {
 
   cart.items = cart.items.filter((item) => item.product.toString() !== productId);
   await cart.save();
-  return cart;
+  return populateCart(cart);
 };
 
 const clearCart = async (userId) => {
@@ -73,7 +89,7 @@ const clearCart = async (userId) => {
 
   cart.items = [];
   await cart.save();
-  return cart;
+  return populateCart(cart);
 };
 
 export { getCart, addToCart, updateCartItem, removeFromCart, clearCart };

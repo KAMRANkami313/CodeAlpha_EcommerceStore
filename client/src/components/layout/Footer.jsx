@@ -1,4 +1,5 @@
 import { ShoppingBag } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import ROUTES from '../../constants/ROUTES.js';
 
 const Footer = () => {
@@ -25,9 +26,9 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href={ROUTES.HOME} className="hover:text-primary-400 transition-colors no-underline text-surface-400">Home</a></li>
-              <li><a href={ROUTES.PRODUCTS} className="hover:text-primary-400 transition-colors no-underline text-surface-400">Products</a></li>
-              <li><a href={ROUTES.CART} className="hover:text-primary-400 transition-colors no-underline text-surface-400">Cart</a></li>
+              <li><Link to={ROUTES.HOME} className="hover:text-primary-400 transition-colors no-underline text-surface-400">Home</Link></li>
+              <li><Link to={ROUTES.PRODUCTS} className="hover:text-primary-400 transition-colors no-underline text-surface-400">Products</Link></li>
+              <li><Link to={ROUTES.CART} className="hover:text-primary-400 transition-colors no-underline text-surface-400">Cart</Link></li>
             </ul>
           </div>
 

@@ -1,6 +1,7 @@
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import env from '../config/env.js';
+import User from '../models/User.js';
 import * as authService from '../services/authService.js';
 
 const setTokenCookies = (res, accessToken, refreshToken) => {
@@ -37,6 +38,14 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const logout = asyncHandler(async (req, res) => {
+  // FIX: Invalidate refresh token in DB so stolen tokens can't be reused
+  if (req.user?._id) {
+    await User.updateOne(
+      { _id: req.user._id },
+      { $unset: { refreshToken: 1 } }
+    );
+  }
+
   res.cookie('accessToken', '', { maxAge: 0 });
   res.cookie('refreshToken', '', { maxAge: 0 });
 

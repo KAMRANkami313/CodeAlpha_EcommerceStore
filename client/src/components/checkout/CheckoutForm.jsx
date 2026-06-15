@@ -10,6 +10,7 @@ import ROUTES from '../../constants/ROUTES.js';
 
 const CheckoutForm = () => {
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('COD');
   const { cart, emptyCart } = useCart();
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -104,12 +105,12 @@ const CheckoutForm = () => {
 
       <h3 className="text-lg font-bold text-surface-800 pt-4">Payment Method</h3>
       <div className="flex gap-4">
-        <label className="flex-1 flex items-center gap-3 p-4 border-2 border-primary-600 rounded-xl bg-primary-50 cursor-pointer">
-          <input type="radio" value="COD" {...register('paymentMethod')} defaultChecked className="accent-primary-600" />
+        <label className={`flex-1 flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors ${paymentMethod === 'COD' ? 'border-primary-600 bg-primary-50' : 'border-surface-200 hover:border-primary-400'}`}>
+          <input type="radio" value="COD" {...register('paymentMethod')} onChange={() => setPaymentMethod('COD')} defaultChecked className="accent-primary-600" />
           <span className="font-medium text-surface-700">Cash on Delivery</span>
         </label>
-        <label className="flex-1 flex items-center gap-3 p-4 border-2 border-surface-200 rounded-xl hover:border-primary-400 cursor-pointer">
-          <input type="radio" value="Card" {...register('paymentMethod')} className="accent-primary-600" />
+        <label className={`flex-1 flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors ${paymentMethod === 'Card' ? 'border-primary-600 bg-primary-50' : 'border-surface-200 hover:border-primary-400'}`}>
+          <input type="radio" value="Card" {...register('paymentMethod')} onChange={() => setPaymentMethod('Card')} className="accent-primary-600" />
           <span className="font-medium text-surface-700">Card Payment</span>
         </label>
       </div>

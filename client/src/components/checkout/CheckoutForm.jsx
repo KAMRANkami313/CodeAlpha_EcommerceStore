@@ -1,26 +1,74 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { User, Phone, MapPin } from 'lucide-react';
+import { User, Phone, MapPin, CreditCard, Truck, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import orderService from '../../services/orderService.js';
 import useCart from '../../hooks/useCart.js';
 import { useNavigate } from 'react-router-dom';
 import Button from '../common/Button.jsx';
+import StripePaymentForm from './StripePaymentForm.jsx';
 import ROUTES from '../../constants/ROUTES.js';
+
+// Load Stripe outside of component render to avoid recreating instance
+let stripePromise = null;
+
+const getStripe = () => {
+  if (!stripePromise) {
+    const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+    if (key) {
+      stripePromise = loadStripe(key);
+    }
+  }
+  return stripePromise;
+};
+
+const isStripeConfigured = !!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
 const CheckoutForm = () => {
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('COD');
+  const [clientSecret, setClientSecret] = useState(null);
+  const [creatingIntent, setCreatingIntent] = useState(false);
   const { cart, emptyCart } = useCart();
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm();
 
-  const onSubmit = async (data) => {
+  // When user selects Card, create a payment intent
+  useEffect(() => {
+    if (paymentMethod === 'Card' && isStripeConfigured && !clientSecret) {
+      handleCreatePaymentIntent();
+    }
+  }, [paymentMethod]);
+
+  const handleCreatePaymentIntent = async () => {
+    setCreatingIntent(true);
+    try {
+      const response = await orderService.createPaymentIntent();
+      setClientSecret(response.data.clientSecret);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to initialize payment. Please use COD.');
+      setPaymentMethod('COD');
+    } finally {
+      setCreatingIntent(false);
+    }
+  };
+
+  // Handle COD order
+  const handleCODOrder = async (data) => {
     setLoading(true);
     try {
       await orderService.createOrder({
-        shippingAddress: data,
-        paymentMethod: data.paymentMethod,
+        shippingAddress: {
+          fullName: data.fullName,
+          phone: data.phone,
+          street: data.street,
+          city: data.city,
+          state: data.state,
+          zipCode: data.zipCode,
+        },
+        paymentMethod: 'COD',
       });
       await emptyCart();
       toast.success('Order placed successfully!');
@@ -32,8 +80,42 @@ const CheckoutForm = () => {
     }
   };
 
+  // Handle Card payment success — create order with stripePaymentId
+  const handlePaymentSuccess = async (paymentIntentId) => {
+    const shippingData = getValues();
+    setLoading(true);
+    try {
+      await orderService.createOrder({
+        shippingAddress: {
+          fullName: shippingData.fullName,
+          phone: shippingData.phone,
+          street: shippingData.street,
+          city: shippingData.city,
+          state: shippingData.state,
+          zipCode: shippingData.zipCode,
+        },
+        paymentMethod: 'Card',
+        stripePaymentId: paymentIntentId,
+      });
+      await emptyCart();
+      toast.success('Order placed successfully!');
+      navigate(ROUTES.ORDER_SUCCESS);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Payment succeeded but order creation failed. Please contact support.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onSubmit = async (data) => {
+    if (paymentMethod === 'COD') {
+      await handleCODOrder(data);
+    }
+    // For Card, the StripePaymentForm handles submission
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <div className="space-y-6">
       <h3 className="text-lg font-bold text-surface-800 dark:text-white flex items-center gap-2">
         <MapPin className="w-5 h-5 text-primary-600 dark:text-primary-400" /> Shipping Address
       </h3>
@@ -103,22 +185,121 @@ const CheckoutForm = () => {
         </div>
       </div>
 
+      {/* Payment Method Selection */}
       <h3 className="text-lg font-bold text-surface-800 dark:text-white pt-4">Payment Method</h3>
-      <div className="flex gap-4">
-        <label className={`flex-1 flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors ${paymentMethod === 'COD' ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20' : 'border-surface-200 dark:border-surface-600 hover:border-primary-400'}`}>
-          <input type="radio" value="COD" {...register('paymentMethod')} onChange={() => setPaymentMethod('COD')} defaultChecked className="accent-primary-600" />
-          <span className="font-medium text-surface-700 dark:text-surface-300">Cash on Delivery</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <label className={`flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+          paymentMethod === 'COD'
+            ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20'
+            : 'border-surface-200 dark:border-surface-600 hover:border-primary-400'
+        }`}>
+          <input
+            type="radio"
+            value="COD"
+            checked={paymentMethod === 'COD'}
+            onChange={() => setPaymentMethod('COD')}
+            className="accent-primary-600"
+          />
+          <Truck className="w-5 h-5 text-primary-600 shrink-0" />
+          <div>
+            <span className="font-medium text-surface-700 dark:text-surface-300 block">Cash on Delivery</span>
+            <span className="text-xs text-surface-500 dark:text-surface-400">Pay when you receive</span>
+          </div>
         </label>
-        <label className={`flex-1 flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors ${paymentMethod === 'Card' ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20' : 'border-surface-200 dark:border-surface-600 hover:border-primary-400'}`}>
-          <input type="radio" value="Card" {...register('paymentMethod')} onChange={() => setPaymentMethod('Card')} className="accent-primary-600" />
-          <span className="font-medium text-surface-700 dark:text-surface-300">Card Payment</span>
+
+        <label className={`flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+          paymentMethod === 'Card'
+            ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20'
+            : 'border-surface-200 dark:border-surface-600 hover:border-primary-400'
+        } ${!isStripeConfigured ? 'opacity-60' : ''}`}>
+          <input
+            type="radio"
+            value="Card"
+            checked={paymentMethod === 'Card'}
+            onChange={() => {
+              if (isStripeConfigured) {
+                setPaymentMethod('Card');
+              } else {
+                toast.error('Card payment is not available. Please use Cash on Delivery.');
+              }
+            }}
+            className="accent-primary-600"
+            disabled={!isStripeConfigured}
+          />
+          <CreditCard className="w-5 h-5 text-primary-600 shrink-0" />
+          <div>
+            <span className="font-medium text-surface-700 dark:text-surface-300 block">Card Payment</span>
+            <span className="text-xs text-surface-500 dark:text-surface-400">
+              {isStripeConfigured ? 'Pay securely with Stripe' : 'Not configured yet'}
+            </span>
+          </div>
         </label>
       </div>
 
-      <Button type="submit" loading={loading} variant="accent" size="lg" className="w-full mt-4">
-        Place Order
-      </Button>
-    </form>
+      {/* Stripe Payment Form */}
+      {paymentMethod === 'Card' && (
+        <div className="space-y-4">
+          {creatingIntent ? (
+            <div className="flex items-center justify-center py-8 gap-2 text-surface-500">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Initializing payment...</span>
+            </div>
+          ) : clientSecret ? (
+            <Elements
+              stripe={getStripe()}
+              options={{
+                clientSecret,
+                appearance: {
+                  theme: 'stripe',
+                  variables: {
+                    borderRadius: '12px',
+                  },
+                },
+              }}
+            >
+              <StripePaymentForm
+                onSuccess={handlePaymentSuccess}
+                clientSecret={clientSecret}
+              />
+            </Elements>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-sm text-red-500 dark:text-red-400">
+                Failed to initialize payment. Please try again or use Cash on Delivery.
+              </p>
+              <button
+                type="button"
+                onClick={handleCreatePaymentIntent}
+                className="mt-2 text-sm text-primary-600 dark:text-primary-400 hover:underline cursor-pointer"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* COD Submit Button */}
+      {paymentMethod === 'COD' && (
+        <Button 
+          type="button" 
+          onClick={handleSubmit(onSubmit)} 
+          loading={loading} 
+          variant="accent" 
+          size="lg" 
+          className="w-full mt-4"
+        >
+          Place Order (Cash on Delivery)
+        </Button>
+      )}
+
+      {/* Card payment note */}
+      {paymentMethod === 'Card' && clientSecret && (
+        <p className="text-xs text-center text-surface-400 dark:text-surface-500 mt-2">
+          Your shipping details above will be used when you complete payment.
+        </p>
+      )}
+    </div>
   );
 };
 

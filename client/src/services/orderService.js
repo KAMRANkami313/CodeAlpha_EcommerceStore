@@ -16,4 +16,9 @@ const getOrderById = async (id) => {
   return response.data;
 };
 
-export default { createOrder, getMyOrders, getOrderById };
+const createPaymentIntent = async () => {
+  const response = await api.post(API.CREATE_PAYMENT_INTENT);
+  return response.data;
+};
+
+export default { createOrder, getMyOrders, getOrderById, createPaymentIntent };

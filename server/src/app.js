@@ -15,6 +15,10 @@ import orderRoutes from './routes/orderRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+
+// Import webhook handler directly for raw body parsing
+import { stripeWebhook } from './controllers/paymentController.js';
 
 const app = express();
 
@@ -37,6 +41,13 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+// ─── Stripe Webhook (MUST be before express.json() for raw body) ──
+app.post(
+  '/api/payments/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhook
+);
+
 // ─── Body Parsing ───────────────────────────────────────────
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -55,6 +66,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // ─── Health Check ───────────────────────────────────────────
 app.get('/api/health', (req, res) => {

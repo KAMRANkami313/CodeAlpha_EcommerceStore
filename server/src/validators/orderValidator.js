@@ -36,4 +36,8 @@ export const createOrderValidator = [
     .withMessage('Payment method is required')
     .isIn(['COD', 'Card'])
     .withMessage('Invalid payment method'),
+
+  body('stripePaymentId')
+    .optional()
+    .trim(),
 ];

@@ -83,6 +83,10 @@ const orderSchema = new mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
+    stripePaymentId: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

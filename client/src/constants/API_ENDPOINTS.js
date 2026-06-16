@@ -17,6 +17,9 @@ const API = {
   ORDERS: '/api/orders',
   ORDER_DETAIL: (id) => `/api/orders/${id}`,
 
+  // Payments
+  CREATE_PAYMENT_INTENT: '/api/payments/create-payment-intent',
+
   // Reviews
   PRODUCT_REVIEWS: (productId) => `/api/reviews/product/${productId}`,
   REVIEW_DETAIL: (id) => `/api/reviews/${id}`,

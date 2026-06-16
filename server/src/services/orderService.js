@@ -30,6 +30,8 @@ const createOrder = async (userId, orderData) => {
     shippingPrice,
     totalPrice,
     paymentMethod: orderData.paymentMethod,
+    stripePaymentId: orderData.stripePaymentId || null,
+    paymentStatus: orderData.paymentMethod === 'Card' && orderData.stripePaymentId ? 'paid' : 'pending',
   });
 
   // Decrease product stock

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, Search, LogOut, Heart, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Search, LogOut, Heart, Sun, Moon, Shield } from 'lucide-react';
 import useAuth from '../../hooks/useAuth.js';
 import useCart from '../../hooks/useCart.js';
 import useWishlist from '../../hooks/useWishlist.js';
@@ -128,6 +128,15 @@ const Navbar = () => {
                         >
                           <User className="w-4 h-4" /> My Profile
                         </Link>
+                        {user?.role === 'admin' && (
+                          <Link
+                            to={ROUTES.ADMIN}
+                            onClick={() => setIsProfileOpen(false)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-700 dark:text-primary-400 no-underline text-sm font-medium"
+                          >
+                            <Shield className="w-4 h-4" /> Admin Panel
+                          </Link>
+                        )}
                         <Link
                           to={ROUTES.WISHLIST}
                           onClick={() => setIsProfileOpen(false)}
@@ -230,6 +239,15 @@ const Navbar = () => {
                     >
                       Profile
                     </Link>
+                    {user?.role === 'admin' && (
+                      <Link
+                        to={ROUTES.ADMIN}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex items-center gap-2 py-2 text-primary-600 dark:text-primary-400 font-medium no-underline"
+                      >
+                        <Shield className="w-4 h-4" /> Admin Panel
+                      </Link>
+                    )}
                     <button
                       onClick={() => { handleLogout(); setIsMenuOpen(false); }}
                       className="block py-2 text-red-600 dark:text-red-400 font-medium cursor-pointer"

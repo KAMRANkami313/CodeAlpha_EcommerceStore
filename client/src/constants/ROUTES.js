@@ -10,6 +10,13 @@ const ROUTES = {
   PROFILE: '/profile',
   ORDER_DETAIL: '/orders/:id',
   WISHLIST: '/wishlist',
+
+  // Admin
+  ADMIN: '/admin',
+  ADMIN_DASHBOARD: '/admin',
+  ADMIN_PRODUCTS: '/admin/products',
+  ADMIN_ORDERS: '/admin/orders',
+  ADMIN_USERS: '/admin/users',
 };
 
 export default ROUTES;

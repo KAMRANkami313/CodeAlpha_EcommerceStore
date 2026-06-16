@@ -26,6 +26,13 @@ const API = {
   WISHLIST_ITEM: (productId) => `/api/wishlist/${productId}`,
   WISHLIST_CHECK: (productId) => `/api/wishlist/check/${productId}`,
 
+  // Admin
+  ADMIN_STATS: '/api/admin/stats',
+  ADMIN_ORDERS: '/api/admin/orders',
+  ADMIN_ORDER_DETAIL: (id) => `/api/admin/orders/${id}`,
+  ADMIN_USERS: '/api/admin/users',
+  ADMIN_USER_DETAIL: (id) => `/api/admin/users/${id}`,
+
   // Health
   HEALTH: '/api/health',
 };

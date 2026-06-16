@@ -1,16 +1,28 @@
+/**
+ * Skeleton — Phase 9 upgraded with shimmer animation
+ *
+ * Components:
+ *   SkeletonCard  — product card placeholder
+ *   SkeletonGrid  — grid of SkeletonCards
+ *   SkeletonLine  — single line placeholder [NEW]
+ *   SkeletonBlock — arbitrary block [NEW]
+ */
+
+const shimmerClass = 'shimmer bg-surface-200 dark:bg-surface-800';
+
 const SkeletonCard = () => {
   return (
-    <div className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden">
-      <div className="aspect-square skeleton dark:opacity-20" />
+    <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className={`aspect-square ${shimmerClass}`} />
       <div className="p-4 space-y-3">
-        <div className="h-3 w-16 skeleton dark:opacity-20 rounded" />
-        <div className="h-4 w-3/4 skeleton dark:opacity-20 rounded" />
+        <div className={`h-3 w-16 ${shimmerClass} rounded-full`} />
+        <div className={`h-4 w-3/4 ${shimmerClass} rounded`} />
         <div className="flex items-center gap-1.5">
-          <div className="h-3 w-20 skeleton dark:opacity-20 rounded" />
+          <div className={`h-3 w-20 ${shimmerClass} rounded`} />
         </div>
         <div className="flex items-center justify-between">
-          <div className="h-5 w-20 skeleton dark:opacity-20 rounded" />
-          <div className="h-9 w-9 skeleton dark:opacity-20 rounded-xl" />
+          <div className={`h-5 w-20 ${shimmerClass} rounded`} />
+          <div className={`h-9 w-9 ${shimmerClass} rounded-xl`} />
         </div>
       </div>
     </div>
@@ -27,5 +39,13 @@ const SkeletonGrid = ({ count = 8 }) => {
   );
 };
 
-export { SkeletonCard, SkeletonGrid };
+const SkeletonLine = ({ width = 'w-full', height = 'h-4', className = '' }) => (
+  <div className={`${shimmerClass} ${width} ${height} rounded ${className}`} />
+);
+
+const SkeletonBlock = ({ className = '' }) => (
+  <div className={`${shimmerClass} rounded-xl ${className}`} />
+);
+
+export { SkeletonCard, SkeletonGrid, SkeletonLine, SkeletonBlock };
 export default SkeletonGrid;

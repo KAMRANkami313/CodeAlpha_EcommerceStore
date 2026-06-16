@@ -1,21 +1,84 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, Search, LogOut, Heart, Sun, Moon, Shield } from 'lucide-react';
+import {
+  ShoppingBag, User, Menu, X, Search, LogOut, Heart, Sun, Moon, Shield,
+  ChevronDown, Sparkles, Package, Settings, Home as HomeIcon,
+} from 'lucide-react';
 import useAuth from '../../hooks/useAuth.js';
 import useCart from '../../hooks/useCart.js';
 import useWishlist from '../../hooks/useWishlist.js';
 import { useThemeContext } from '../../context/ThemeContext.jsx';
 import ROUTES from '../../constants/ROUTES.js';
 
+const NAV_CATEGORIES = [
+  { name: 'Electronics',   desc: 'Gadgets, audio, mobile',         icon: '📱' },
+  { name: 'Clothing',      desc: 'Men, women, kids',                icon: '👕' },
+  { name: 'Footwear',      desc: 'Sneakers, formal, sports',        icon: '👟' },
+  { name: 'Accessories',   desc: 'Bags, watches, jewelry',          icon: '⌚' },
+  { name: 'Home & Garden', desc: 'Decor, kitchen, outdoor',         icon: '🏡' },
+  { name: 'Sports',        desc: 'Fitness, outdoor, gear',          icon: '⚽' },
+];
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cartPulse, setCartPulse] = useState(false);
+  const [wishlistPulse, setWishlistPulse] = useState(false);
+
   const { user, isAuthenticated, logout } = useAuth();
   const { cart } = useCart();
   const { wishlistCount } = useWishlist();
   const { isDark, toggleTheme } = useThemeContext();
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchInputRef = useRef(null);
+  const megaMenuTimeout = useRef(null);
+
+  // Sticky shrink on scroll
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close menus on route change
+  useEffect(() => {
+    setIsMenuOpen(false);
+    setIsProfileOpen(false);
+    setIsSearchOpen(false);
+    setIsMegaMenuOpen(false);
+  }, [location.pathname]);
+
+  // Animate cart badge when count changes
+  useEffect(() => {
+    if (cart.totalQuantity > 0) {
+      setCartPulse(true);
+      const t = setTimeout(() => setCartPulse(false), 600);
+      return () => clearTimeout(t);
+    }
+  }, [cart.totalQuantity]);
+
+  // Animate wishlist badge when count changes
+  useEffect(() => {
+    if (wishlistCount > 0) {
+      setWishlistPulse(true);
+      const t = setTimeout(() => setWishlistPulse(false), 600);
+      return () => clearTimeout(t);
+    }
+  }, [wishlistCount]);
+
+  // Focus search input when opened
+  useEffect(() => {
+    if (isSearchOpen) {
+      setTimeout(() => searchInputRef.current?.focus(), 100);
+    }
+  }, [isSearchOpen]);
 
   const handleLogout = async () => {
     await logout();
@@ -23,259 +86,432 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
+
+  const openMegaMenu = () => {
+    clearTimeout(megaMenuTimeout.current);
+    setIsMegaMenuOpen(true);
+  };
+  const closeMegaMenu = () => {
+    megaMenuTimeout.current = setTimeout(() => setIsMegaMenuOpen(false), 150);
+  };
+
+  const isActive = (path) => location.pathname === path ||
+    (path !== ROUTES.HOME && location.pathname.startsWith(path));
+
   return (
-    <nav className="sticky top-0 z-40 bg-white/80 dark:bg-surface-900/80 backdrop-blur-lg border-b border-surface-200 dark:border-surface-700">
+    <nav
+      className={`sticky top-0 z-40 transition-all duration-300 ${
+        scrolled
+          ? 'glass-nav border-b border-surface-200/70 dark:border-surface-800/70'
+          : 'bg-white/95 dark:bg-surface-950/95 backdrop-blur-sm border-b border-transparent'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className={`flex items-center justify-between transition-all duration-300 ${scrolled ? 'h-14' : 'h-16'}`}>
           {/* Logo */}
-          <Link to={ROUTES.HOME} className="flex items-center gap-2 no-underline">
-            <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center">
-              <ShoppingBag className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-surface-900 dark:text-white">
-              Shop<span className="text-primary-600">Verse</span>
+          <Link to={ROUTES.HOME} className="flex items-center gap-2.5 no-underline shrink-0 group">
+            <motion.div
+              whileHover={{ rotate: -8, scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-9 h-9 bg-linear-to-br from-primary-600 to-violet-600 rounded-xl flex items-center justify-center shadow-brand"
+            >
+              <ShoppingBag className="w-5 h-5 text-white" strokeWidth={2.5} />
+            </motion.div>
+            <span className="text-xl font-bold text-surface-900 dark:text-white font-display tracking-tight">
+              Shop<span className="gradient-text-brand">Verse</span>
             </span>
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link to={ROUTES.HOME} className="text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors no-underline">
+          {/* Desktop Nav Links */}
+          <div className="hidden lg:flex items-center gap-1">
+            <Link
+              to={ROUTES.HOME}
+              className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors no-underline ${
+                isActive(ROUTES.HOME)
+                  ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20'
+                  : 'text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800'
+              }`}
+            >
               Home
             </Link>
-            <Link to={ROUTES.PRODUCTS} className="text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors no-underline">
-              Products
+
+            {/* Mega Menu Trigger */}
+            <div
+              onMouseEnter={openMegaMenu}
+              onMouseLeave={closeMegaMenu}
+              className="relative"
+            >
+              <button
+                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-1 cursor-pointer ${
+                  isActive(ROUTES.PRODUCTS)
+                    ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20'
+                    : 'text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800'
+                }`}
+              >
+                Shop
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isMegaMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {isMegaMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute left-1/2 -translate-x-1/2 top-full pt-3 w-160"
+                  >
+                    <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-large border border-surface-200 dark:border-surface-800 p-4">
+                      <div className="grid grid-cols-3 gap-1">
+                        {NAV_CATEGORIES.map((cat) => (
+                          <Link
+                            key={cat.name}
+                            to={`/products?category=${encodeURIComponent(cat.name)}`}
+                            className="flex items-start gap-3 p-3 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors no-underline group"
+                          >
+                            <span className="text-2xl shrink-0">{cat.icon}</span>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-sm text-surface-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                                {cat.name}
+                              </p>
+                              <p className="text-xs text-surface-500 dark:text-surface-400 truncate">
+                                {cat.desc}
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-surface-100 dark:border-surface-800 flex items-center justify-between px-3">
+                        <p className="text-xs text-surface-500 dark:text-surface-400 flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-accent-500" />
+                          New arrivals every week
+                        </p>
+                        <Link
+                          to={ROUTES.PRODUCTS}
+                          className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline no-underline"
+                        >
+                          Browse all →
+                        </Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <Link
+              to={ROUTES.PRODUCTS + '?sort=newest'}
+              className="px-3.5 py-2 rounded-lg text-sm font-medium transition-colors no-underline text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800"
+            >
+              New Arrivals
             </Link>
           </div>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            {/* Search */}
+            <div className="hidden sm:block">
+              {isSearchOpen ? (
+                <form
+                  onSubmit={handleSearchSubmit}
+                  className="flex items-center bg-surface-100 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 focus-within:border-primary-400 dark:focus-within:border-primary-500 transition-colors"
+                >
+                  <Search className="w-4 h-4 text-surface-400 ml-3" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="bg-transparent border-none outline-none px-2.5 py-2 text-sm w-48 lg:w-64 text-surface-900 dark:text-white placeholder:text-surface-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }}
+                    className="p-2 text-surface-400 hover:text-surface-700 dark:hover:text-surface-200 cursor-pointer"
+                    aria-label="Close search"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </form>
+              ) : (
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className="p-2.5 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-white transition-colors cursor-pointer"
+                  aria-label="Open search"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+              className="p-2.5 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-white transition-colors cursor-pointer"
               title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label="Toggle theme"
             >
-              {isDark ? (
-                <Sun className="w-5 h-5 text-amber-400" />
-              ) : (
-                <Moon className="w-5 h-5 text-surface-600" />
-              )}
+              <AnimatePresence mode="wait">
+                {isDark ? (
+                  <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                    <Sun className="w-5 h-5 text-amber-400" />
+                  </motion.div>
+                ) : (
+                  <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
+                    <Moon className="w-5 h-5" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </button>
-
-            <Link
-              to={ROUTES.PRODUCTS}
-              className="p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors no-underline"
-            >
-              <Search className="w-5 h-5 text-surface-600 dark:text-surface-400" />
-            </Link>
 
             {/* Wishlist */}
             <Link
               to={ROUTES.WISHLIST}
-              className="relative p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors no-underline"
+              className="relative p-2.5 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-white transition-colors no-underline"
+              aria-label={`Wishlist (${wishlistCount} items)`}
             >
-              <Heart className="w-5 h-5 text-surface-600 dark:text-surface-400" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                  {wishlistCount}
-                </span>
-              )}
+              <Heart className="w-5 h-5" />
+              <AnimatePresence>
+                {wishlistCount > 0 && (
+                  <motion.span
+                    key={wishlistCount}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: wishlistPulse ? [1, 1.3, 1] : 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute -top-0.5 -right-0.5 min-w-5 h-5 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm"
+                  >
+                    {wishlistCount}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </Link>
 
             {/* Cart */}
             <Link
               to={ROUTES.CART}
-              className="relative p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors no-underline"
+              className="relative p-2.5 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-white transition-colors no-underline"
+              aria-label={`Cart (${cart.totalQuantity} items)`}
             >
-              <ShoppingBag className="w-5 h-5 text-surface-600 dark:text-surface-400" />
-              {cart.totalQuantity > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-accent-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                  {cart.totalQuantity}
-                </span>
-              )}
+              <ShoppingBag className="w-5 h-5" />
+              <AnimatePresence>
+                {cart.totalQuantity > 0 && (
+                  <motion.span
+                    key={cart.totalQuantity}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: cartPulse ? [1, 1.3, 1] : 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute -top-0.5 -right-0.5 min-w-5 h-5 px-1 bg-accent-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm"
+                  >
+                    {cart.totalQuantity}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </Link>
 
+            {/* Profile / Auth */}
             {isAuthenticated ? (
-              <div className="relative">
+              <div className="relative ml-1">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-2 p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 p-1 pr-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+                  aria-label="Open profile menu"
                 >
-                  <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-primary-600 dark:text-primary-400">
+                  <div className="w-8 h-8 bg-linear-to-br from-primary-500 to-violet-600 rounded-full flex items-center justify-center shadow-sm">
+                    <span className="text-sm font-bold text-white">
                       {user?.name?.charAt(0)?.toUpperCase()}
                     </span>
                   </div>
+                  <ChevronDown className={`w-4 h-4 text-surface-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 <AnimatePresence>
                   {isProfileOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 top-12 w-56 bg-white dark:bg-surface-800 rounded-xl shadow-xl border border-surface-200 dark:border-surface-700 overflow-hidden"
-                    >
-                      <div className="p-4 border-b border-surface-100 dark:border-surface-700">
-                        <p className="font-semibold text-surface-800 dark:text-white">{user?.name}</p>
-                        <p className="text-sm text-surface-500 dark:text-surface-400">{user?.email}</p>
-                      </div>
-                      <div className="p-2">
-                        <Link
-                          to={ROUTES.PROFILE}
-                          onClick={() => setIsProfileOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 no-underline text-sm"
-                        >
-                          <User className="w-4 h-4" /> My Profile
-                        </Link>
-                        {user?.role === 'admin' && (
-                          <Link
-                            to={ROUTES.ADMIN}
-                            onClick={() => setIsProfileOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-700 dark:text-primary-400 no-underline text-sm font-medium"
-                          >
-                            <Shield className="w-4 h-4" /> Admin Panel
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setIsProfileOpen(false)} />
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-12 w-60 bg-white dark:bg-surface-900 rounded-2xl shadow-large border border-surface-200 dark:border-surface-800 overflow-hidden z-20"
+                      >
+                        <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-linear-to-br from-primary-50 to-violet-50 dark:from-primary-900/20 dark:to-violet-900/20">
+                          <p className="font-semibold text-surface-900 dark:text-white truncate">{user?.name}</p>
+                          <p className="text-xs text-surface-500 dark:text-surface-400 truncate">{user?.email}</p>
+                        </div>
+                        <div className="p-2">
+                          <Link to={ROUTES.PROFILE} className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200 no-underline text-sm transition-colors">
+                            <User className="w-4 h-4 text-surface-400" /> My Profile
                           </Link>
-                        )}
-                        <Link
-                          to={ROUTES.WISHLIST}
-                          onClick={() => setIsProfileOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 no-underline text-sm"
-                        >
-                          <Heart className="w-4 h-4" /> Wishlist
-                        </Link>
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 text-sm cursor-pointer"
-                        >
-                          <LogOut className="w-4 h-4" /> Logout
-                        </button>
-                      </div>
-                    </motion.div>
+                          <Link to={ROUTES.PROFILE} className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200 no-underline text-sm transition-colors">
+                            <Package className="w-4 h-4 text-surface-400" /> My Orders
+                          </Link>
+                          <Link to={ROUTES.WISHLIST} className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200 no-underline text-sm transition-colors">
+                            <Heart className="w-4 h-4 text-surface-400" /> Wishlist
+                            {wishlistCount > 0 && (
+                              <span className="ml-auto text-xs font-semibold text-red-500">{wishlistCount}</span>
+                            )}
+                          </Link>
+                          <Link to={ROUTES.CART} className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200 no-underline text-sm transition-colors">
+                            <ShoppingBag className="w-4 h-4 text-surface-400" /> Cart
+                            {cart.totalQuantity > 0 && (
+                              <span className="ml-auto text-xs font-semibold text-accent-500">{cart.totalQuantity}</span>
+                            )}
+                          </Link>
+                          {user?.role === 'admin' && (
+                            <Link to={ROUTES.ADMIN} className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-700 dark:text-primary-400 no-underline text-sm font-medium transition-colors">
+                              <Shield className="w-4 h-4" /> Admin Panel
+                            </Link>
+                          )}
+                          <div className="my-1.5 border-t border-surface-100 dark:border-surface-800" />
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 text-sm cursor-pointer transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" /> Logout
+                          </button>
+                        </div>
+                      </motion.div>
+                    </>
                   )}
                 </AnimatePresence>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2 ml-1">
                 <Link
                   to={ROUTES.LOGIN}
-                  className="px-4 py-2 text-sm font-medium text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors no-underline"
+                  className="px-3.5 py-2 text-sm font-medium text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white transition-colors no-underline"
                 >
                   Login
                 </Link>
                 <Link
                   to={ROUTES.REGISTER}
-                  className="px-4 py-2 text-sm font-semibold bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors no-underline"
+                  className="px-4 py-2 text-sm font-semibold bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all hover:shadow-brand no-underline"
                 >
                   Sign Up
                 </Link>
               </div>
             )}
-          </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex items-center gap-2 md:hidden">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer"
-            >
-              {isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-surface-600" />}
-            </button>
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer"
+              className="lg:hidden p-2.5 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer transition-colors"
+              aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X className="w-6 h-6 text-surface-700 dark:text-surface-300" /> : <Menu className="w-6 h-6 text-surface-700 dark:text-surface-300" />}
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900"
-          >
-            <div className="px-4 py-4 space-y-3">
-              <Link
-                to={ROUTES.HOME}
-                onClick={() => setIsMenuOpen(false)}
-                className="block py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
-              >
-                Home
-              </Link>
-              <Link
-                to={ROUTES.PRODUCTS}
-                onClick={() => setIsMenuOpen(false)}
-                className="block py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
-              >
-                Products
-              </Link>
-              <Link
-                to={ROUTES.WISHLIST}
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
-              >
-                Wishlist {wishlistCount > 0 && <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{wishlistCount}</span>}
-              </Link>
-              <Link
-                to={ROUTES.CART}
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
-              >
-                Cart {cart.totalQuantity > 0 && <span className="bg-accent-500 text-white text-xs px-2 py-0.5 rounded-full">{cart.totalQuantity}</span>}
-              </Link>
-              <div className="pt-3 border-t border-surface-200 dark:border-surface-700">
-                {isAuthenticated ? (
-                  <>
-                    <Link
-                      to={ROUTES.PROFILE}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="block py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
-                    >
-                      Profile
-                    </Link>
-                    {user?.role === 'admin' && (
-                      <Link
-                        to={ROUTES.ADMIN}
-                        onClick={() => setIsMenuOpen(false)}
-                        className="flex items-center gap-2 py-2 text-primary-600 dark:text-primary-400 font-medium no-underline"
-                      >
-                        <Shield className="w-4 h-4" /> Admin Panel
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 top-16 bg-surface-950/40 backdrop-blur-sm z-30"
+              onClick={() => setIsMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, x: '100%' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+              className="lg:hidden fixed right-0 top-16 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-surface-900 z-30 overflow-y-auto shadow-large"
+            >
+              <div className="p-4 space-y-1">
+                {/* Mobile search */}
+                <form onSubmit={handleSearchSubmit} className="flex items-center bg-surface-100 dark:bg-surface-800 rounded-xl mb-3">
+                  <Search className="w-4 h-4 text-surface-400 ml-3" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="bg-transparent border-none outline-none px-2.5 py-2.5 text-sm w-full text-surface-900 dark:text-white placeholder:text-surface-400"
+                  />
+                </form>
+
+                <Link to={ROUTES.HOME} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200 font-medium no-underline transition-colors">
+                  <HomeIcon className="w-4 h-4 text-surface-400" /> Home
+                </Link>
+                <Link to={ROUTES.PRODUCTS} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200 font-medium no-underline transition-colors">
+                  <ShoppingBag className="w-4 h-4 text-surface-400" /> All Products
+                </Link>
+
+                {/* Categories accordion */}
+                <div className="pt-2 pb-1 px-3 text-xs font-semibold uppercase tracking-wider text-surface-400">
+                  Categories
+                </div>
+                {NAV_CATEGORIES.map((cat) => (
+                  <Link
+                    key={cat.name}
+                    to={`/products?category=${encodeURIComponent(cat.name)}`}
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-600 dark:text-surface-300 no-underline text-sm transition-colors"
+                  >
+                    <span className="text-lg">{cat.icon}</span>
+                    {cat.name}
+                  </Link>
+                ))}
+
+                <div className="my-3 border-t border-surface-100 dark:border-surface-800" />
+
+                <Link to={ROUTES.WISHLIST} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200 font-medium no-underline transition-colors">
+                  <Heart className="w-4 h-4 text-surface-400" /> Wishlist
+                  {wishlistCount > 0 && <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{wishlistCount}</span>}
+                </Link>
+                <Link to={ROUTES.CART} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200 font-medium no-underline transition-colors">
+                  <ShoppingBag className="w-4 h-4 text-surface-400" /> Cart
+                  {cart.totalQuantity > 0 && <span className="ml-auto bg-accent-500 text-white text-xs px-2 py-0.5 rounded-full">{cart.totalQuantity}</span>}
+                </Link>
+
+                <div className="pt-3 border-t border-surface-100 dark:border-surface-800">
+                  {isAuthenticated ? (
+                    <>
+                      <Link to={ROUTES.PROFILE} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200 font-medium no-underline transition-colors">
+                        <User className="w-4 h-4 text-surface-400" /> Profile
                       </Link>
-                    )}
-                    <button
-                      onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                      className="block py-2 text-red-600 dark:text-red-400 font-medium cursor-pointer"
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <div className="flex gap-3">
-                    <Link
-                      to={ROUTES.LOGIN}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex-1 text-center py-2 border border-surface-300 dark:border-surface-600 rounded-xl text-surface-700 dark:text-surface-300 font-medium no-underline"
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      to={ROUTES.REGISTER}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex-1 text-center py-2 bg-primary-600 text-white rounded-xl font-semibold no-underline"
-                    >
-                      Sign Up
-                    </Link>
-                  </div>
-                )}
+                      {user?.role === 'admin' && (
+                        <Link to={ROUTES.ADMIN} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-700 dark:text-primary-400 font-medium no-underline transition-colors">
+                          <Shield className="w-4 h-4" /> Admin Panel
+                        </Link>
+                      )}
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 font-medium cursor-pointer transition-colors"
+                      >
+                        <LogOut className="w-4 h-4" /> Logout
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex flex-col gap-2 pt-2">
+                      <Link to={ROUTES.LOGIN} className="text-center py-2.5 border border-surface-300 dark:border-surface-700 rounded-xl text-surface-700 dark:text-surface-200 font-medium no-underline">
+                        Login
+                      </Link>
+                      <Link to={ROUTES.REGISTER} className="text-center py-2.5 bg-primary-600 text-white rounded-xl font-semibold no-underline hover:bg-primary-700 transition-colors">
+                        Sign Up
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </nav>

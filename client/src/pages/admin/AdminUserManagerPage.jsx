@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   Search,
   Mail,
@@ -8,10 +9,13 @@ import {
   ChevronRight,
   Users as UsersIcon,
   ShoppingBag,
+  Calendar,
+  Phone,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import adminService from '../../services/adminService.js';
 import Loader from '../../components/common/Loader.jsx';
+import Badge from '../../components/common/Badge.jsx';
 import formatCurrency from '../../utils/formatCurrency.js';
 
 const AdminUserManagerPage = () => {
@@ -53,34 +57,38 @@ const AdminUserManagerPage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Users</h1>
-        <p className="text-surface-500 dark:text-surface-400 mt-1">
-          Manage registered users and their roles
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h1 className="text-2xl md:text-3xl font-bold gradient-text-brand">Users</h1>
+        <p className="text-surface-500 dark:text-surface-400 mt-1 flex items-center gap-1.5">
+          <UsersIcon className="w-3.5 h-3.5" />
+          Manage registered users and their roles · {pagination.total} total
         </p>
-      </div>
+      </motion.div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 pointer-events-none" />
           <input
             type="text"
             placeholder="Search by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
           />
         </div>
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1.5 p-1 bg-surface-100 dark:bg-surface-800 rounded-xl">
           {['all', 'user', 'admin'].map((role) => (
             <button
               key={role}
               onClick={() => { setRoleFilter(role); setPage(1); }}
-              className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
                 roleFilter === role
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-600'
+                  ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-sm'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white'
               }`}
             >
               {role === 'all' ? 'All Users' : role.charAt(0).toUpperCase() + role.slice(1) + 's'}
@@ -91,95 +99,108 @@ const AdminUserManagerPage = () => {
 
       {/* Users Grid */}
       {loading ? (
-        <Loader />
+        <Loader label="Loading users..." />
       ) : users.length === 0 ? (
-        <div className="text-center py-12 bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700">
-          <UsersIcon className="w-12 h-12 mx-auto text-surface-300 dark:text-surface-600" />
-          <p className="mt-3 text-surface-500 dark:text-surface-400">No users found</p>
+        <div className="text-center py-16 bg-white dark:bg-surface-800 rounded-2xl border border-dashed border-surface-200 dark:border-surface-700">
+          <div className="w-20 h-20 mx-auto rounded-3xl bg-surface-100 dark:bg-surface-700 flex items-center justify-center mb-4">
+            <UsersIcon className="w-10 h-10 text-surface-300 dark:text-surface-500" />
+          </div>
+          <p className="text-surface-700 dark:text-surface-200 font-semibold">No users found</p>
+          <p className="text-sm text-surface-400 dark:text-surface-500 mt-1">Try adjusting filters</p>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {users.map((user) => (
-              <div
+            {users.map((user, i) => (
+              <motion.div
                 key={user._id}
-                className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-5 hover:shadow-lg transition-shadow duration-300"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-5 hover:shadow-soft hover:border-primary-200 dark:hover:border-primary-700 transition-all duration-300"
               >
+                {/* Top: avatar + name + role */}
                 <div className="flex items-start gap-3">
-                  <div className="w-11 h-11 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center shrink-0">
-                    <span className="text-sm font-bold text-primary-600 dark:text-primary-400">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
+                    user.role === 'admin'
+                      ? 'bg-linear-to-br from-primary-600 to-violet-600 shadow-glow'
+                      : 'bg-surface-100 dark:bg-surface-700'
+                  }`}>
+                    <span className={`text-base font-bold ${user.role === 'admin' ? 'text-white' : 'text-surface-600 dark:text-surface-300'}`}>
                       {user.name?.charAt(0)?.toUpperCase()}
                     </span>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-surface-900 dark:text-white truncate">
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-bold text-surface-900 dark:text-white truncate">
                         {user.name}
                       </p>
                       {user.role === 'admin' ? (
-                        <ShieldCheck className="w-4 h-4 text-primary-600 shrink-0" />
+                        <ShieldCheck className="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0" />
                       ) : (
                         <Shield className="w-4 h-4 text-surface-300 dark:text-surface-600 shrink-0" />
                       )}
                     </div>
                     <div className="flex items-center gap-1 mt-0.5">
-                      <Mail className="w-3 h-3 text-surface-400" />
-                      <p className="text-sm text-surface-500 dark:text-surface-400 truncate">
+                      <Mail className="w-3 h-3 text-surface-400 shrink-0" />
+                      <p className="text-xs text-surface-500 dark:text-surface-400 truncate">
                         {user.email}
                       </p>
                     </div>
+                    <Badge
+                      variant={user.role === 'admin' ? 'gradient' : 'default'}
+                      size="xs"
+                      className="mt-2 capitalize"
+                    >
+                      {user.role}
+                    </Badge>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-surface-100 dark:border-surface-700 grid grid-cols-3 gap-3">
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-surface-900 dark:text-white">
+                {/* Stats grid */}
+                <div className="mt-4 pt-4 border-t border-dashed border-surface-100 dark:border-surface-700 grid grid-cols-2 gap-3">
+                  <div className="text-center p-2.5 rounded-xl bg-surface-50 dark:bg-surface-700/40">
+                    <ShoppingBag className="w-4 h-4 text-primary-600 dark:text-primary-400 mx-auto mb-1" />
+                    <p className="text-lg font-bold text-surface-900 dark:text-white tabular-nums">
                       {user.orderCount || 0}
                     </p>
-                    <p className="text-[10px] text-surface-400 uppercase tracking-wider">Orders</p>
+                    <p className="text-[10px] text-surface-400 uppercase tracking-wider font-semibold">Orders</p>
                   </div>
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-surface-900 dark:text-white">
+                  <div className="text-center p-2.5 rounded-xl bg-surface-50 dark:bg-surface-700/40">
+                    <p className="text-lg font-bold gradient-text-brand tabular-nums">
                       {formatCurrency(user.totalSpent || 0)}
                     </p>
-                    <p className="text-[10px] text-surface-400 uppercase tracking-wider">Spent</p>
-                  </div>
-                  <div className="text-center">
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                      user.role === 'admin'
-                        ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
-                        : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
-                    }`}>
-                      {user.role}
-                    </span>
-                    <p className="text-[10px] text-surface-400 uppercase tracking-wider mt-1">Role</p>
+                    <p className="text-[10px] text-surface-400 uppercase tracking-wider font-semibold mt-0.5">Total Spent</p>
                   </div>
                 </div>
 
-                {user.phone && (
-                  <p className="mt-2 text-xs text-surface-400">
-                    Phone: {user.phone}
+                {/* Footer info */}
+                <div className="mt-3 space-y-1">
+                  {user.phone && (
+                    <p className="text-xs text-surface-400 dark:text-surface-500 flex items-center gap-1.5">
+                      <Phone className="w-3 h-3" /> {user.phone}
+                    </p>
+                  )}
+                  <p className="text-xs text-surface-400 dark:text-surface-500 flex items-center gap-1.5">
+                    <Calendar className="w-3 h-3" /> Joined {new Date(user.createdAt).toLocaleDateString('en-PK', { year: 'numeric', month: 'short', day: 'numeric' })}
                   </p>
-                )}
-
-                <p className="mt-2 text-xs text-surface-400">
-                  Joined: {new Date(user.createdAt).toLocaleDateString()}
-                </p>
-              </div>
+                </div>
+              </motion.div>
             ))}
           </div>
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="flex items-center justify-between bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 px-5 py-3">
-              <p className="text-sm text-surface-500 dark:text-surface-400">
-                Showing {(page - 1) * 10 + 1} to {Math.min(page * 10, pagination.total)} of {pagination.total} users
+            <div className="flex items-center justify-between bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 px-5 py-3 shadow-soft">
+              <p className="text-xs text-surface-500 dark:text-surface-400">
+                Showing <span className="font-semibold">{(page - 1) * 10 + 1}</span> to <span className="font-semibold">{Math.min(page * 10, pagination.total)}</span> of <span className="font-semibold">{pagination.total}</span> users
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                  aria-label="Previous page"
                 >
                   <ChevronLeft className="w-4 h-4 text-surface-600 dark:text-surface-400" />
                 </button>
@@ -187,9 +208,9 @@ const AdminUserManagerPage = () => {
                   <button
                     key={p}
                     onClick={() => setPage(p)}
-                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                    className={`min-w-8 h-8 px-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                       p === page
-                        ? 'bg-primary-600 text-white'
+                        ? 'bg-linear-to-r from-primary-600 to-violet-600 text-white shadow-sm'
                         : 'hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-600 dark:text-surface-400'
                     }`}
                   >
@@ -199,7 +220,8 @@ const AdminUserManagerPage = () => {
                 <button
                   onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))}
                   disabled={page === pagination.pages}
-                  className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                  aria-label="Next page"
                 >
                   <ChevronRight className="w-4 h-4 text-surface-600 dark:text-surface-400" />
                 </button>

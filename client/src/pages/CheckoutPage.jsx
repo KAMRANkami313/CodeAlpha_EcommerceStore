@@ -1,9 +1,25 @@
+import { useEffect, useState } from 'react';
 import CheckoutForm from '../components/checkout/CheckoutForm.jsx';
 import OrderSummary from '../components/checkout/OrderSummary.jsx';
 import useCart from '../hooks/useCart.js';
+import Loader from '../components/common/Loader.jsx';
 
 const CheckoutPage = () => {
-  const { cart } = useCart();
+  const { cart, fetchCart } = useCart();
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  // Ensure cart data is loaded on mount
+  useEffect(() => {
+    const loadCart = async () => {
+      await fetchCart();
+      setInitialLoading(false);
+    };
+    loadCart();
+  }, [fetchCart]);
+
+  if (initialLoading) {
+    return <Loader />;
+  }
 
   if (cart.items.length === 0) {
     return (

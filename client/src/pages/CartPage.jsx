@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -9,8 +10,13 @@ import Button from '../components/common/Button.jsx';
 import ROUTES from '../constants/ROUTES.js';
 
 const CartPage = () => {
-  const { cart } = useCart();
+  const { cart, fetchCart } = useCart();
   const { isAuthenticated } = useAuth();
+
+  // Refresh cart data on mount
+  useEffect(() => {
+    if (isAuthenticated) fetchCart();
+  }, [isAuthenticated, fetchCart]);
 
   if (!isAuthenticated) {
     return (

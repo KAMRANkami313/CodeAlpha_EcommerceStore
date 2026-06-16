@@ -5,15 +5,16 @@ import Product from '../models/Product.js';
 import Order from '../models/Order.js';
 import ApiError from '../utils/ApiError.js';
 
-const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+export const isStripeConfigured = !!(env.STRIPE_SECRET_KEY && env.STRIPE_SECRET_KEY.length > 10);
 
-export const isStripeConfigured = !!env.STRIPE_SECRET_KEY;
+// Only initialize Stripe if the key is properly configured
+const stripe = isStripeConfigured ? new Stripe(env.STRIPE_SECRET_KEY) : null;
 
 /**
  * Create a Stripe PaymentIntent for the user's cart
  */
 const createPaymentIntent = async (userId) => {
-  if (!isStripeConfigured) {
+  if (!isStripeConfigured || !stripe) {
     throw new ApiError(503, 'Stripe is not configured. Please use Cash on Delivery instead.');
   }
 
@@ -65,7 +66,7 @@ const createPaymentIntent = async (userId) => {
  * Handle Stripe webhook events
  */
 const handleWebhook = async (payload, signature) => {
-  if (!isStripeConfigured || !env.STRIPE_WEBHOOK_SECRET) {
+  if (!isStripeConfigured || !stripe || !env.STRIPE_WEBHOOK_SECRET) {
     throw new ApiError(503, 'Stripe webhook not configured');
   }
 

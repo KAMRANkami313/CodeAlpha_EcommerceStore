@@ -33,7 +33,7 @@ const CheckoutForm = () => {
   const [creatingIntent, setCreatingIntent] = useState(false);
   const { cart, emptyCart } = useCart();
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, getValues } = useForm();
+  const { register, handleSubmit, formState: { errors }, getValues, trigger } = useForm();
 
   // When user selects Card, create a payment intent
   useEffect(() => {
@@ -82,6 +82,13 @@ const CheckoutForm = () => {
 
   // Handle Card payment success — create order with stripePaymentId
   const handlePaymentSuccess = async (paymentIntentId) => {
+    // Validate shipping fields BEFORE creating the order
+    const isValid = await trigger();
+    if (!isValid) {
+      toast.error('Please fill in all shipping details before completing payment.');
+      return;
+    }
+
     const shippingData = getValues();
     setLoading(true);
     try {
@@ -126,7 +133,7 @@ const CheckoutForm = () => {
           <div className="relative">
             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
             <input
-              {...register('fullName', { required: 'Required' })}
+              {...register('fullName', { required: 'Full name is required' })}
               className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
               placeholder="Muhammad Kamran"
             />
@@ -139,7 +146,7 @@ const CheckoutForm = () => {
           <div className="relative">
             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
             <input
-              {...register('phone', { required: 'Required' })}
+              {...register('phone', { required: 'Phone number is required' })}
               className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
               placeholder="+92 317 5718391"
             />
@@ -151,7 +158,7 @@ const CheckoutForm = () => {
       <div>
         <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Street Address</label>
         <input
-          {...register('street', { required: 'Required' })}
+          {...register('street', { required: 'Street address is required' })}
           className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
           placeholder="123 Main Street"
         />
@@ -162,26 +169,29 @@ const CheckoutForm = () => {
         <div>
           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">City</label>
           <input
-            {...register('city', { required: 'Required' })}
+            {...register('city', { required: 'City is required' })}
             className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
             placeholder="Rawalpindi"
           />
+          {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city.message}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">State</label>
           <input
-            {...register('state', { required: 'Required' })}
+            {...register('state', { required: 'State is required' })}
             className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
             placeholder="Punjab"
           />
+          {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state.message}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Zip Code</label>
           <input
-            {...register('zipCode', { required: 'Required' })}
+            {...register('zipCode', { required: 'Zip code is required' })}
             className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
             placeholder="46000"
           />
+          {errors.zipCode && <p className="text-red-500 text-xs mt-1">{errors.zipCode.message}</p>}
         </div>
       </div>
 
@@ -260,6 +270,7 @@ const CheckoutForm = () => {
               <StripePaymentForm
                 onSuccess={handlePaymentSuccess}
                 clientSecret={clientSecret}
+                orderLoading={loading}
               />
             </Elements>
           ) : (

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useAuthContext } from './AuthContext.jsx';
 import cartService from '../services/cartService.js';
 import toast from 'react-hot-toast';
@@ -24,6 +24,16 @@ export const CartProvider = ({ children }) => {
       // Cart might not exist yet — that's fine
     }
   }, [isAuthenticated]);
+
+  // Auto-fetch cart when authentication state changes
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCart();
+    } else {
+      // Reset cart when logged out
+      setCart({ items: [], totalQuantity: 0, totalPrice: 0 });
+    }
+  }, [isAuthenticated, fetchCart]);
 
   const addToCart = async (productId, quantity = 1) => {
     if (!isAuthenticated) {
@@ -63,7 +73,8 @@ export const CartProvider = ({ children }) => {
       const response = await cartService.clearCart();
       setCart(response.data);
     } catch (error) {
-      toast.error('Failed to clear cart');
+      // Even if server cart clear fails (e.g., cart already empty), reset local state
+      setCart({ items: [], totalQuantity: 0, totalPrice: 0 });
     }
   };
 

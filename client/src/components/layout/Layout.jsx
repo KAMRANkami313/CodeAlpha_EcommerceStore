@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar.jsx';
 import Footer from './Footer.jsx';
+import ScrollToTopButton from '../common/ScrollToTopButton.jsx';
 import { Toaster } from 'react-hot-toast';
 
 const Layout = () => {
@@ -22,6 +23,7 @@ const Layout = () => {
         <Outlet />
       </main>
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 };

@@ -19,8 +19,8 @@ const ProductListPage = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-surface-900">All Products</h1>
-          <p className="text-surface-500 mt-1">{pagination.total || 0} products found</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-surface-900 dark:text-white">All Products</h1>
+          <p className="text-surface-500 dark:text-surface-400 mt-1">{pagination.total || 0} products found</p>
         </div>
         <Button variant="secondary" size="sm" icon={SlidersHorizontal} onClick={() => setShowFilters(!showFilters)} className="lg:hidden">
           Filters
@@ -49,7 +49,7 @@ const ProductListPage = () => {
                       className={`w-10 h-10 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
                         pagination.page === i + 1
                           ? 'bg-primary-600 text-white'
-                          : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
+                          : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'
                       }`}
                     >
                       {i + 1}

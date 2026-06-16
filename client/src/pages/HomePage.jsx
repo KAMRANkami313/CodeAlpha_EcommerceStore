@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingBag, ArrowRight, Truck, Shield, RotateCcw, Headphones } from 'lucide-react';
 import useCart from '../hooks/useCart.js';
+import useWishlist from '../hooks/useWishlist.js';
 import useProducts from '../hooks/useProducts.js';
 import ProductCard from '../components/product/ProductCard.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
@@ -18,9 +19,10 @@ const features = [
 
 const HomePage = () => {
   const { fetchCart } = useCart();
+  const { fetchWishlist } = useWishlist();
   const { products: featuredProducts, loading } = useProducts({ featured: 'true', limit: 8 });
 
-  useEffect(() => { fetchCart(); }, [fetchCart]);
+  useEffect(() => { fetchCart(); fetchWishlist(); }, [fetchCart, fetchWishlist]);
 
   return (
     <div>
@@ -56,15 +58,15 @@ const HomePage = () => {
       </section>
 
       {/* Features Bar */}
-      <section className="bg-white border-b border-surface-200">
+      <section className="bg-white dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map((feature, i) => (
               <motion.div key={feature.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="flex items-center gap-3">
-                <div className="p-2.5 bg-primary-50 rounded-xl"><feature.icon className="w-5 h-5 text-primary-600" /></div>
+                <div className="p-2.5 bg-primary-50 dark:bg-primary-900/30 rounded-xl"><feature.icon className="w-5 h-5 text-primary-600 dark:text-primary-400" /></div>
                 <div>
-                  <p className="font-semibold text-surface-800 text-sm">{feature.title}</p>
-                  <p className="text-xs text-surface-500">{feature.desc}</p>
+                  <p className="font-semibold text-surface-800 dark:text-surface-200 text-sm">{feature.title}</p>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">{feature.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -76,10 +78,10 @@ const HomePage = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-surface-900">Featured Products</h2>
-            <p className="text-surface-500 mt-1">Handpicked items just for you</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-surface-900 dark:text-white">Featured Products</h2>
+            <p className="text-surface-500 dark:text-surface-400 mt-1">Handpicked items just for you</p>
           </div>
-          <Link to={ROUTES.PRODUCTS} className="flex items-center gap-1 text-primary-600 font-semibold hover:gap-2 transition-all no-underline text-sm">
+          <Link to={ROUTES.PRODUCTS} className="flex items-center gap-1 text-primary-600 dark:text-primary-400 font-semibold hover:gap-2 transition-all no-underline text-sm">
             View All <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -87,7 +89,7 @@ const HomePage = () => {
       </section>
 
       {/* CTA Banner */}
-      <section className="bg-surface-900">
+      <section className="bg-surface-900 dark:bg-surface-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Shopping?</h2>
           <p className="text-surface-400 max-w-md mx-auto mb-8">Join thousands of happy customers and discover amazing products at great prices.</p>

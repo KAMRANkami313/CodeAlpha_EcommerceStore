@@ -7,7 +7,7 @@ const StarRating = ({ rating = 0, size = 16 }) => {
         <Star
           key={star}
           size={size}
-          className={star <= rating ? 'fill-amber-400 text-amber-400' : 'text-surface-300'}
+          className={star <= rating ? 'fill-amber-400 text-amber-400' : 'text-surface-300 dark:text-surface-600'}
         />
       ))}
     </div>

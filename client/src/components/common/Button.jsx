@@ -2,10 +2,10 @@ import { motion } from 'framer-motion';
 
 const variants = {
   primary: 'bg-primary-600 text-white hover:bg-primary-700 shadow-md hover:shadow-lg',
-  secondary: 'bg-surface-100 text-surface-700 hover:bg-surface-200 border border-surface-300',
+  secondary: 'bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-600 border border-surface-300 dark:border-surface-600',
   accent: 'bg-accent-500 text-white hover:bg-accent-600 shadow-md hover:shadow-lg',
-  outline: 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50',
-  ghost: 'text-surface-600 hover:bg-surface-100',
+  outline: 'border-2 border-primary-600 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30',
+  ghost: 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800',
   danger: 'bg-red-600 text-white hover:bg-red-700',
 };
 

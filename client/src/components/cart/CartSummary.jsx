@@ -9,25 +9,25 @@ const CartSummary = ({ cart }) => {
   const total = cart.totalPrice + shipping;
 
   return (
-    <div className="bg-white rounded-2xl border border-surface-200 p-6 sticky top-24">
-      <h3 className="text-lg font-bold text-surface-800 mb-4">Order Summary</h3>
+    <div className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-6 sticky top-24">
+      <h3 className="text-lg font-bold text-surface-800 dark:text-white mb-4">Order Summary</h3>
 
       <div className="space-y-3 text-sm">
         <div className="flex justify-between">
-          <span className="text-surface-500">Subtotal ({cart.totalQuantity} items)</span>
-          <span className="font-medium">{formatCurrency(cart.totalPrice)}</span>
+          <span className="text-surface-500 dark:text-surface-400">Subtotal ({cart.totalQuantity} items)</span>
+          <span className="font-medium text-surface-900 dark:text-white">{formatCurrency(cart.totalPrice)}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-surface-500">Shipping</span>
-          <span className="font-medium">{shipping === 0 ? 'FREE' : formatCurrency(shipping)}</span>
+          <span className="text-surface-500 dark:text-surface-400">Shipping</span>
+          <span className="font-medium text-surface-900 dark:text-white">{shipping === 0 ? 'FREE' : formatCurrency(shipping)}</span>
         </div>
         {shipping > 0 && (
-          <p className="text-xs text-emerald-600">Add {formatCurrency(5000 - cart.totalPrice)} more for free shipping!</p>
+          <p className="text-xs text-emerald-600 dark:text-emerald-400">Add {formatCurrency(5000 - cart.totalPrice)} more for free shipping!</p>
         )}
-        <div className="border-t border-surface-200 pt-3">
+        <div className="border-t border-surface-200 dark:border-surface-700 pt-3">
           <div className="flex justify-between text-base">
-            <span className="font-semibold text-surface-800">Total</span>
-            <span className="font-bold text-surface-900">{formatCurrency(total)}</span>
+            <span className="font-semibold text-surface-800 dark:text-white">Total</span>
+            <span className="font-bold text-surface-900 dark:text-white">{formatCurrency(total)}</span>
           </div>
         </div>
       </div>

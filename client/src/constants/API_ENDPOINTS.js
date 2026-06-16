@@ -21,6 +21,11 @@ const API = {
   PRODUCT_REVIEWS: (productId) => `/api/reviews/product/${productId}`,
   REVIEW_DETAIL: (id) => `/api/reviews/${id}`,
 
+  // Wishlist
+  WISHLIST: '/api/wishlist',
+  WISHLIST_ITEM: (productId) => `/api/wishlist/${productId}`,
+  WISHLIST_CHECK: (productId) => `/api/wishlist/check/${productId}`,
+
   // Health
   HEALTH: '/api/health',
 };

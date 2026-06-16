@@ -34,18 +34,18 @@ const CheckoutForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <h3 className="text-lg font-bold text-surface-800 flex items-center gap-2">
-        <MapPin className="w-5 h-5 text-primary-600" /> Shipping Address
+      <h3 className="text-lg font-bold text-surface-800 dark:text-white flex items-center gap-2">
+        <MapPin className="w-5 h-5 text-primary-600 dark:text-primary-400" /> Shipping Address
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-surface-700 mb-1">Full Name</label>
+          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Full Name</label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
             <input
               {...register('fullName', { required: 'Required' })}
-              className="w-full pl-10 pr-4 py-2.5 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+              className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
               placeholder="Muhammad Kamran"
             />
           </div>
@@ -53,12 +53,12 @@ const CheckoutForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-surface-700 mb-1">Phone</label>
+          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Phone</label>
           <div className="relative">
             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
             <input
               {...register('phone', { required: 'Required' })}
-              className="w-full pl-10 pr-4 py-2.5 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+              className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
               placeholder="+92 317 5718391"
             />
           </div>
@@ -67,10 +67,10 @@ const CheckoutForm = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-surface-700 mb-1">Street Address</label>
+        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Street Address</label>
         <input
           {...register('street', { required: 'Required' })}
-          className="w-full px-4 py-2.5 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
           placeholder="123 Main Street"
         />
         {errors.street && <p className="text-red-500 text-xs mt-1">{errors.street.message}</p>}
@@ -78,40 +78,40 @@ const CheckoutForm = () => {
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-surface-700 mb-1">City</label>
+          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">City</label>
           <input
             {...register('city', { required: 'Required' })}
-            className="w-full px-4 py-2.5 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+            className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
             placeholder="Rawalpindi"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-surface-700 mb-1">State</label>
+          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">State</label>
           <input
             {...register('state', { required: 'Required' })}
-            className="w-full px-4 py-2.5 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+            className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
             placeholder="Punjab"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-surface-700 mb-1">Zip Code</label>
+          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Zip Code</label>
           <input
             {...register('zipCode', { required: 'Required' })}
-            className="w-full px-4 py-2.5 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+            className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
             placeholder="46000"
           />
         </div>
       </div>
 
-      <h3 className="text-lg font-bold text-surface-800 pt-4">Payment Method</h3>
+      <h3 className="text-lg font-bold text-surface-800 dark:text-white pt-4">Payment Method</h3>
       <div className="flex gap-4">
-        <label className={`flex-1 flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors ${paymentMethod === 'COD' ? 'border-primary-600 bg-primary-50' : 'border-surface-200 hover:border-primary-400'}`}>
+        <label className={`flex-1 flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors ${paymentMethod === 'COD' ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20' : 'border-surface-200 dark:border-surface-600 hover:border-primary-400'}`}>
           <input type="radio" value="COD" {...register('paymentMethod')} onChange={() => setPaymentMethod('COD')} defaultChecked className="accent-primary-600" />
-          <span className="font-medium text-surface-700">Cash on Delivery</span>
+          <span className="font-medium text-surface-700 dark:text-surface-300">Cash on Delivery</span>
         </label>
-        <label className={`flex-1 flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors ${paymentMethod === 'Card' ? 'border-primary-600 bg-primary-50' : 'border-surface-200 hover:border-primary-400'}`}>
+        <label className={`flex-1 flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors ${paymentMethod === 'Card' ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20' : 'border-surface-200 dark:border-surface-600 hover:border-primary-400'}`}>
           <input type="radio" value="Card" {...register('paymentMethod')} onChange={() => setPaymentMethod('Card')} className="accent-primary-600" />
-          <span className="font-medium text-surface-700">Card Payment</span>
+          <span className="font-medium text-surface-700 dark:text-surface-300">Card Payment</span>
         </label>
       </div>
 

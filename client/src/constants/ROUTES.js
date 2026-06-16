@@ -9,6 +9,7 @@ const ROUTES = {
   ORDER_SUCCESS: '/order-success',
   PROFILE: '/profile',
   ORDER_DETAIL: '/orders/:id',
+  WISHLIST: '/wishlist',
 };
 
 export default ROUTES;

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, Search, LogOut } from 'lucide-react';
-import  useAuth  from '../../hooks/useAuth.js';
+import { ShoppingBag, User, Menu, X, Search, LogOut, Heart, Sun, Moon } from 'lucide-react';
+import useAuth from '../../hooks/useAuth.js';
 import useCart from '../../hooks/useCart.js';
+import useWishlist from '../../hooks/useWishlist.js';
+import { useThemeContext } from '../../context/ThemeContext.jsx';
 import ROUTES from '../../constants/ROUTES.js';
 
 const Navbar = () => {
@@ -11,6 +13,8 @@ const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const { cart } = useCart();
+  const { wishlistCount } = useWishlist();
+  const { isDark, toggleTheme } = useThemeContext();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -20,7 +24,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-surface-200">
+    <nav className="sticky top-0 z-40 bg-white/80 dark:bg-surface-900/80 backdrop-blur-lg border-b border-surface-200 dark:border-surface-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -28,35 +32,62 @@ const Navbar = () => {
             <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center">
               <ShoppingBag className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-surface-900">
+            <span className="text-xl font-bold text-surface-900 dark:text-white">
               Shop<span className="text-primary-600">Verse</span>
             </span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to={ROUTES.HOME} className="text-surface-600 hover:text-primary-600 font-medium transition-colors no-underline">
+            <Link to={ROUTES.HOME} className="text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors no-underline">
               Home
             </Link>
-            <Link to={ROUTES.PRODUCTS} className="text-surface-600 hover:text-primary-600 font-medium transition-colors no-underline">
+            <Link to={ROUTES.PRODUCTS} className="text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors no-underline">
               Products
             </Link>
           </div>
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              to={ROUTES.PRODUCTS}
-              className="p-2.5 rounded-xl hover:bg-surface-100 transition-colors no-underline"
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              <Search className="w-5 h-5 text-surface-600" />
-            </Link>
+              {isDark ? (
+                <Sun className="w-5 h-5 text-amber-400" />
+              ) : (
+                <Moon className="w-5 h-5 text-surface-600" />
+              )}
+            </button>
 
             <Link
-              to={ROUTES.CART}
-              className="relative p-2.5 rounded-xl hover:bg-surface-100 transition-colors no-underline"
+              to={ROUTES.PRODUCTS}
+              className="p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors no-underline"
             >
-              <ShoppingBag className="w-5 h-5 text-surface-600" />
+              <Search className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+            </Link>
+
+            {/* Wishlist */}
+            <Link
+              to={ROUTES.WISHLIST}
+              className="relative p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors no-underline"
+            >
+              <Heart className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Cart */}
+            <Link
+              to={ROUTES.CART}
+              className="relative p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors no-underline"
+            >
+              <ShoppingBag className="w-5 h-5 text-surface-600 dark:text-surface-400" />
               {cart.totalQuantity > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-accent-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                   {cart.totalQuantity}
@@ -68,10 +99,10 @@ const Navbar = () => {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-2 p-2 rounded-xl hover:bg-surface-100 transition-colors cursor-pointer"
+                  className="flex items-center gap-2 p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer"
                 >
-                  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-primary-600">
+                  <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-semibold text-primary-600 dark:text-primary-400">
                       {user?.name?.charAt(0)?.toUpperCase()}
                     </span>
                   </div>
@@ -83,23 +114,30 @@ const Navbar = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 top-12 w-56 bg-white rounded-xl shadow-xl border border-surface-200 overflow-hidden"
+                      className="absolute right-0 top-12 w-56 bg-white dark:bg-surface-800 rounded-xl shadow-xl border border-surface-200 dark:border-surface-700 overflow-hidden"
                     >
-                      <div className="p-4 border-b border-surface-100">
-                        <p className="font-semibold text-surface-800">{user?.name}</p>
-                        <p className="text-sm text-surface-500">{user?.email}</p>
+                      <div className="p-4 border-b border-surface-100 dark:border-surface-700">
+                        <p className="font-semibold text-surface-800 dark:text-white">{user?.name}</p>
+                        <p className="text-sm text-surface-500 dark:text-surface-400">{user?.email}</p>
                       </div>
                       <div className="p-2">
                         <Link
                           to={ROUTES.PROFILE}
                           onClick={() => setIsProfileOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-50 text-surface-700 no-underline text-sm"
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 no-underline text-sm"
                         >
                           <User className="w-4 h-4" /> My Profile
                         </Link>
+                        <Link
+                          to={ROUTES.WISHLIST}
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 no-underline text-sm"
+                        >
+                          <Heart className="w-4 h-4" /> Wishlist
+                        </Link>
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 text-red-600 text-sm cursor-pointer"
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 text-sm cursor-pointer"
                         >
                           <LogOut className="w-4 h-4" /> Logout
                         </button>
@@ -112,7 +150,7 @@ const Navbar = () => {
               <div className="flex items-center gap-2">
                 <Link
                   to={ROUTES.LOGIN}
-                  className="px-4 py-2 text-sm font-medium text-surface-600 hover:text-primary-600 transition-colors no-underline"
+                  className="px-4 py-2 text-sm font-medium text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors no-underline"
                 >
                   Login
                 </Link>
@@ -127,12 +165,20 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-xl hover:bg-surface-100 cursor-pointer"
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer"
+            >
+              {isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-surface-600" />}
+            </button>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer"
+            >
+              {isMenuOpen ? <X className="w-6 h-6 text-surface-700 dark:text-surface-300" /> : <Menu className="w-6 h-6 text-surface-700 dark:text-surface-300" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -143,43 +189,50 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-surface-200 bg-white"
+            className="md:hidden border-t border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900"
           >
             <div className="px-4 py-4 space-y-3">
               <Link
                 to={ROUTES.HOME}
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 text-surface-700 font-medium no-underline"
+                className="block py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
               >
                 Home
               </Link>
               <Link
                 to={ROUTES.PRODUCTS}
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 text-surface-700 font-medium no-underline"
+                className="block py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
               >
                 Products
               </Link>
               <Link
+                to={ROUTES.WISHLIST}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-2 py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
+              >
+                Wishlist {wishlistCount > 0 && <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{wishlistCount}</span>}
+              </Link>
+              <Link
                 to={ROUTES.CART}
                 onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 py-2 text-surface-700 font-medium no-underline"
+                className="flex items-center gap-2 py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
               >
                 Cart {cart.totalQuantity > 0 && <span className="bg-accent-500 text-white text-xs px-2 py-0.5 rounded-full">{cart.totalQuantity}</span>}
               </Link>
-              <div className="pt-3 border-t border-surface-200">
+              <div className="pt-3 border-t border-surface-200 dark:border-surface-700">
                 {isAuthenticated ? (
                   <>
                     <Link
                       to={ROUTES.PROFILE}
                       onClick={() => setIsMenuOpen(false)}
-                      className="block py-2 text-surface-700 font-medium no-underline"
+                      className="block py-2 text-surface-700 dark:text-surface-300 font-medium no-underline"
                     >
                       Profile
                     </Link>
                     <button
                       onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                      className="block py-2 text-red-600 font-medium cursor-pointer"
+                      className="block py-2 text-red-600 dark:text-red-400 font-medium cursor-pointer"
                     >
                       Logout
                     </button>
@@ -189,7 +242,7 @@ const Navbar = () => {
                     <Link
                       to={ROUTES.LOGIN}
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex-1 text-center py-2 border border-surface-300 rounded-xl text-surface-700 font-medium no-underline"
+                      className="flex-1 text-center py-2 border border-surface-300 dark:border-surface-600 rounded-xl text-surface-700 dark:text-surface-300 font-medium no-underline"
                     >
                       Login
                     </Link>

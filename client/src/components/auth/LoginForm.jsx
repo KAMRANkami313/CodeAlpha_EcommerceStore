@@ -31,19 +31,19 @@ const LoginForm = () => {
       className="max-w-md mx-auto"
     >
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-surface-900">Welcome Back</h1>
-        <p className="text-surface-500 mt-2">Sign in to your account</p>
+        <h1 className="text-3xl font-bold text-surface-900 dark:text-white">Welcome Back</h1>
+        <p className="text-surface-500 dark:text-surface-400 mt-2">Sign in to your account</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-surface-700 mb-1.5">Email</label>
+          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Email</label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
             <input
               type="email"
               {...register('email', { required: 'Email is required' })}
-              className="w-full pl-10 pr-4 py-3 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-4 py-3 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
               placeholder="you@example.com"
             />
           </div>
@@ -51,19 +51,19 @@ const LoginForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-surface-700 mb-1.5">Password</label>
+          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Password</label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
             <input
               type={showPassword ? 'text' : 'password'}
               {...register('password', { required: 'Password is required' })}
-              className="w-full pl-10 pr-12 py-3 border border-surface-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-12 py-3 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500"
               placeholder="Enter your password"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 cursor-pointer"
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -76,9 +76,9 @@ const LoginForm = () => {
         </Button>
       </form>
 
-      <p className="text-center text-sm text-surface-500 mt-6">
+      <p className="text-center text-sm text-surface-500 dark:text-surface-400 mt-6">
         Don't have an account?{' '}
-        <Link to={ROUTES.REGISTER} className="text-primary-600 font-semibold hover:underline no-underline">
+        <Link to={ROUTES.REGISTER} className="text-primary-600 dark:text-primary-400 font-semibold hover:underline no-underline">
           Sign Up
         </Link>
       </p>

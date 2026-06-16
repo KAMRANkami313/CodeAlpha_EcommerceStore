@@ -26,7 +26,11 @@
   --color-surface-700: #334155;
   --color-surface-800: #1e293b;
   --color-surface-900: #0f172a;
+  --color-surface-950: #020617;
 }
+
+/* ─── Dark mode selector ────────────────────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
 
 * {
   margin: 0;
@@ -46,6 +50,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @apply bg-surface-50 text-surface-900 transition-colors duration-300;
+}
+
+.dark body {
+  @apply bg-surface-950 text-surface-100;
 }
 
 ::-webkit-scrollbar {
@@ -53,14 +62,25 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-surface-100);
+  @apply bg-surface-100;
+}
+
+.dark ::-webkit-scrollbar-track {
+  @apply bg-surface-900;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-surface-300);
-  border-radius: 3px;
+  @apply bg-surface-300 rounded;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-surface-700 rounded;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-surface-400);
+  @apply bg-surface-400;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-surface-600;
 }

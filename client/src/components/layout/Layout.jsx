@@ -5,7 +5,7 @@ import { Toaster } from 'react-hot-toast';
 
 const Layout = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-surface-50">
+    <div className="min-h-screen flex flex-col bg-surface-50 dark:bg-surface-950 transition-colors duration-300">
       <Toaster
         position="top-right"
         toastOptions={{

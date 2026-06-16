@@ -6,7 +6,8 @@ export const registerValidator = [
     .notEmpty()
     .withMessage('Name is required')
     .isLength({ min: 2, max: 50 })
-    .withMessage('Name must be between 2 and 50 characters'),
+    .withMessage('Name must be between 2 and 50 characters')
+    .escape(),
 
   body('email')
     .trim()
@@ -19,8 +20,16 @@ export const registerValidator = [
   body('password')
     .notEmpty()
     .withMessage('Password is required')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters'),
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters')
+    .matches(/[a-z]/)
+    .withMessage('Password must contain at least one lowercase letter')
+    .matches(/[A-Z]/)
+    .withMessage('Password must contain at least one uppercase letter')
+    .matches(/[0-9]/)
+    .withMessage('Password must contain at least one number')
+    .matches(/[^a-zA-Z0-9]/)
+    .withMessage('Password must contain at least one special character'),
 ];
 
 export const loginValidator = [
@@ -32,7 +41,9 @@ export const loginValidator = [
     .withMessage('Please provide a valid email')
     .normalizeEmail(),
 
-  body('password').notEmpty().withMessage('Password is required'),
+  body('password')
+    .notEmpty()
+    .withMessage('Password is required'),
 ];
 
 export const updateProfileValidator = [
@@ -40,11 +51,14 @@ export const updateProfileValidator = [
     .optional({ values: 'falsy' })
     .trim()
     .isLength({ min: 2, max: 50 })
-    .withMessage('Name must be between 2 and 50 characters'),
+    .withMessage('Name must be between 2 and 50 characters')
+    .escape(),
 
   body('phone')
     .optional({ values: 'falsy' })
     .trim()
     .isLength({ max: 20 })
-    .withMessage('Phone number cannot exceed 20 characters'),
+    .withMessage('Phone number cannot exceed 20 characters')
+    .matches(/^[+\d\s()-]*$/)
+    .withMessage('Phone number contains invalid characters'),
 ];

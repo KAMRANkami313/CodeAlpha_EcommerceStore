@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import env from '../config/env.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -21,7 +22,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, 'Password is required'],
-      minlength: [6, 'Password must be at least 6 characters'],
+      minlength: [8, 'Password must be at least 8 characters'],
       select: false,
     },
     avatar: {
@@ -32,6 +33,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
+      immutable: true, // Prevent role changes via direct assignment
     },
     phone: {
       type: String,
@@ -48,30 +50,80 @@ const userSchema = new mongoose.Schema(
       type: String,
       select: false,
     },
+    // Account lockout fields
+    loginAttempts: {
+      type: Number,
+      default: 0,
+      select: false,
+    },
+    lockUntil: {
+      type: Number,
+      select: false,
+      default: 0,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// Hash password before saving
-// Mongoose 7+: async middleware no longer receives `next` callback.
-// Just return early or let the function complete — Mongoose auto-advances.
-userSchema.pre('save', async function () {
-  if (!this.isModified('password')) return;
-  this.password = await bcrypt.hash(this.password, 12);
+// ─── Virtual: Check if account is locked ──────────────────────
+userSchema.virtual('isLocked').get(function () {
+  return !!(this.lockUntil && this.lockUntil > Date.now());
 });
 
-// Compare password method
+// ─── Hash password before saving ─────────────────────────────
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+  const saltRounds = env.BCRYPT_SALT_ROUNDS || 12;
+  this.password = await bcrypt.hash(this.password, saltRounds);
+});
+
+// ─── Compare password method ─────────────────────────────────
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Remove password from JSON output
+// ─── Account lockout: increment failed attempts ──────────────
+userSchema.methods.incLoginAttempts = function () {
+  // If we have a previous lock that has expired, restart at 1
+  if (this.lockUntil && this.lockUntil < Date.now()) {
+    return this.updateOne({
+      $set: { loginAttempts: 1 },
+      $unset: { lockUntil: 1 },
+    });
+  }
+
+  const maxAttempts = env.MAX_LOGIN_ATTEMPTS || 5;
+  const lockTime = (env.LOGIN_LOCKOUT_TIME || 15) * 60 * 1000; // minutes to ms
+
+  // If we've hit max attempts and no current lock, lock the account
+  const updates = { $inc: { loginAttempts: 1 } };
+  const needToLock = this.loginAttempts + 1 >= maxAttempts;
+
+  if (needToLock) {
+    updates.$set = { lockUntil: Date.now() + lockTime };
+  }
+
+  return this.updateOne(updates);
+};
+
+// ─── Account lockout: reset attempts on successful login ─────
+userSchema.methods.resetLoginAttempts = function () {
+  return this.updateOne({
+    $set: { loginAttempts: 0 },
+    $unset: { lockUntil: 1 },
+  });
+};
+
+// ─── Remove sensitive fields from JSON output ────────────────
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
   delete obj.refreshToken;
+  delete obj.loginAttempts;
+  delete obj.lockUntil;
+  delete obj.__v;
   return obj;
 };
 

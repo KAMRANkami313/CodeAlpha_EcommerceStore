@@ -214,3 +214,149 @@ img {
 .dark img {
   background-color: var(--color-surface-800);
 }
+
+/* ============================================================
+   Phase 9.10 — Final Polish
+   ============================================================ */
+
+/* ---------- Focus ring utility variants ---------- */
+/* Use .focus-ring for a clean brand-color focus outline that works
+   on any element (buttons, links, inputs, cards). */
+.focus-ring {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.focus-ring-soft {
+  outline: 2px solid var(--color-primary-300);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.focus-ring-inset {
+  box-shadow: inset 0 0 0 2px var(--color-primary-500);
+  border-radius: 6px;
+}
+
+/* Selection — refined with subtle accent gradient */
+::selection {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-900);
+}
+.dark ::selection {
+  background-color: var(--color-primary-600);
+  color: #ffffff;
+}
+/* Secondary selection in highlighted code/data contexts */
+.selection-accent ::selection {
+  background-color: var(--color-accent-200);
+  color: var(--color-accent-700);
+}
+
+/* ---------- Toast styling (react-hot-toast overrides) ---------- */
+/* react-hot-toast injects its own inline styles; these overlays add
+   the glass + brand aesthetic without breaking positioning. */
+[data-hot-toast] {
+  font-family: var(--font-sans) !important;
+  font-weight: 500;
+  border-radius: 14px !important;
+  padding: 12px 16px !important;
+  box-shadow: var(--shadow-large) !important;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+
+[data-hot-toast][data-type="success"] {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: var(--color-success) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+.dark [data-hot-toast][data-type="success"] {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #6ee7b7 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+[data-hot-toast][data-type="error"] {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: var(--color-danger) !important;
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+}
+.dark [data-hot-toast][data-type="error"] {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+
+[data-hot-toast][data-type="loading"] {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: var(--color-surface-700) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+.dark [data-hot-toast][data-type="loading"] {
+  background: rgba(30, 41, 59, 0.85) !important;
+  color: var(--color-surface-200) !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+[data-hot-toast][data-type="blank"],
+[data-hot-toast]:not([data-type]) {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: var(--color-surface-800) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+.dark [data-hot-toast][data-type="blank"],
+.dark [data-hot-toast]:not([data-type]) {
+  background: rgba(30, 41, 59, 0.9) !important;
+  color: var(--color-surface-100) !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+/* ---------- Smooth page transitions ---------- */
+.page-fade-enter {
+  animation: fade-in-up 0.4s ease-out forwards;
+}
+
+/* ---------- Reduced motion support ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Better number rendering for prices/quantities ---------- */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ---------- Subtle inner highlight on cards (top edge gleam) ---------- */
+.card-gleam {
+  position: relative;
+  overflow: hidden;
+}
+.card-gleam::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+.dark .card-gleam::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+}

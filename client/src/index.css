@@ -176,17 +176,9 @@ h6 {
   letter-spacing: -0.02em;
 }
 
-/* Selection color */
-::selection {
-  background-color: var(--color-primary-200);
-  color: var(--color-primary-900);
-}
-.dark ::selection {
-  background-color: var(--color-primary-600);
-  color: white;
-}
+/* Selection color — handled in global.css (Phase 9.10) */
 
-/* Focus ring (accessibility) */
+/* Focus ring (accessibility) — base rule; .focus-ring utility in global.css for explicit use */
 *:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;

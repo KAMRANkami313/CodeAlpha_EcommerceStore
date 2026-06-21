@@ -10,7 +10,16 @@ const CartItem = ({ item }) => {
   const productId = item.product._id || item.product;
   const qty = item.quantity || 1;
   const lineTotal = item.price * qty;
-  const productPath = `${ROUTES.PRODUCT_DETAIL.replace(':id', productId)}`;
+
+  // Safely generate the product path to prevent runtime crashes
+  let productPath = `/products/${productId}`; // safe default fallback
+  if (ROUTES && ROUTES.PRODUCT_DETAIL) {
+    if (typeof ROUTES.PRODUCT_DETAIL === 'function') {
+      productPath = ROUTES.PRODUCT_DETAIL(productId);
+    } else if (typeof ROUTES.PRODUCT_DETAIL === 'string') {
+      productPath = ROUTES.PRODUCT_DETAIL.replace(':id', productId);
+    }
+  }
 
   return (
     <motion.div

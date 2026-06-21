@@ -3,6 +3,15 @@ import Product from '../models/Product.js';
 import ApiError from '../utils/ApiError.js';
 
 /**
+ * Safely extract the product ID as a string,
+ * whether the product field is populated or unpopulated.
+ */
+const getProductIdString = (productField) => {
+  if (!productField) return '';
+  return productField._id ? productField._id.toString() : productField.toString();
+};
+
+/**
  * Sync cart item prices with the latest product prices from the database.
  * This ensures that if an admin changes a product's price, the cart reflects it.
  * Also removes items where the product no longer exists.
@@ -11,7 +20,7 @@ import ApiError from '../utils/ApiError.js';
 const syncCartPrices = async (cart) => {
   if (!cart || cart.items.length === 0) return cart;
 
-  const productIds = cart.items.map((item) => item.product);
+  const productIds = cart.items.map((item) => getProductIdString(item.product)).filter(Boolean);
   const products = await Product.find({ _id: { $in: productIds } }).select('price name images stock isActive');
 
   const productMap = new Map(products.map((p) => [p._id.toString(), p]));
@@ -19,7 +28,8 @@ const syncCartPrices = async (cart) => {
   // Update prices and remove items for deleted/inactive products
   const updatedItems = [];
   for (const item of cart.items) {
-    const product = productMap.get(item.product.toString());
+    const productIdStr = getProductIdString(item.product);
+    const product = productMap.get(productIdStr);
     if (!product || !product.isActive) {
       // Product was deleted or deactivated — skip (remove from cart)
       continue;
@@ -46,7 +56,16 @@ const getCart = async (userId) => {
   // Sync prices with latest product data
   const wasModified = await syncCartPricesFromDB(cart);
   if (wasModified) {
-    await cart.save();
+    try {
+      await cart.save();
+    } catch (error) {
+      if (error.name === 'VersionError') {
+        // Fetch the updated cart state caused by the concurrent request
+        cart = await Cart.findOne({ user: userId });
+      } else {
+        throw error;
+      }
+    }
   }
 
   return cart.populate('items.product', 'name price images stock');
@@ -59,7 +78,7 @@ const getCart = async (userId) => {
 const syncCartPricesFromDB = async (cart) => {
   if (!cart || cart.items.length === 0) return false;
 
-  const productIds = cart.items.map((item) => item.product);
+  const productIds = cart.items.map((item) => getProductIdString(item.product)).filter(Boolean);
   const products = await Product.find({ _id: { $in: productIds } }).select('price name images stock isActive');
   const productMap = new Map(products.map((p) => [p._id.toString(), p]));
 
@@ -67,7 +86,8 @@ const syncCartPricesFromDB = async (cart) => {
   const updatedItems = [];
 
   for (const item of cart.items) {
-    const product = productMap.get(item.product.toString());
+    const productIdStr = getProductIdString(item.product);
+    const product = productMap.get(productIdStr);
     if (!product || !product.isActive) {
       modified = true; // Item removed
       continue;
@@ -83,6 +103,7 @@ const syncCartPricesFromDB = async (cart) => {
 
   if (cart.items.length !== updatedItems.length) {
     cart.items = updatedItems;
+    modified = true;
   }
 
   return modified;
@@ -91,7 +112,17 @@ const syncCartPricesFromDB = async (cart) => {
 // Helper: sync, save, populate and return cart after mutation
 const populateCart = async (cart) => {
   await syncCartPricesFromDB(cart);
-  await cart.save();
+  try {
+    await cart.save();
+  } catch (error) {
+    if (error.name === 'VersionError') {
+      // Fetch the latest updated document from database
+      const latestCart = await Cart.findById(cart._id);
+      if (latestCart) cart = latestCart;
+    } else {
+      throw error;
+    }
+  }
   await cart.populate('items.product', 'name price images stock');
   return cart;
 };
@@ -106,7 +137,7 @@ const addToCart = async (userId, productId, quantity = 1) => {
     cart = await Cart.create({ user: userId, items: [] });
   }
 
-  const existingItem = cart.items.find((item) => item.product.toString() === productId);
+  const existingItem = cart.items.find((item) => getProductIdString(item.product) === productId);
 
   // Check stock against TOTAL quantity (existing + new)
   const totalQuantity = existingItem ? existingItem.quantity + quantity : quantity;
@@ -128,7 +159,15 @@ const addToCart = async (userId, productId, quantity = 1) => {
     });
   }
 
-  await cart.save();
+  try {
+    await cart.save();
+  } catch (error) {
+    if (error.name !== 'VersionError') throw error;
+    // If version error occurs, fetch fresh cart state and retry addition
+    cart = await Cart.findOne({ user: userId });
+    return addToCart(userId, productId, quantity);
+  }
+  
   return populateCart(cart);
 };
 
@@ -136,11 +175,11 @@ const updateCartItem = async (userId, productId, quantity) => {
   const cart = await Cart.findOne({ user: userId });
   if (!cart) throw new ApiError(404, 'Cart not found');
 
-  const item = cart.items.find((item) => item.product.toString() === productId);
+  const item = cart.items.find((item) => getProductIdString(item.product) === productId);
   if (!item) throw new ApiError(404, 'Item not found in cart');
 
   if (quantity <= 0) {
-    cart.items = cart.items.filter((item) => item.product.toString() !== productId);
+    cart.items = cart.items.filter((item) => getProductIdString(item.product) !== productId);
   } else {
     // Validate stock before updating quantity
     const product = await Product.findById(productId);
@@ -161,7 +200,7 @@ const removeFromCart = async (userId, productId) => {
   const cart = await Cart.findOne({ user: userId });
   if (!cart) throw new ApiError(404, 'Cart not found');
 
-  cart.items = cart.items.filter((item) => item.product.toString() !== productId);
+  cart.items = cart.items.filter((item) => getProductIdString(item.product) !== productId);
   return populateCart(cart);
 };
 

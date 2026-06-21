@@ -206,6 +206,9 @@ const reviewTemplates = [
   { rating: 3, comment: 'Average product. Does what it says but nothing special. I have seen better options in the same price range.' },
 ];
 
+// ─── Shipping helper (matches orderService logic: free over 5000, else 150) ────
+const calcShipping = (itemsPrice) => itemsPrice > 5000 ? 0 : 150;
+
 const seedDatabase = async () => {
   try {
     await connectDB();
@@ -221,16 +224,18 @@ const seedDatabase = async () => {
     console.log(`Seeded ${createdProducts.length} products`);
 
     // ─── Create Users ────────────────────────────────
+    // Passwords now meet the registration validator requirements:
+    // 8+ chars, uppercase, lowercase, number, special character
     let adminUser = await User.findOne({ email: 'admin@shopverse.com' });
     if (!adminUser) {
       adminUser = await User.create({
         name: 'Admin User',
         email: 'admin@shopverse.com',
-        password: 'admin123',
+        password: 'Admin@123',
         role: 'admin',
         phone: '+92 300 1234567',
       });
-      console.log('Created admin user (admin@shopverse.com / admin123)');
+      console.log('Created admin user (admin@shopverse.com / Admin@123)');
     } else {
       console.log('Admin user already exists');
     }
@@ -240,11 +245,11 @@ const seedDatabase = async () => {
       testUser = await User.create({
         name: 'Test User',
         email: 'test@shopverse.com',
-        password: 'test123',
+        password: 'Test@1234',
         role: 'user',
         phone: '+92 317 5718391',
       });
-      console.log('Created test user (test@shopverse.com / test123)');
+      console.log('Created test user (test@shopverse.com / Test@1234)');
     } else {
       console.log('Test user already exists');
     }
@@ -254,11 +259,11 @@ const seedDatabase = async () => {
       kamranUser = await User.create({
         name: 'Muhammad Kamran',
         email: 'kamran@shopverse.com',
-        password: 'kamran123',
+        password: 'Kamran@123',
         role: 'user',
         phone: '+92 317 5718391',
       });
-      console.log('Created kamran user (kamran@shopverse.com / kamran123)');
+      console.log('Created kamran user (kamran@shopverse.com / Kamran@123)');
     } else {
       console.log('Kamran user already exists');
     }
@@ -323,8 +328,8 @@ const seedDatabase = async () => {
       items: items1,
       shippingAddress: shippingAddresses[1],
       itemsPrice: itemsPrice1,
-      shippingPrice: itemsPrice1 > 5000 ? 0 : 200,
-      totalPrice: itemsPrice1 + (itemsPrice1 > 5000 ? 0 : 200),
+      shippingPrice: calcShipping(itemsPrice1),
+      totalPrice: itemsPrice1 + calcShipping(itemsPrice1),
       paymentMethod: 'COD',
       paymentStatus: 'paid',
       orderStatus: 'delivered',
@@ -347,8 +352,8 @@ const seedDatabase = async () => {
       items: items2,
       shippingAddress: shippingAddresses[0],
       itemsPrice: itemsPrice2,
-      shippingPrice: 0,
-      totalPrice: itemsPrice2,
+      shippingPrice: calcShipping(itemsPrice2),
+      totalPrice: itemsPrice2 + calcShipping(itemsPrice2),
       paymentMethod: 'Card',
       paymentStatus: 'paid',
       orderStatus: 'shipped',
@@ -365,8 +370,8 @@ const seedDatabase = async () => {
       items: items3,
       shippingAddress: shippingAddresses[2],
       itemsPrice: p6.price,
-      shippingPrice: 0,
-      totalPrice: p6.price,
+      shippingPrice: calcShipping(p6.price),
+      totalPrice: p6.price + calcShipping(p6.price),
       paymentMethod: 'COD',
       paymentStatus: 'pending',
       orderStatus: 'processing',
@@ -386,8 +391,8 @@ const seedDatabase = async () => {
       items: items4,
       shippingAddress: shippingAddresses[1],
       itemsPrice: itemsPrice4,
-      shippingPrice: 0,
-      totalPrice: itemsPrice4,
+      shippingPrice: calcShipping(itemsPrice4),
+      totalPrice: itemsPrice4 + calcShipping(itemsPrice4),
       paymentMethod: 'COD',
       paymentStatus: 'paid',
       orderStatus: 'delivered',
@@ -405,8 +410,8 @@ const seedDatabase = async () => {
       items: items5,
       shippingAddress: shippingAddresses[0],
       itemsPrice: p9.price,
-      shippingPrice: 200,
-      totalPrice: p9.price + 200,
+      shippingPrice: calcShipping(p9.price),
+      totalPrice: p9.price + calcShipping(p9.price),
       paymentMethod: 'Card',
       paymentStatus: 'paid',
       orderStatus: 'delivered',

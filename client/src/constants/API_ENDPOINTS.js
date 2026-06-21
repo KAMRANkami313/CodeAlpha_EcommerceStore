@@ -3,6 +3,7 @@ const API = {
   REGISTER: '/api/auth/register',
   LOGIN: '/api/auth/login',
   LOGOUT: '/api/auth/logout',
+  REFRESH_TOKEN: '/api/auth/refresh-token',
   PROFILE: '/api/auth/profile',
 
   // Products
@@ -35,6 +36,8 @@ const API = {
   ADMIN_ORDER_DETAIL: (id) => `/api/admin/orders/${id}`,
   ADMIN_USERS: '/api/admin/users',
   ADMIN_USER_DETAIL: (id) => `/api/admin/users/${id}`,
+  ADMIN_USER_ROLE: (id) => `/api/admin/users/${id}/role`,
+  ADMIN_REVIEW_DETAIL: (id) => `/api/admin/reviews/${id}`,
 
   // Health
   HEALTH: '/api/health',

@@ -1,12 +1,12 @@
 import express from 'express';
-import { createPaymentIntent, stripeWebhook } from '../controllers/paymentController.js';
+import { createPaymentIntent } from '../controllers/paymentController.js';
 import { isAuthenticated } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Webhook route must use raw body — mounted before express.json() in app.js
-// Still defining here for organization, but will be mounted separately
-router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+// NOTE: The Stripe webhook route is mounted directly in app.js BEFORE express.json()
+// to ensure the raw body is available for signature verification.
+// Do NOT re-register /webhook here — it will break signature validation.
 
 // Authenticated routes
 router.post('/create-payment-intent', isAuthenticated, createPaymentIntent);

@@ -57,7 +57,40 @@ const getProductById = asyncHandler(async (req, res) => {
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
-  const product = await productService.updateProduct(req.params.id, req.body);
+  let newImages = [];
+
+  // If new images are uploaded, process them
+  if (req.files && req.files.length > 0) {
+    if (isCloudinaryConfigured) {
+      const uploadPromises = req.files.map((file) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: 'ecommerce/products' },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve({ public_id: result.public_id, url: result.secure_url });
+            }
+          );
+          stream.end(file.buffer);
+        });
+      });
+      newImages = await Promise.all(uploadPromises);
+    } else {
+      newImages = req.files.map((file, index) => ({
+        public_id: `placeholder_${Date.now()}_${index}`,
+        url: `https://placehold.co/400x400/e2e8f0/64748b?text=${encodeURIComponent(req.body.name || 'Product')}`,
+      }));
+    }
+  }
+
+  // If new images were provided, replace the old ones
+  // If no new images uploaded, keep existing images (don't overwrite)
+  const updateData = { ...req.body };
+  if (newImages.length > 0) {
+    updateData.images = newImages;
+  }
+
+  const product = await productService.updateProduct(req.params.id, updateData);
 
   res.status(200).json(new ApiResponse(200, product, 'Product updated successfully'));
 });

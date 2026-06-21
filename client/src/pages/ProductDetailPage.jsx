@@ -365,10 +365,9 @@ const ProductDetailPage = () => {
               {activeTab === 'description' && (
                 <div className="prose prose-slate dark:prose-invert max-w-none">
                   <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-3">Product Description</h3>
-                  <div
-                    className="text-surface-600 dark:text-surface-300 leading-relaxed space-y-3"
-                    dangerouslySetInnerHTML={{ __html: product.description || 'No description available.' }}
-                  />
+                  <p className="text-surface-600 dark:text-surface-300 leading-relaxed whitespace-pre-line">
+                    {product.description || 'No description available.'}
+                  </p>
                 </div>
               )}
 

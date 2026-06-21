@@ -12,5 +12,8 @@
   },
   "keywords": ["ecommerce", "mern", "codealpha", "fullstack"],
   "author": "Muhammad Kamran",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
 }

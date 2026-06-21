@@ -1,6 +1,7 @@
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import User from '../models/User.js';
+import ApiError from '../utils/ApiError.js';
 
 const getDashboardStats = async () => {
   const totalOrders = await Order.countDocuments();
@@ -127,21 +128,34 @@ const getAllUsers = async (filters = {}) => {
     .skip(skip)
     .limit(parseInt(limit));
 
-  // Get order count per user
-  const usersWithStats = await Promise.all(
-    users.map(async (user) => {
-      const orderCount = await Order.countDocuments({ user: user._id });
-      const totalSpent = await Order.aggregate([
-        { $match: { user: user._id, paymentStatus: 'paid' } },
-        { $group: { _id: null, total: { $sum: '$totalPrice' } } },
-      ]);
-      return {
-        ...user.toObject(),
-        orderCount,
-        totalSpent: totalSpent[0]?.total || 0,
-      };
-    })
-  );
+  // Get order count per user — optimized with a single aggregation instead of N+1
+  const userIds = users.map((u) => u._id);
+  const orderStats = await Order.aggregate([
+    { $match: { user: { $in: userIds } } },
+    {
+      $group: {
+        _id: '$user',
+        orderCount: { $sum: 1 },
+        totalSpent: {
+          $sum: {
+            $cond: [{ $eq: ['$paymentStatus', 'paid'] }, '$totalPrice', 0],
+          },
+        },
+      },
+    },
+  ]);
+
+  // Build a lookup map for O(1) access
+  const statsMap = new Map(orderStats.map((s) => [s._id.toString(), s]));
+
+  const usersWithStats = users.map((user) => {
+    const stats = statsMap.get(user._id.toString()) || { orderCount: 0, totalSpent: 0 };
+    return {
+      ...user.toObject(),
+      orderCount: stats.orderCount,
+      totalSpent: stats.totalSpent,
+    };
+  });
 
   return {
     users: usersWithStats,
@@ -160,10 +174,64 @@ const getUserByIdAdmin = async (userId) => {
   return { user, orders };
 };
 
+/**
+ * Change a user's role. Only callable by admins.
+ * Prevents the last admin from demoting themselves.
+ */
+const changeUserRole = async (userId, newRole) => {
+  const user = await User.findById(userId);
+  if (!user) throw new ApiError(404, 'User not found');
+
+  // Prevent demoting the last admin
+  if (user.role === 'admin' && newRole === 'user') {
+    const adminCount = await User.countDocuments({ role: 'admin' });
+    if (adminCount <= 1) {
+      throw new ApiError(400, 'Cannot demote the last admin. Assign another admin first.');
+    }
+  }
+
+  user.role = newRole;
+  await user.save();
+
+  return User.findById(userId).select('-password -refreshToken -loginAttempts -lockUntil');
+};
+
+/**
+ * Delete a user and their associated data (cart, wishlist).
+ * Prevents deleting the last admin.
+ */
+const deleteUser = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new ApiError(404, 'User not found');
+
+  // Prevent deleting the last admin
+  if (user.role === 'admin') {
+    const adminCount = await User.countDocuments({ role: 'admin' });
+    if (adminCount <= 1) {
+      throw new ApiError(400, 'Cannot delete the last admin account.');
+    }
+  }
+
+  // Import here to avoid circular dependency issues
+  const { default: Cart } = await import('../models/Cart.js');
+  const { default: Wishlist } = await import('../models/Wishlist.js');
+
+  // Clean up user's cart and wishlist
+  await Cart.deleteOne({ user: userId });
+  await Wishlist.deleteOne({ user: userId });
+
+  // Delete the user
+  await User.findByIdAndDelete(userId);
+
+  return { message: 'User deleted successfully' };
+};
+
 export {
   getDashboardStats,
   getAllOrders,
   getOrderByIdAdmin,
   getAllUsers,
   getUserByIdAdmin,
+  changeUserRole,
+  deleteUser,
 };

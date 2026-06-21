@@ -33,7 +33,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
-      immutable: true, // Prevent role changes via direct assignment
+      // immutable removed — admins can change roles via the dedicated admin endpoint
+      // Direct role changes via profile update are still blocked by authService whitelist
     },
     phone: {
       type: String,

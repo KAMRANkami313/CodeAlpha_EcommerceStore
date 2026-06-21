@@ -9,11 +9,29 @@ const createOrder = async (userId, orderData) => {
     throw new ApiError(400, 'Your cart is empty. Add items before placing an order.');
   }
 
-  // Verify stock availability
+  // ─── Atomic stock verification & reservation ──────────────
+  // Use findOneAndUpdate with a condition to prevent race conditions.
+  // We verify AND decrement in a single atomic operation.
   for (const item of cart.items) {
-    const product = await Product.findById(item.product);
-    if (!product) throw new ApiError(404, `Product ${item.name} no longer exists`);
-    if (product.stock < item.quantity) {
+    const updated = await Product.findOneAndUpdate(
+      { _id: item.product, stock: { $gte: item.quantity } },
+      { $inc: { stock: -item.quantity } },
+      { new: true }
+    );
+
+    if (!updated) {
+      // Stock was insufficient — roll back any previously decremented stock
+      for (const prevItem of cart.items) {
+        if (prevItem.product.toString() === item.product.toString()) break; // stop at the failed item
+        await Product.findByIdAndUpdate(prevItem.product, {
+          $inc: { stock: prevItem.quantity },
+        });
+      }
+
+      const product = await Product.findById(item.product);
+      if (!product) {
+        throw new ApiError(404, `Product ${item.name} no longer exists`);
+      }
       throw new ApiError(400, `Insufficient stock for ${item.name}. Available: ${product.stock}`);
     }
   }
@@ -33,13 +51,6 @@ const createOrder = async (userId, orderData) => {
     stripePaymentId: orderData.stripePaymentId || null,
     paymentStatus: orderData.paymentMethod === 'Card' && orderData.stripePaymentId ? 'paid' : 'pending',
   });
-
-  // Decrease product stock
-  for (const item of cart.items) {
-    await Product.findByIdAndUpdate(item.product, {
-      $inc: { stock: -item.quantity },
-    });
-  }
 
   // Clear the cart
   cart.items = [];
@@ -86,7 +97,7 @@ const updateOrderStatus = async (orderId, status) => {
   }
 
   if (status === 'cancelled') {
-    // Restore stock
+    // Restore stock atomically
     for (const item of order.items) {
       await Product.findByIdAndUpdate(item.product, {
         $inc: { stock: item.quantity },

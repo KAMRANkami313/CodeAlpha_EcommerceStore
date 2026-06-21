@@ -87,11 +87,17 @@ const updateReview = async (reviewId, userId, reviewData) => {
   return review.populate('user', 'name');
 };
 
-const deleteReview = async (reviewId, userId) => {
+/**
+ * Delete a review.
+ * - Regular users can only delete their own reviews.
+ * - Admins can delete any review (for moderation).
+ */
+const deleteReview = async (reviewId, userId, isAdmin = false) => {
   const review = await Review.findById(reviewId);
   if (!review) throw new ApiError(404, 'Review not found');
 
-  if (review.user.toString() !== userId.toString()) {
+  // Only the review owner OR an admin can delete
+  if (!isAdmin && review.user.toString() !== userId.toString()) {
     throw new ApiError(403, 'You can only delete your own reviews');
   }
 

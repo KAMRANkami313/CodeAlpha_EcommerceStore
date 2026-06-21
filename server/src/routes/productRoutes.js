@@ -13,9 +13,11 @@ import upload from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
+// Public routes
 router.get('/', getAllProducts);
 router.get('/:id', getProductById);
 
+// Admin-only routes
 router.post(
   '/',
   isAuthenticated,
@@ -26,10 +28,12 @@ router.post(
   createProduct
 );
 
+// Update product — support optional new images upload
 router.put(
   '/:id',
   isAuthenticated,
   authorizeRoles('admin'),
+  upload.array('images', 5), // Accept optional new images on update
   updateProductValidator,
   validate,
   updateProduct

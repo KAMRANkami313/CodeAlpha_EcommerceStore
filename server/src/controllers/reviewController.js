@@ -33,7 +33,8 @@ const updateReview = asyncHandler(async (req, res) => {
 });
 
 const deleteReview = asyncHandler(async (req, res) => {
-  const result = await reviewService.deleteReview(req.params.id, req.user._id);
+  const isAdmin = req.user?.role === 'admin';
+  const result = await reviewService.deleteReview(req.params.id, req.user._id, isAdmin);
 
   res.status(200).json(new ApiResponse(200, result, 'Review deleted successfully'));
 });

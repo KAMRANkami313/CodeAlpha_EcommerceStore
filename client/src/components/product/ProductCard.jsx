@@ -9,7 +9,7 @@ import useWishlist from '../../hooks/useWishlist.js';
 import toast from 'react-hot-toast';
 
 /**
- * ProductCard — Enhanced
+ * ProductCard — Premium Redesign
  * Premium hover lift, image shine, animated badges, gradient hairline on hover.
  */
 const ProductCard = ({ product, index = 0 }) => {
@@ -43,7 +43,7 @@ const ProductCard = ({ product, index = 0 }) => {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.04, 0.4), duration: 0.4 }}
-      className="group relative bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden card-premium"
+      className="group relative bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden card-premium hover:border-primary-200 dark:hover:border-primary-700"
     >
       {/* Image */}
       <Link
@@ -104,7 +104,7 @@ const ProductCard = ({ product, index = 0 }) => {
           <Heart className={`w-4 h-4 ${wishlisted ? 'fill-white' : ''}`} />
         </motion.button>
 
-        {/* Quick view hint (desktop hover) */}
+        {/* Subtle dark overlay on hover */}
         <div className="absolute inset-0 bg-surface-950/0 group-hover:bg-surface-950/10 transition-colors duration-300 pointer-events-none" />
 
         {/* Quick-add overlay button (desktop hover) */}
@@ -147,7 +147,7 @@ const ProductCard = ({ product, index = 0 }) => {
         <div className="flex items-end justify-between mt-3 gap-2">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-surface-900 dark:text-white tabular-nums">
+              <span className="text-lg font-bold text-surface-900 dark:text-white tabular-nums font-display">
                 {formatCurrency(product.price)}
               </span>
               {product.compareAtPrice > product.price && (

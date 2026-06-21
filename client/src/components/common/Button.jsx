@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 /**
- * Button — Enhanced
+ * Button — Premium Redesign
  *
  * Variants:
  *   primary   — solid indigo (default CTA) + shine sweep
@@ -13,7 +13,7 @@ import { motion } from 'framer-motion';
  *   gradient  — indigo→violet animated gradient
  *   glow      — primary + animated glow shadow
  *   glass     — frosted glass
- *   shine     — premium white-sweep on hover (NEW)
+ *   shine     — premium white-sweep on hover
  *
  * Sizes: sm | md | lg
  *
@@ -22,9 +22,9 @@ import { motion } from 'framer-motion';
  *   icon (left), iconRight (right), onClick, type, ...props
  */
 const variants = {
-  primary:   'bg-primary-600 text-white hover:bg-primary-700 shadow-sm hover:shadow-md hover:shadow-primary-500/25',
+  primary:   'bg-primary-600 text-white hover:bg-primary-700 shadow-sm hover:shadow-brand hover:shadow-primary-500/25',
   secondary: 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-200 hover:bg-surface-200 dark:hover:bg-surface-700 border border-surface-200 dark:border-surface-700',
-  accent:    'bg-accent-500 text-white hover:bg-accent-600 shadow-sm hover:shadow-md hover:shadow-accent-500/25',
+  accent:    'bg-accent-500 text-white hover:bg-accent-600 shadow-sm hover:shadow-accent hover:shadow-accent-500/25',
   outline:   'border-2 border-primary-600 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 bg-transparent',
   ghost:     'text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 bg-transparent',
   danger:    'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md hover:shadow-red-500/25',
@@ -53,7 +53,6 @@ const Button = ({
   type = 'button',
   ...props
 }) => {
-  // Add shine sweep to primary & accent for that premium feel
   const baseVariant = variants[variant] || variants.primary;
   const withShine = (variant === 'primary' || variant === 'accent' || variant === 'gradient')
     ? 'shine-effect'

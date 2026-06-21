@@ -12,9 +12,10 @@ const Layout = () => {
         toastOptions={{
           duration: 3000,
           style: {
-            borderRadius: '12px',
+            borderRadius: '14px',
             padding: '12px 16px',
             fontSize: '14px',
+            fontWeight: 500,
           },
         }}
       />

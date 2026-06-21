@@ -41,7 +41,7 @@ const CartPage = () => {
               <ShoppingBag className="w-12 h-12 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold gradient-text-brand mb-2">Your Cart Awaits</h1>
+          <h1 className="text-3xl font-bold gradient-text-brand mb-2 font-display tracking-tight">Your Cart Awaits</h1>
           <p className="text-surface-500 dark:text-surface-400 mb-8">
             Sign in to view your saved items, apply promo codes, and check out faster.
           </p>
@@ -68,7 +68,7 @@ const CartPage = () => {
               <ShoppingBag className="w-12 h-12 text-surface-400 dark:text-surface-500" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-surface-800 dark:text-white mb-2">Your cart is empty</h1>
+          <h1 className="text-3xl font-bold text-surface-800 dark:text-white mb-2 font-display tracking-tight">Your cart is empty</h1>
           <p className="text-surface-500 dark:text-surface-400 mb-8">
             Looks like you haven't added anything yet. Let's find something you'll love.
           </p>
@@ -90,7 +90,7 @@ const CartPage = () => {
     >
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-surface-500 dark:text-surface-400 mb-4" aria-label="Breadcrumb">
-        <Link to={ROUTES.HOME} className="hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-1 transition-colors">
+        <Link to={ROUTES.HOME} className="hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-1 transition-colors no-underline">
           <HomeIcon className="w-3.5 h-3.5" /> Home
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
@@ -100,14 +100,14 @@ const CartPage = () => {
       {/* Page header */}
       <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold gradient-text-brand mb-1">Shopping Cart</h1>
+          <h1 className="text-2xl md:text-3xl font-bold gradient-text-brand mb-1 font-display tracking-tight">Shopping Cart</h1>
           <p className="text-sm text-surface-500 dark:text-surface-400">
             {cart.totalQuantity} {cart.totalQuantity === 1 ? 'item' : 'items'} in your cart
           </p>
         </div>
         <Link
           to={ROUTES.PRODUCTS}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2.5 transition-all"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2.5 transition-all no-underline"
         >
           Continue Shopping <ArrowRight className="w-4 h-4" />
         </Link>

@@ -63,7 +63,7 @@ const Footer = () => {
           <div className="grid md:grid-cols-2 gap-6 items-center">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold text-white font-display tracking-tight">
-                Get <span className="linear-text-animated">10% off</span> your first order
+                Get <span className="gradient-text-animated">10% off</span> your first order
               </h3>
               <p className="text-surface-400 mt-2 text-sm">
                 Subscribe to our newsletter for exclusive deals, new arrivals, and insider updates.

@@ -2,24 +2,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
 /**
- * Modal — Phase 9 upgraded
+ * Modal — Premium Redesign
  *
  * Props:
- *   isOpen, onClose, title, children, size, showClose [NEW default true], footer [NEW]
+ *   isOpen, onClose, title, children, size, showClose [default true], footer
  *
  * Sizes: sm | md | lg | xl | 2xl | full
  */
 const Modal = ({ isOpen, onClose, title, children, size = 'md', showClose = true, footer = null }) => {
   const sizes = {
-    sm:   'max-w-md',
-    md:   'max-w-lg',
-    lg:   'max-w-2xl',
-    xl:   'max-w-4xl',
-    '2xl':'max-w-6xl',
-    full: 'max-w-[95vw]',
+    sm:    'max-w-md',
+    md:    'max-w-lg',
+    lg:    'max-w-2xl',
+    xl:    'max-w-4xl',
+    '2xl': 'max-w-6xl',
+    full:  'max-w-[95vw]',
   };
 
-  // Close on ESC key
   const handleKeyDown = (e) => {
     if (e.key === 'Escape' && isOpen) onClose?.();
   };
@@ -32,7 +31,7 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md', showClose = true
           onKeyDown={handleKeyDown}
           tabIndex={-1}
         >
-          {/* Backdrop */}
+          {/* Backdrop with subtle mesh */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -53,11 +52,14 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md', showClose = true
             aria-modal="true"
             aria-labelledby={title ? 'modal-title' : undefined}
           >
+            {/* Premium top hairline */}
+            <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary-500/40 to-transparent" />
+
             {/* Header */}
             {(title || showClose) && (
               <div className="flex items-center justify-between px-6 py-4 border-b border-surface-200 dark:border-surface-800">
                 {title ? (
-                  <h2 id="modal-title" className="text-lg font-bold text-surface-900 dark:text-white font-display">
+                  <h2 id="modal-title" className="text-lg font-bold text-surface-900 dark:text-white font-display tracking-tight">
                     {title}
                   </h2>
                 ) : (

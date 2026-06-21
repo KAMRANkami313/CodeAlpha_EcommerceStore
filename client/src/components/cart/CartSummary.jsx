@@ -72,7 +72,7 @@ const CartSummary = ({ cart }) => {
         <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
           <ShoppingBag className="w-5 h-5 text-primary-600 dark:text-primary-400" />
         </div>
-        <h3 className="text-lg font-bold text-surface-800 dark:text-white">Order Summary</h3>
+        <h3 className="text-lg font-bold text-surface-800 dark:text-white font-display tracking-tight">Order Summary</h3>
       </div>
 
       {/* Free shipping progress bar */}
@@ -144,7 +144,7 @@ const CartSummary = ({ cart }) => {
               }}
               onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
               placeholder="WELCOME10"
-              className="flex-1 px-3 py-2 text-sm border border-surface-200 dark:border-surface-600 rounded-xl bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 uppercase tracking-wider transition-all"
+              className="flex-1 px-3 py-2 text-sm border-1.5 border-surface-200 dark:border-surface-600 rounded-xl bg-surface-50 dark:bg-surface-800/60 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500 focus:outline-none focus:ring-4 focus:ring-primary-500/15 focus:border-primary-500 uppercase tracking-wider transition-all hover:border-surface-300 dark:hover:border-surface-500"
             />
             <button
               type="button"
@@ -199,7 +199,7 @@ const CartSummary = ({ cart }) => {
       <div className="flex justify-between items-baseline pt-4 mb-5">
         <span className="font-semibold text-surface-800 dark:text-white">Total</span>
         <div className="text-right">
-          <div className="text-2xl font-bold gradient-text-brand tabular-nums">{formatCurrency(finalTotal)}</div>
+          <div className="text-2xl font-bold gradient-text-brand tabular-nums font-display">{formatCurrency(finalTotal)}</div>
           <div className="text-[10px] text-surface-400 dark:text-surface-500">Incl. all taxes</div>
         </div>
       </div>

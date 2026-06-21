@@ -23,7 +23,7 @@ const SORT_OPTIONS = [
 ];
 
 /**
- * ProductFilters — Phase 9 redesigned
+ * ProductFilters — Premium Redesign
  *
  * Sidebar filter panel with sectioned groups:
  *   - Search input
@@ -48,7 +48,10 @@ const ProductFilters = ({ filters, onFilterChange, onClose }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+    <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden shadow-card">
+      {/* Premium top hairline */}
+      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary-500/40 to-transparent" />
+
       {/* Header */}
       <div className="flex items-center justify-between p-5 border-b border-surface-100 dark:border-surface-800">
         <div className="flex items-center gap-2">
@@ -84,14 +87,14 @@ const ProductFilters = ({ filters, onFilterChange, onClose }) => {
           <label className="flex items-center gap-2 text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider mb-2">
             <Search className="w-3.5 h-3.5" /> Search
           </label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 group-focus-within:text-primary-500 transition-colors" />
             <input
               type="text"
               placeholder="Search products..."
               value={filters.search || ''}
               onChange={(e) => onFilterChange({ search: e.target.value, page: 1 })}
-              className="w-full pl-10 pr-9 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-surface-50 dark:bg-surface-800 text-surface-900 dark:text-white placeholder:text-surface-400 transition-colors"
+              className="w-full pl-10 pr-9 py-2.5 border-1.5 border-surface-200 dark:border-surface-700 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/15 focus:border-primary-500 bg-surface-50 dark:bg-surface-800/60 text-surface-900 dark:text-white placeholder:text-surface-400 transition-all hover:border-surface-300 dark:hover:border-surface-600"
             />
             {filters.search && (
               <button
@@ -119,7 +122,7 @@ const ProductFilters = ({ filters, onFilterChange, onClose }) => {
                   onClick={() => onFilterChange({ category: cat.name === 'All' ? '' : cat.name, page: 1 })}
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
+                      ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 ring-1 ring-inset ring-primary-200/60 dark:ring-primary-700/40'
                       : 'text-surface-600 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800'
                   }`}
                 >
@@ -148,7 +151,7 @@ const ProductFilters = ({ filters, onFilterChange, onClose }) => {
                 min="0"
                 value={filters.minPrice || ''}
                 onChange={(e) => onFilterChange({ minPrice: e.target.value, page: 1 })}
-                className="w-full pl-12 pr-3 py-2 border border-surface-200 dark:border-surface-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-surface-50 dark:bg-surface-800 text-surface-900 dark:text-white placeholder:text-surface-400"
+                className="w-full pl-12 pr-3 py-2 border-1.5 border-surface-200 dark:border-surface-700 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/15 focus:border-primary-500 bg-surface-50 dark:bg-surface-800/60 text-surface-900 dark:text-white placeholder:text-surface-400 transition-all hover:border-surface-300 dark:hover:border-surface-600"
               />
             </div>
             <span className="text-surface-400 text-sm">—</span>
@@ -160,7 +163,7 @@ const ProductFilters = ({ filters, onFilterChange, onClose }) => {
                 min="0"
                 value={filters.maxPrice || ''}
                 onChange={(e) => onFilterChange({ maxPrice: e.target.value, page: 1 })}
-                className="w-full pl-12 pr-3 py-2 border border-surface-200 dark:border-surface-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-surface-50 dark:bg-surface-800 text-surface-900 dark:text-white placeholder:text-surface-400"
+                className="w-full pl-12 pr-3 py-2 border-1.5 border-surface-200 dark:border-surface-700 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/15 focus:border-primary-500 bg-surface-50 dark:bg-surface-800/60 text-surface-900 dark:text-white placeholder:text-surface-400 transition-all hover:border-surface-300 dark:hover:border-surface-600"
               />
             </div>
           </div>
@@ -174,7 +177,7 @@ const ProductFilters = ({ filters, onFilterChange, onClose }) => {
           <select
             value={filters.sort || 'newest'}
             onChange={(e) => onFilterChange({ sort: e.target.value, page: 1 })}
-            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-50 dark:bg-surface-800 text-surface-900 dark:text-white cursor-pointer"
+            className="w-full px-3 py-2.5 border-1.5 border-surface-200 dark:border-surface-700 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/15 focus:border-primary-500 bg-surface-50 dark:bg-surface-800/60 text-surface-900 dark:text-white cursor-pointer transition-all hover:border-surface-300 dark:hover:border-surface-600"
           >
             {SORT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>

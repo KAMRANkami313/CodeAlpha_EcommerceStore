@@ -1,15 +1,15 @@
 import { Star } from 'lucide-react';
 
 /**
- * StarRating — Phase 9 upgraded
+ * StarRating — Premium Redesign
  *
  * Props:
  *   rating     — number 0-5 (supports fractions)
  *   size       — sm=13 | md=16 | lg=20 | xl=24
- *   showNumber — show numeric rating next to stars [NEW]
- *   count      — review count to display after rating [NEW]
- *   interactive — boolean, makes stars clickable [NEW]
- *   onChange    — callback(starNumber) when interactive [NEW]
+ *   showNumber — show numeric rating next to stars
+ *   count      — review count to display after rating
+ *   interactive — boolean, makes stars clickable
+ *   onChange    — callback(starNumber) when interactive
  */
 const sizeMap = {
   sm: 13,

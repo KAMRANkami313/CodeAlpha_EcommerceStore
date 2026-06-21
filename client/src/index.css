@@ -1,6 +1,6 @@
 /* =================================================================
-   ShopVerse — index.css (Enhanced)
-   Premium design tokens, animations, and base styles.
+   ShopVerse — index.css (Premium Redesign v2)
+   Elevated design tokens, refined animations, premium base styles.
    ================================================================= */
 @import "tailwindcss";
 
@@ -27,6 +27,20 @@
   --color-accent-500: #f97316;
   --color-accent-600: #ea580c;
   --color-accent-700: #c2410c;
+  --color-accent-800: #9a3412;
+  --color-accent-900: #7c2d12;
+
+  /* ---------- Secondary: Violet (for gradients) ---------- */
+  --color-violet-50: #f5f3ff;
+  --color-violet-100: #ede9fe;
+  --color-violet-200: #ddd6fe;
+  --color-violet-300: #c4b5fd;
+  --color-violet-400: #a78bfa;
+  --color-violet-500: #8b5cf6;
+  --color-violet-600: #7c3aed;
+  --color-violet-700: #6d28d9;
+  --color-violet-800: #5b21b6;
+  --color-violet-900: #4c1d95;
 
   /* ---------- Surface: Slate ---------- */
   --color-surface-50: #f8fafc;
@@ -48,6 +62,8 @@
   --color-warning-soft: #fef3c7;
   --color-danger: #ef4444;
   --color-danger-soft: #fee2e2;
+  --color-info: #3b82f6;
+  --color-info-soft: #dbeafe;
   --color-gold: #d4af37;
   --color-gold-soft: #fef3c7;
 
@@ -56,43 +72,62 @@
   --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  /* ---------- Shadows (enhanced) ---------- */
+  /* ---------- Refined radius scale ---------- */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+
+  /* ---------- Shadows (refined premium) ---------- */
   --shadow-soft:
-    0 2px 8px -2px rgba(15, 23, 42, 0.06),
-    0 4px 16px -4px rgba(15, 23, 42, 0.05);
+    0 1px 2px -1px rgba(15, 23, 42, 0.04), 0 2px 8px -2px rgba(15, 23, 42, 0.05);
   --shadow-medium:
-    0 4px 16px -2px rgba(15, 23, 42, 0.08),
-    0 8px 24px -4px rgba(15, 23, 42, 0.06);
+    0 2px 4px -1px rgba(15, 23, 42, 0.05),
+    0 6px 16px -4px rgba(15, 23, 42, 0.07);
   --shadow-large:
-    0 8px 32px -4px rgba(15, 23, 42, 0.1),
-    0 16px 48px -8px rgba(15, 23, 42, 0.08);
+    0 4px 8px -2px rgba(15, 23, 42, 0.06),
+    0 12px 28px -6px rgba(15, 23, 42, 0.08),
+    0 24px 56px -12px rgba(15, 23, 42, 0.06);
   --shadow-glow:
-    0 0 0 1px rgba(99, 102, 241, 0.2), 0 8px 24px -4px rgba(99, 102, 241, 0.35);
-  --shadow-brand: 0 4px 14px 0 rgba(79, 70, 229, 0.3);
-  --shadow-accent: 0 4px 14px 0 rgba(249, 115, 22, 0.3);
-  /* New premium shadows */
+    0 0 0 1px rgba(99, 102, 241, 0.18), 0 6px 20px -4px rgba(99, 102, 241, 0.4);
+  --shadow-brand:
+    0 2px 8px -1px rgba(79, 70, 229, 0.25),
+    0 6px 16px -4px rgba(79, 70, 229, 0.3);
+  --shadow-accent:
+    0 2px 8px -1px rgba(249, 115, 22, 0.25),
+    0 6px 16px -4px rgba(249, 115, 22, 0.3);
   --shadow-premium:
     0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px -2px rgba(15, 23, 42, 0.06),
-    0 16px 40px -8px rgba(15, 23, 42, 0.1);
+    0 16px 40px -8px rgba(15, 23, 42, 0.08);
   --shadow-premium-hover:
+    0 2px 4px rgba(15, 23, 42, 0.05), 0 8px 20px -4px rgba(15, 23, 42, 0.1),
+    0 24px 48px -8px rgba(99, 102, 241, 0.15);
+  --shadow-card:
+    0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-card-hover:
     0 4px 8px -2px rgba(15, 23, 42, 0.08),
-    0 12px 28px -4px rgba(15, 23, 42, 0.1),
-    0 32px 64px -12px rgba(99, 102, 241, 0.18);
+    0 12px 28px -6px rgba(15, 23, 42, 0.1),
+    0 20px 40px -10px rgba(99, 102, 241, 0.12);
+  --shadow-input-focus: 0 0 0 4px rgba(99, 102, 241, 0.12);
 
-  /* ---------- Animations (enhanced) ---------- */
+  /* ---------- Animations ---------- */
   --animate-fade-in: fade-in 0.5s ease-out forwards;
-  --animate-fade-in-up: fade-in-up 0.6s ease-out forwards;
-  --animate-fade-in-scale: fade-in-scale 0.4s ease-out forwards;
+  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fade-in-scale: fade-in-scale 0.4s cubic-bezier(0.16, 1, 0.3, 1)
+    forwards;
   --animate-slide-in-right: slide-in-right 0.3s ease-out forwards;
   --animate-shimmer: shimmer 2s linear infinite;
   --animate-float: float 4s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
-  /* New premium animations */
   --animate-aurora: aurora 18s ease-in-out infinite;
   --animate-shine: shine 1.2s ease-in-out forwards;
   --animate-gradient-shift: gradient-shift 8s ease infinite;
   --animate-scale-in: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-bounce-subtle: bounce-subtle 2s ease-in-out infinite;
+  --animate-spin-slow: spin 1.4s linear infinite;
+  --animate-pulse-ring: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes fade-in {
@@ -157,8 +192,6 @@
     box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
   }
 }
-
-/* New premium keyframes */
 @keyframes aurora {
   0%,
   100% {
@@ -174,7 +207,6 @@
     transform: translate(-2%, 2%) rotate(-2deg);
   }
 }
-
 @keyframes shine {
   0% {
     transform: translateX(-120%) skewX(-20deg);
@@ -183,7 +215,6 @@
     transform: translateX(220%) skewX(-20deg);
   }
 }
-
 @keyframes gradient-shift {
   0%,
   100% {
@@ -193,7 +224,6 @@
     background-position: 100% 50%;
   }
 }
-
 @keyframes scale-in {
   0% {
     opacity: 0;
@@ -204,7 +234,6 @@
     transform: scale(1);
   }
 }
-
 @keyframes bounce-subtle {
   0%,
   100% {
@@ -212,6 +241,20 @@
   }
   50% {
     transform: translateY(-3px);
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.6);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
   }
 }
 
@@ -227,8 +270,8 @@
 html {
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
-  /* Better scroll snapping on hero sections */
   scroll-padding-top: 5rem;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 body {
@@ -251,7 +294,7 @@ h4,
 h5,
 h6 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
@@ -262,7 +305,7 @@ h6 {
   border-radius: 4px;
 }
 
-/* ---------- Scrollbar ---------- */
+/* ---------- Scrollbar (premium) ---------- */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -303,4 +346,10 @@ h6 {
 .tabular-nums {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
+}
+
+/* Text size 2xs helper */
+.text-2xs {
+  font-size: 0.625rem;
+  line-height: 0.875rem;
 }

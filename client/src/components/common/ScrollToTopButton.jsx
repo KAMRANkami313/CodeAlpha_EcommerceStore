@@ -3,27 +3,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 
 /**
- * ScrollToTopButton — Phase 9.10 polish
+ * ScrollToTopButton — Premium Redesign
  *
  * Floating glass button with a circular SVG progress ring that
  * reflects the user's scroll position on the page (0% → 100%).
- *
- * Behaviors:
- *   - Hidden until user scrolls past 300px
- *   - Progress ring fills as user scrolls down
- *   - Click smoothly scrolls back to top
- *   - Tooltip label appears on hover
- *   - Glass morphism styling with brand color accents
  */
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [progress, setProgress] = useState(0); // 0–100
+  const [progress, setProgress] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const rafRef = useRef(null);
 
-  // SVG ring geometry
-  const size = 56;          // button width/height
-  const stroke = 3;         // ring stroke width
+  const size = 56;
+  const stroke = 3;
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
@@ -41,7 +33,7 @@ const ScrollToTopButton = () => {
       });
     };
 
-    handleScroll(); // initialize on mount
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
 
@@ -99,7 +91,6 @@ const ScrollToTopButton = () => {
             height={size}
             aria-hidden="true"
           >
-            {/* Track ring */}
             <circle
               cx={size / 2}
               cy={size / 2}
@@ -110,7 +101,6 @@ const ScrollToTopButton = () => {
               className="text-surface-200 dark:text-surface-700"
               opacity={0.5}
             />
-            {/* Progress ring */}
             <circle
               cx={size / 2}
               cy={size / 2}
@@ -141,7 +131,7 @@ const ScrollToTopButton = () => {
             />
           </span>
 
-          {/* Percentage label (small, bottom-right) */}
+          {/* Percentage label */}
           {progress > 5 && (
             <span className="absolute -bottom-1 -right-1 min-w-4.5 h-4.5 px-1 flex items-center justify-center rounded-full bg-primary-600 text-white text-[9px] font-bold leading-none shadow-sm">
               {Math.round(progress)}

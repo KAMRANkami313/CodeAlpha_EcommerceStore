@@ -222,9 +222,9 @@ const ProductDetailPage = () => {
               )}
             </div>
 
-            {/* Price block (premium gradient hairline) */}
+            {/* Price block (premium gradient hairline — FIXED bg-liner-to-r → bg-linear-to-r) */}
             <div className="relative bg-surface-50 dark:bg-surface-900 rounded-2xl p-5 border border-surface-200 dark:border-surface-800 overflow-hidden">
-              <div className="absolute inset-x-0 top-0 h-px bg-liner-to-r from-transparent via-primary-500/40 to-transparent" />
+              <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary-500/40 to-transparent" />
               <div className="flex items-baseline gap-3 flex-wrap">
                 <span className="text-4xl font-bold gradient-text-brand font-display tabular-nums">
                   {formatCurrency(product.price)}

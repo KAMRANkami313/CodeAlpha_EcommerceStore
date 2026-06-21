@@ -1,11 +1,11 @@
 /**
- * Skeleton — Phase 9 upgraded with shimmer animation
+ * Skeleton — Premium Redesign with shimmer animation
  *
  * Components:
  *   SkeletonCard  — product card placeholder
  *   SkeletonGrid  — grid of SkeletonCards
- *   SkeletonLine  — single line placeholder [NEW]
- *   SkeletonBlock — arbitrary block [NEW]
+ *   SkeletonLine  — single line placeholder
+ *   SkeletonBlock — arbitrary block
  */
 
 const shimmerClass = 'shimmer bg-surface-200 dark:bg-surface-800';

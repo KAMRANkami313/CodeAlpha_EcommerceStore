@@ -24,7 +24,8 @@ const LoginForm = () => {
     }
   };
 
-  const inputBase = "w-full pl-10 pr-12 py-3 border border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500 transition-all";
+  // Shared premium input class — consistent across all auth forms
+  const inputBase = "w-full pl-11 pr-12 py-3 text-sm border-1.5 border-surface-200 dark:border-surface-600 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-500/15 focus:border-primary-500 bg-surface-50 dark:bg-surface-800/60 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500 transition-all duration-200 hover:border-surface-300 dark:hover:border-surface-500";
 
   return (
     <motion.div
@@ -37,19 +38,21 @@ const LoginForm = () => {
           initial={{ scale: 0, rotate: -10 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', damping: 12 }}
-          className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-linear-to-br from-primary-600 to-violet-600 flex items-center justify-center shadow-brand"
+          className="relative w-16 h-16 mx-auto mb-4 rounded-2xl bg-linear-to-br from-primary-600 to-violet-600 flex items-center justify-center shadow-brand overflow-hidden"
         >
-          <Lock className="w-6 h-6 text-white" />
+          {/* Shine sweep */}
+          <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shine_3s_ease-in-out_infinite]" />
+          <Lock className="w-7 h-7 text-white relative z-10" strokeWidth={2.2} />
         </motion.div>
-        <h1 className="text-3xl font-bold text-surface-900 dark:text-white">Welcome Back</h1>
-        <p className="text-surface-500 dark:text-surface-400 mt-2">Sign in to your account</p>
+        <h1 className="text-3xl font-bold text-surface-900 dark:text-white font-display tracking-tight">Welcome Back</h1>
+        <p className="text-surface-500 dark:text-surface-400 mt-2 text-sm">Sign in to your account to continue</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Email</label>
+          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Email Address</label>
           <div className="relative group">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 group-focus-within:text-primary-500 transition-colors" />
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 group-focus-within:text-primary-500 transition-colors" />
             <input
               type="email"
               {...register('email', { required: 'Email is required' })}
@@ -65,7 +68,7 @@ const LoginForm = () => {
         <div>
           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Password</label>
           <div className="relative group">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 group-focus-within:text-primary-500 transition-colors" />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 group-focus-within:text-primary-500 transition-colors" />
             <input
               type={showPassword ? 'text' : 'password'}
               {...register('password', { required: 'Password is required' })}
@@ -75,7 +78,8 @@ const LoginForm = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 cursor-pointer transition-colors"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 cursor-pointer transition-colors"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -89,7 +93,7 @@ const LoginForm = () => {
           <label className="inline-flex items-center gap-2 cursor-pointer select-none text-surface-600 dark:text-surface-400">
             <input
               type="checkbox"
-              className="w-4 h-4 rounded border-surface-300 dark:border-surface-600 text-primary-600 focus:ring-primary-500 cursor-pointer"
+              className="check-premium"
             />
             Remember me
           </label>
@@ -103,7 +107,17 @@ const LoginForm = () => {
         </Button>
       </form>
 
-      <p className="text-center text-sm text-surface-500 dark:text-surface-400 mt-6">
+      {/* Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-surface-200 dark:border-surface-700" />
+        </div>
+        <div className="relative flex justify-center text-xs">
+          <span className="bg-white dark:bg-surface-950 px-3 text-surface-400 uppercase tracking-wider">or</span>
+        </div>
+      </div>
+
+      <p className="text-center text-sm text-surface-500 dark:text-surface-400">
         Don't have an account?{' '}
         <Link to={ROUTES.REGISTER} className="text-primary-600 dark:text-primary-400 font-semibold hover:underline no-underline">
           Sign Up

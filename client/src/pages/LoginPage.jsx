@@ -32,7 +32,7 @@ const LoginPage = () => {
 
         {/* Content (z-10 above blobs) */}
         <div className="relative z-10">
-          <Link to={ROUTES.HOME} className="inline-flex items-center gap-2.5 group">
+          <Link to={ROUTES.HOME} className="inline-flex items-center gap-2.5 group no-underline">
             <div className="relative w-10 h-10 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center group-hover:bg-white/25 transition-all overflow-hidden">
               <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               <ShoppingBag className="w-5 h-5 text-white relative z-10" />
@@ -47,7 +47,7 @@ const LoginPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-4 text-balance">
+            <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-4 text-balance font-display tracking-tight">
               Welcome back to <br />
               <span className="bg-linear-to-r from-white to-primary-200 bg-clip-text text-transparent">
                 premium shopping.
@@ -117,7 +117,7 @@ const LoginPage = () => {
       >
         <div className="w-full max-w-md">
           {/* Mobile logo (hidden on desktop) */}
-          <Link to={ROUTES.HOME} className="lg:hidden inline-flex items-center gap-2.5 mb-8">
+          <Link to={ROUTES.HOME} className="lg:hidden inline-flex items-center gap-2.5 mb-8 no-underline">
             <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary-600 to-violet-600 flex items-center justify-center shadow-brand">
               <ShoppingBag className="w-5 h-5 text-white" />
             </div>
@@ -140,7 +140,7 @@ const LoginPage = () => {
 
           <Link
             to={ROUTES.REGISTER}
-            className="mt-6 mx-auto w-fit inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2.5 transition-all"
+            className="mt-6 mx-auto w-fit inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2.5 transition-all no-underline"
           >
             New here? Create an account <ArrowRight className="w-4 h-4" />
           </Link>

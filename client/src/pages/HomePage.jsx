@@ -188,7 +188,7 @@ const HomePage = () => {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white dark:hover:bg-surface-900 transition-all hover:shadow-soft"
+                className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white dark:hover:bg-surface-900 transition-all hover:shadow-soft group"
               >
                 <div className={`p-3 ${feature.bg} rounded-xl transition-transform group-hover:scale-110`}>
                   <feature.icon className={`w-5 h-5 ${feature.color}`} />
@@ -228,9 +228,10 @@ const HomePage = () => {
             >
               <Link
                 to={`/products?category=${encodeURIComponent(cat.name)}`}
-                className="group block relative aspect-square rounded-2xl overflow-hidden no-underline card-hover hover:shadow-large border border-surface-200 dark:border-surface-800"
+                className="group block relative aspect-square rounded-2xl overflow-hidden no-underline card-premium hover:shadow-large border border-surface-200 dark:border-surface-800"
               >
-                <div className={`absolute inset-0 bg-linear-to-br ${cat.linear} opacity-90 transition-opacity group-hover:opacity-100`} />
+                {/* Use cat.gradient (fixed from cat.linear) */}
+                <div className={`absolute inset-0 bg-linear-to-br ${cat.gradient} opacity-90 transition-opacity group-hover:opacity-100`} />
                 <div className="absolute inset-0 bg-surface-950/20 group-hover:bg-surface-950/10 transition-colors" />
                 {/* Shine sweep */}
                 <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />

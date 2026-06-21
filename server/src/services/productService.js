@@ -7,8 +7,20 @@ const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 12;
 
 const createProduct = async (productData, images = []) => {
+  // Whitelist allowed fields to prevent mass assignment
+  const allowedFields = [
+    'name', 'description', 'price', 'compareAtPrice',
+    'category', 'brand', 'stock', 'featured', 'isActive',
+  ];
+  const filteredData = {};
+  for (const field of allowedFields) {
+    if (productData[field] !== undefined) {
+      filteredData[field] = productData[field];
+    }
+  }
+
   const product = await Product.create({
-    ...productData,
+    ...filteredData,
     images,
   });
   return product;
@@ -70,7 +82,19 @@ const getProductById = async (productId) => {
 };
 
 const updateProduct = async (productId, updateData) => {
-  const product = await Product.findByIdAndUpdate(productId, updateData, {
+  // Whitelist allowed fields to prevent mass assignment
+  const allowedFields = [
+    'name', 'description', 'price', 'compareAtPrice',
+    'category', 'brand', 'stock', 'featured', 'isActive', 'images',
+  ];
+  const filteredData = {};
+  for (const field of allowedFields) {
+    if (updateData[field] !== undefined) {
+      filteredData[field] = updateData[field];
+    }
+  }
+
+  const product = await Product.findByIdAndUpdate(productId, filteredData, {
     new: true,
     runValidators: true,
   });

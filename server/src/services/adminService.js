@@ -3,6 +3,12 @@ import Product from '../models/Product.js';
 import User from '../models/User.js';
 import ApiError from '../utils/ApiError.js';
 
+/**
+ * Escape special regex characters in a string to prevent ReDoS attacks.
+ * Without this, user input like "(a+)+$" causes catastrophic backtracking.
+ */
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const getDashboardStats = async () => {
   const totalOrders = await Order.countDocuments();
   const totalProducts = await Product.countDocuments({ isActive: true });
@@ -76,8 +82,8 @@ const getAllOrders = async (filters = {}) => {
 
   if (search) {
     query.$or = [
-      { 'shippingAddress.fullName': { $regex: search, $options: 'i' } },
-      { 'shippingAddress.phone': { $regex: search, $options: 'i' } },
+      { 'shippingAddress.fullName': { $regex: escapeRegex(search), $options: 'i' } },
+      { 'shippingAddress.phone': { $regex: escapeRegex(search), $options: 'i' } },
     ];
   }
 
@@ -115,8 +121,8 @@ const getAllUsers = async (filters = {}) => {
 
   if (search) {
     query.$or = [
-      { name: { $regex: search, $options: 'i' } },
-      { email: { $regex: search, $options: 'i' } },
+      { name: { $regex: escapeRegex(search), $options: 'i' } },
+      { email: { $regex: escapeRegex(search), $options: 'i' } },
     ];
   }
 

@@ -65,7 +65,6 @@ const HomePage = () => {
 
   useEffect(() => { fetchCart(); fetchWishlist(); }, [fetchCart, fetchWishlist]);
 
-  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -79,7 +78,6 @@ const HomePage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Testimonial auto-rotate
   useEffect(() => {
     const timer = setInterval(() => {
       setTestimonialIdx((i) => (i + 1) % testimonials.length);
@@ -125,7 +123,7 @@ const HomePage = () => {
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white font-display leading-[1.05] tracking-tight text-balance">
                 Discover Your{' '}
                 <span className="relative inline-block">
-                  <span className="gradient-text">Perfect</span>
+                  <span className="gradient-text-animated">Perfect</span>
                   <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
                     <path d="M2 5.5C50 2.5 150 2.5 198 5.5" stroke="#fb923c" strokeWidth="3" strokeLinecap="round" />
                   </svg>
@@ -156,11 +154,16 @@ const HomePage = () => {
                   { value: '10K+', label: 'Happy Customers' },
                   { value: '500+', label: 'Products' },
                   { value: '4.9★', label: 'Avg Rating' },
-                ].map((stat) => (
-                  <div key={stat.label}>
-                    <p className="text-2xl md:text-3xl font-bold text-white font-display">{stat.value}</p>
+                ].map((stat, i) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + i * 0.1 }}
+                  >
+                    <p className="text-2xl md:text-3xl font-bold text-white font-display tabular-nums">{stat.value}</p>
                     <p className="text-xs text-primary-200 uppercase tracking-wider mt-0.5">{stat.label}</p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
@@ -185,9 +188,9 @@ const HomePage = () => {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white dark:hover:bg-surface-900 transition-colors"
+                className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white dark:hover:bg-surface-900 transition-all hover:shadow-soft"
               >
-                <div className={`p-3 ${feature.bg} rounded-xl`}>
+                <div className={`p-3 ${feature.bg} rounded-xl transition-transform group-hover:scale-110`}>
                   <feature.icon className={`w-5 h-5 ${feature.color}`} />
                 </div>
                 <div>
@@ -227,8 +230,10 @@ const HomePage = () => {
                 to={`/products?category=${encodeURIComponent(cat.name)}`}
                 className="group block relative aspect-square rounded-2xl overflow-hidden no-underline card-hover hover:shadow-large border border-surface-200 dark:border-surface-800"
               >
-                <div className={`absolute inset-0 bg-linear-to-br ${cat.gradient} opacity-90`} />
+                <div className={`absolute inset-0 bg-linear-to-br ${cat.linear} opacity-90 transition-opacity group-hover:opacity-100`} />
                 <div className="absolute inset-0 bg-surface-950/20 group-hover:bg-surface-950/10 transition-colors" />
+                {/* Shine sweep */}
+                <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
                 <div className="relative h-full flex flex-col items-center justify-center p-4 text-center">
                   <span className="text-4xl md:text-5xl mb-2 transition-transform group-hover:scale-110">{cat.icon}</span>
                   <p className="font-bold text-white text-sm md:text-base">{cat.name}</p>
@@ -267,7 +272,6 @@ const HomePage = () => {
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="grid lg:grid-cols-12 gap-8 items-start">
-              {/* Left: heading + countdown */}
               <div className="lg:col-span-3">
                 <Badge variant="accent" size="xs" className="mb-3">Limited time</Badge>
                 <h2 className="text-3xl md:text-4xl font-bold text-white font-display tracking-tight">
@@ -277,7 +281,6 @@ const HomePage = () => {
                   Grab these deals before they're gone. New deals every day at midnight.
                 </p>
 
-                {/* Countdown */}
                 <div className="mt-6 flex gap-2">
                   {[
                     { label: 'Hours',   value: pad(timeLeft.hours) },
@@ -286,8 +289,8 @@ const HomePage = () => {
                   ].map((unit, i) => (
                     <div key={unit.label} className="flex items-center gap-2">
                       <div className="flex flex-col items-center">
-                        <div className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/10">
-                          <span className="text-xl font-bold text-white font-mono">{unit.value}</span>
+                        <div className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/10 transition-colors hover:bg-white/15">
+                          <span className="text-xl font-bold text-white font-mono tabular-nums">{unit.value}</span>
                         </div>
                         <p className="text-2xs text-surface-500 uppercase mt-1.5 tracking-wider">{unit.label}</p>
                       </div>
@@ -301,7 +304,6 @@ const HomePage = () => {
                 </Link>
               </div>
 
-              {/* Right: product grid */}
               <div className="lg:col-span-9">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {dealProducts.map((product, i) => (
@@ -332,8 +334,12 @@ const HomePage = () => {
       </section>
 
       {/* ============ TESTIMONIALS ============ */}
-      <section className="bg-surface-100 dark:bg-surface-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="bg-surface-100 dark:bg-surface-900 relative overflow-hidden">
+        {/* Decorative blobs */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-primary-300/20 dark:bg-primary-700/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-72 h-72 bg-accent-300/20 dark:bg-accent-700/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center mb-10">
             <Badge variant="gold" size="xs" className="mb-3">Testimonials</Badge>
             <h2 className="text-2xl md:text-4xl font-bold text-surface-900 dark:text-white font-display tracking-tight">
@@ -351,7 +357,7 @@ const HomePage = () => {
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4 }}
-                className="bg-white dark:bg-surface-800 rounded-3xl shadow-large border border-surface-200 dark:border-surface-700 p-8 md:p-12"
+                className="glass-premium rounded-3xl p-8 md:p-12"
               >
                 <Quote className="w-10 h-10 text-primary-200 dark:text-primary-800 mb-4" />
                 <p className="text-lg md:text-xl text-surface-700 dark:text-surface-200 leading-relaxed font-medium">
@@ -359,7 +365,7 @@ const HomePage = () => {
                 </p>
                 <div className="flex items-center justify-between mt-8 flex-wrap gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary-500 to-violet-600 flex items-center justify-center text-white font-bold">
+                    <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary-500 to-violet-600 flex items-center justify-center text-white font-bold shadow-md">
                       {testimonials[testimonialIdx].avatar}
                     </div>
                     <div>
@@ -383,7 +389,7 @@ const HomePage = () => {
             <div className="flex items-center justify-center gap-2 mt-6">
               <button
                 onClick={() => setTestimonialIdx((i) => (i - 1 + testimonials.length) % testimonials.length)}
-                className="p-2 rounded-full bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors cursor-pointer"
+                className="p-2 rounded-full bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-100 dark:hover:bg-surface-700 hover:-translate-x-0.5 transition-all cursor-pointer"
                 aria-label="Previous testimonial"
               >
                 <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300" />
@@ -400,7 +406,7 @@ const HomePage = () => {
               ))}
               <button
                 onClick={() => setTestimonialIdx((i) => (i + 1) % testimonials.length)}
-                className="p-2 rounded-full bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors cursor-pointer"
+                className="p-2 rounded-full bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:bg-surface-100 dark:hover:bg-surface-700 hover:translate-x-0.5 transition-all cursor-pointer"
                 aria-label="Next testimonial"
               >
                 <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-300" />

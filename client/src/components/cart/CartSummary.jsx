@@ -22,21 +22,19 @@ const FLAT_SHIPPING = 150;
 const CartSummary = ({ cart }) => {
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState(null);
-  const [promoStatus, setPromoStatus] = useState(null); // 'applied' | 'invalid' | null
+  const [promoStatus, setPromoStatus] = useState(null);
 
   const subtotal = cart.totalPrice;
   const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING;
   const discount = appliedPromo ? Math.round(subtotal * appliedPromo.rate) : 0;
   const total = subtotal + shipping - discount;
 
-  // Free shipping progress
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
   const handleApplyPromo = () => {
     const code = promoCode.trim().toUpperCase();
     if (!code) return;
-    // Demo promos — purely client-side cosmetic
     const validCodes = {
       WELCOME10: { code: 'WELCOME10', rate: 0.1, label: '10% off' },
       SAVE15: { code: 'SAVE15', rate: 0.15, label: '15% off' },
@@ -65,8 +63,11 @@ const CartSummary = ({ cart }) => {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-6 sticky top-24 shadow-soft"
+     className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-6 sticky top-24 shadow-premium overflow-hidden"
     >
+      {/* Premium top hairline */}
+      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary-500/40 to-transparent" />
+
       <div className="flex items-center gap-2 mb-5">
         <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
           <ShoppingBag className="w-5 h-5 text-primary-600 dark:text-primary-400" />
@@ -79,10 +80,12 @@ const CartSummary = ({ cart }) => {
         <div className="flex items-center gap-2 text-xs text-surface-600 dark:text-surface-300 mb-2">
           <Truck className={`w-4 h-4 ${remaining === 0 ? 'text-success' : 'text-primary-600 dark:text-primary-400'}`} />
           {remaining === 0 ? (
-            <span className="font-medium text-success">You unlocked FREE shipping!</span>
+            <span className="font-medium text-success flex items-center gap-1">
+              <Check className="w-3.5 h-3.5" /> You unlocked FREE shipping!
+            </span>
           ) : (
             <span>
-              Add <span className="font-bold text-surface-900 dark:text-white">{formatCurrency(remaining)}</span> more for free shipping
+              Add <span className="font-bold text-surface-900 dark:text-white tabular-nums">{formatCurrency(remaining)}</span> more for free shipping
             </span>
           )}
         </div>
@@ -96,7 +99,7 @@ const CartSummary = ({ cart }) => {
         </div>
       </div>
 
-      {/* FIX: Demo-only warning when a promo code is applied */}
+      {/* Promo warning */}
       {appliedPromo && (
         <div className="mb-4 p-2.5 rounded-xl bg-warning/10 border border-warning/30 flex items-start gap-2">
           <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
@@ -141,7 +144,7 @@ const CartSummary = ({ cart }) => {
               }}
               onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
               placeholder="WELCOME10"
-              className="flex-1 px-3 py-2 text-sm border border-surface-200 dark:border-surface-600 rounded-xl bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent uppercase tracking-wider"
+              className="flex-1 px-3 py-2 text-sm border border-surface-200 dark:border-surface-600 rounded-xl bg-white dark:bg-surface-700 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 uppercase tracking-wider transition-all"
             />
             <button
               type="button"
@@ -173,14 +176,14 @@ const CartSummary = ({ cart }) => {
       <div className="space-y-2.5 text-sm pb-4 border-b border-dashed border-surface-200 dark:border-surface-700">
         <div className="flex justify-between">
           <span className="text-surface-500 dark:text-surface-400">Subtotal ({cart.totalQuantity} items)</span>
-          <span className="font-medium text-surface-900 dark:text-white">{formatCurrency(subtotal)}</span>
+          <span className="font-medium text-surface-900 dark:text-white tabular-nums">{formatCurrency(subtotal)}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-surface-500 dark:text-surface-400">Shipping</span>
           {effectiveShipping === 0 ? (
             <span className="font-semibold text-success">FREE</span>
           ) : (
-            <span className="font-medium text-surface-900 dark:text-white">{formatCurrency(effectiveShipping)}</span>
+            <span className="font-medium text-surface-900 dark:text-white tabular-nums">{formatCurrency(effectiveShipping)}</span>
           )}
         </div>
         {discount > 0 && (
@@ -188,7 +191,7 @@ const CartSummary = ({ cart }) => {
             <span className="flex items-center gap-1">
               <Tag className="w-3.5 h-3.5" /> Discount ({appliedPromo?.code})
             </span>
-            <span className="font-medium">−{formatCurrency(discount)}</span>
+            <span className="font-medium tabular-nums">−{formatCurrency(discount)}</span>
           </div>
         )}
       </div>
@@ -196,14 +199,14 @@ const CartSummary = ({ cart }) => {
       <div className="flex justify-between items-baseline pt-4 mb-5">
         <span className="font-semibold text-surface-800 dark:text-white">Total</span>
         <div className="text-right">
-          <div className="text-2xl font-bold gradient-text-brand">{formatCurrency(finalTotal)}</div>
+          <div className="text-2xl font-bold gradient-text-brand tabular-nums">{formatCurrency(finalTotal)}</div>
           <div className="text-[10px] text-surface-400 dark:text-surface-500">Incl. all taxes</div>
         </div>
       </div>
 
       {/* Checkout CTA */}
       <Link to={ROUTES.CHECKOUT} className="block no-underline">
-        <Button variant="gradient" size="lg" className="w-full" iconRight={ArrowRight}>
+        <Button variant="shine" size="lg" className="w-full" iconRight={ArrowRight}>
           Proceed to Checkout
         </Button>
       </Link>

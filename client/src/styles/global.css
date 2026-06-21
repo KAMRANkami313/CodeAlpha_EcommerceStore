@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ============================================================
-   ShopVerse — Global Utility Classes
+   ShopVerse — Global Utility Classes (Enhanced)
    ============================================================ */
 
 /* ---------- Gradient text ---------- */
@@ -27,6 +27,22 @@
   background-clip: text;
 }
 
+/* NEW: Animated gradient text */
+.gradient-text-animated {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-600),
+    var(--color-accent-500),
+    var(--color-primary-700),
+    var(--color-accent-400)
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 8s ease infinite;
+}
+
 /* ---------- Glassmorphism ---------- */
 .glass-card {
   background: rgba(255, 255, 255, 0.7);
@@ -34,7 +50,6 @@
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
-
 .dark .glass-card {
   background: rgba(30, 41, 59, 0.7);
   border: 1px solid rgba(51, 65, 85, 0.4);
@@ -45,9 +60,21 @@
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
-
 .dark .glass-nav {
   background: rgba(15, 23, 42, 0.75);
+}
+
+/* NEW: Premium glass — stronger blur, richer tint */
+.glass-premium {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-premium);
+}
+.dark .glass-premium {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(99, 102, 241, 0.15);
 }
 
 /* ---------- Mesh gradient backgrounds ---------- */
@@ -57,13 +84,11 @@
     radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
     radial-gradient(at 50% 100%, rgba(251, 146, 60, 0.1) 0px, transparent 50%);
 }
-
 .mesh-bg-soft {
   background-image:
     radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.06) 0px, transparent 50%);
 }
-
 .dark .mesh-bg {
   background-image:
     radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.2) 0px, transparent 50%),
@@ -75,28 +100,87 @@
 .hero-gradient {
   background: linear-gradient(135deg, #1e1b4b 0%, #312e81 35%, #4f46e5 100%);
 }
-
 .hero-gradient-soft {
   background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #f5f3ff 100%);
 }
-
 .dark .hero-gradient-soft {
   background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e293b 100%);
 }
 
-/* ---------- Card hover effect ---------- */
-.card-hover {
-  transition:
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.3s ease;
+/* NEW: Aurora animated background */
+.aurora-bg {
+  position: relative;
+  overflow: hidden;
 }
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-medium);
+.aurora-bg::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(
+    60deg,
+    rgba(99, 102, 241, 0.4),
+    rgba(168, 85, 247, 0.3),
+    rgba(251, 146, 60, 0.25),
+    rgba(99, 102, 241, 0.4)
+  );
+  background-size: 300% 300%;
+  animation: aurora 18s ease-in-out infinite;
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
 }
 
-/* ---------- Button glow ---------- */
+/* ---------- Card hover effect (enhanced) ---------- */
+.card-hover {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+  will-change: transform;
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-premium-hover);
+}
+
+/* NEW: Premium card with subtle gradient border on hover */
+.card-premium {
+  position: relative;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-premium::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.6),
+    rgba(168, 85, 247, 0.3),
+    rgba(251, 146, 60, 0.4)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.card-premium:hover::before {
+  opacity: 1;
+}
+.card-premium:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-premium-hover);
+}
+
+/* ---------- Button effects ---------- */
 .btn-glow {
   box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.3);
   transition:
@@ -106,6 +190,33 @@
 .btn-glow:hover {
   box-shadow: 0 8px 24px 0 rgba(79, 70, 229, 0.45);
   transform: translateY(-1px);
+}
+
+/* NEW: Shine sweep on hover (for buttons & cards) */
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.shine-effect::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: translateX(-120%) skewX(-20deg);
+  pointer-events: none;
+  z-index: 2;
+}
+.shine-effect:hover::after {
+  animation: shine 1s ease-in-out forwards;
 }
 
 /* ---------- Shimmer skeleton ---------- */
@@ -119,7 +230,6 @@
   background-size: 1000px 100%;
   animation: shimmer 2s linear infinite;
 }
-
 .dark .shimmer {
   background: linear-gradient(
     90deg,
@@ -137,14 +247,12 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
 }
-
 .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
-
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -152,12 +260,12 @@
   -webkit-line-clamp: 3;
 }
 
-/* ---------- Text balance for headings ---------- */
+/* ---------- Text balance ---------- */
 .text-balance {
   text-wrap: balance;
 }
 
-/* ---------- Hide scrollbar but keep scroll ---------- */
+/* ---------- Hide scrollbar ---------- */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -177,7 +285,11 @@
   bottom: -2px;
   width: 0;
   height: 2px;
-  background: var(--color-primary-600);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-600),
+    var(--color-accent-500)
+  );
   transition: width 0.3s ease;
 }
 .link-underline:hover::after {
@@ -201,7 +313,7 @@
   background-color: var(--color-danger);
 }
 
-/* ---------- No-tap-highlight on mobile ---------- */
+/* ---------- No-tap-highlight ---------- */
 button,
 a {
   -webkit-tap-highlight-color: transparent;
@@ -215,13 +327,23 @@ img {
   background-color: var(--color-surface-800);
 }
 
+/* NEW: Image zoom-on-hover wrapper */
+.img-zoom {
+  overflow: hidden;
+}
+.img-zoom img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.img-zoom:hover img {
+  transform: scale(1.08);
+}
+
 /* ============================================================
-   Phase 9.10 — Final Polish
+   Final Polish
    ============================================================ */
 
-/* ---------- Focus ring utility variants ---------- */
-/* Use .focus-ring for a clean brand-color focus outline that works
-   on any element (buttons, links, inputs, cards). */
+/* Focus rings */
 .focus-ring {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
@@ -237,7 +359,7 @@ img {
   border-radius: 6px;
 }
 
-/* Selection — refined with subtle accent gradient */
+/* Selection */
 ::selection {
   background-color: var(--color-primary-100);
   color: var(--color-primary-900);
@@ -246,15 +368,12 @@ img {
   background-color: var(--color-primary-600);
   color: #ffffff;
 }
-/* Secondary selection in highlighted code/data contexts */
 .selection-accent ::selection {
   background-color: var(--color-accent-200);
   color: var(--color-accent-700);
 }
 
 /* ---------- Toast styling (react-hot-toast overrides) ---------- */
-/* react-hot-toast injects its own inline styles; these overlays add
-   the glass + brand aesthetic without breaking positioning. */
 [data-hot-toast] {
   font-family: var(--font-sans) !important;
   font-weight: 500;
@@ -264,7 +383,6 @@ img {
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
-
 [data-hot-toast][data-type="success"] {
   background: rgba(16, 185, 129, 0.12) !important;
   color: var(--color-success) !important;
@@ -275,7 +393,6 @@ img {
   color: #6ee7b7 !important;
   border-color: rgba(16, 185, 129, 0.35) !important;
 }
-
 [data-hot-toast][data-type="error"] {
   background: rgba(239, 68, 68, 0.12) !important;
   color: var(--color-danger) !important;
@@ -286,7 +403,6 @@ img {
   color: #fca5a5 !important;
   border-color: rgba(239, 68, 68, 0.35) !important;
 }
-
 [data-hot-toast][data-type="loading"] {
   background: rgba(255, 255, 255, 0.85) !important;
   color: var(--color-surface-700) !important;
@@ -297,7 +413,6 @@ img {
   color: var(--color-surface-200) !important;
   border-color: rgba(148, 163, 184, 0.2) !important;
 }
-
 [data-hot-toast][data-type="blank"],
 [data-hot-toast]:not([data-type]) {
   background: rgba(255, 255, 255, 0.9) !important;
@@ -316,7 +431,7 @@ img {
   animation: fade-in-up 0.4s ease-out forwards;
 }
 
-/* ---------- Reduced motion support ---------- */
+/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -328,13 +443,13 @@ img {
   }
 }
 
-/* ---------- Better number rendering for prices/quantities ---------- */
+/* ---------- Tabular nums ---------- */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
 
-/* ---------- Subtle inner highlight on cards (top edge gleam) ---------- */
+/* ---------- Subtle inner highlight on cards ---------- */
 .card-gleam {
   position: relative;
   overflow: hidden;
@@ -358,5 +473,32 @@ img {
     transparent 0%,
     rgba(255, 255, 255, 0.08) 50%,
     transparent 100%
+  );
+}
+
+/* NEW: Premium shadow utilities */
+.shadow-premium {
+  box-shadow: var(--shadow-premium);
+}
+.shadow-premium-hover {
+  box-shadow: var(--shadow-premium-hover);
+}
+
+/* NEW: Subtle gradient hairline divider */
+.gradient-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(99, 102, 241, 0.3),
+    transparent
+  );
+}
+.dark .gradient-divider {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(129, 140, 248, 0.25),
+    transparent
   );
 }

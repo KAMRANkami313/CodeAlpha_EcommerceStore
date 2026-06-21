@@ -34,7 +34,6 @@ const ProductDetailPage = () => {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
-    // Related products — only fetch when we have a valid product (avoids unnecessary API call on error)
   const { products: related, loading: relatedLoading } = useProducts(
     product?.category ? { category: product.category, limit: 5 } : null
   );
@@ -120,7 +119,7 @@ const ProductDetailPage = () => {
             className="lg:sticky lg:top-24 lg:self-start"
           >
             {/* Main image */}
-            <div className="relative aspect-square rounded-3xl overflow-hidden bg-surface-100 dark:bg-surface-800 border border-surface-200 dark:border-surface-800 mb-4">
+            <div className="relative aspect-square rounded-3xl overflow-hidden bg-surface-100 dark:bg-surface-800 border border-surface-200 dark:border-surface-800 mb-4 img-zoom shadow-soft">
               {product.images?.[selectedImage]?.url ? (
                 <motion.img
                   key={selectedImage}
@@ -138,23 +137,24 @@ const ProductDetailPage = () => {
               )}
 
               {/* Badges overlay */}
-              <div className="absolute top-4 left-4 flex flex-col gap-2">
+              <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                 {discount > 0 && <Badge variant="danger" size="sm">-{discount}% OFF</Badge>}
                 {product.featured && <Badge variant="primary" size="sm" dot>Featured</Badge>}
               </div>
 
               {/* Wishlist button */}
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9 }}
                 onClick={() => toggleWishlist(product._id)}
                 aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-                className={`absolute top-4 right-4 p-3 rounded-full backdrop-blur-md transition-all cursor-pointer ${
+                className={`absolute top-4 right-4 p-3 rounded-full backdrop-blur-md transition-all cursor-pointer z-10 ${
                   wishlisted
                     ? 'bg-red-500 text-white shadow-md'
-                    : 'bg-white/80 dark:bg-surface-900/80 text-surface-500 hover:text-red-500'
+                    : 'bg-white/80 dark:bg-surface-900/80 text-surface-500 hover:text-red-500 hover:bg-white'
                 }`}
               >
                 <Heart className={`w-5 h-5 ${wishlisted ? 'fill-white' : ''}`} />
-              </button>
+              </motion.button>
             </div>
 
             {/* Thumbnails */}
@@ -167,7 +167,7 @@ const ProductDetailPage = () => {
                     className={`aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${
                       selectedImage === i
                         ? 'border-primary-600 ring-2 ring-primary-200 dark:ring-primary-900'
-                        : 'border-surface-200 dark:border-surface-700 hover:border-primary-300'
+                        : 'border-surface-200 dark:border-surface-700 hover:border-primary-300 opacity-70 hover:opacity-100'
                     }`}
                   >
                     <img src={img.url} alt="" className="w-full h-full object-cover" loading="lazy" />
@@ -222,14 +222,15 @@ const ProductDetailPage = () => {
               )}
             </div>
 
-            {/* Price block */}
-            <div className="bg-surface-50 dark:bg-surface-900 rounded-2xl p-5 border border-surface-200 dark:border-surface-800">
+            {/* Price block (premium gradient hairline) */}
+            <div className="relative bg-surface-50 dark:bg-surface-900 rounded-2xl p-5 border border-surface-200 dark:border-surface-800 overflow-hidden">
+              <div className="absolute inset-x-0 top-0 h-px bg-liner-to-r from-transparent via-primary-500/40 to-transparent" />
               <div className="flex items-baseline gap-3 flex-wrap">
-                <span className="text-4xl font-bold text-surface-900 dark:text-white font-display">
+                <span className="text-4xl font-bold gradient-text-brand font-display tabular-nums">
                   {formatCurrency(product.price)}
                 </span>
                 {product.compareAtPrice > product.price && (
-                  <span className="text-xl text-surface-400 line-through">
+                  <span className="text-xl text-surface-400 line-through tabular-nums">
                     {formatCurrency(product.compareAtPrice)}
                   </span>
                 )}
@@ -253,20 +254,20 @@ const ProductDetailPage = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <label className="text-sm font-semibold text-surface-700 dark:text-surface-300">Quantity:</label>
-                  <div className="flex items-center bg-surface-100 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700">
+                  <div className="flex items-center bg-surface-100 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
-                      className="p-3 hover:bg-surface-200 dark:hover:bg-surface-700 rounded-l-xl cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      className="p-3 hover:bg-surface-200 dark:hover:bg-surface-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                       aria-label="Decrease quantity"
                     >
                       <Minus className="w-4 h-4 text-surface-700 dark:text-surface-300" />
                     </button>
-                    <span className="w-12 text-center font-bold text-surface-900 dark:text-white">{quantity}</span>
+                    <span className="w-12 text-center font-bold text-surface-900 dark:text-white tabular-nums">{quantity}</span>
                     <button
                       onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                       disabled={quantity >= product.stock}
-                      className="p-3 hover:bg-surface-200 dark:hover:bg-surface-700 rounded-r-xl cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      className="p-3 hover:bg-surface-200 dark:hover:bg-surface-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                       aria-label="Increase quantity"
                     >
                       <Plus className="w-4 h-4 text-surface-700 dark:text-surface-300" />
@@ -279,7 +280,7 @@ const ProductDetailPage = () => {
 
                 <div className="flex gap-3">
                   <Button
-                    variant="primary"
+                    variant="shine"
                     size="lg"
                     icon={ShoppingBag}
                     loading={addingToCart}
@@ -309,7 +310,7 @@ const ProductDetailPage = () => {
                 { icon: Shield,     title: 'Secure Payment', desc: 'SSL encrypted' },
                 { icon: RotateCcw,  title: 'Easy Returns',  desc: '30-day policy' },
               ].map((item) => (
-                <div key={item.title} className="flex flex-col items-center text-center gap-1.5 p-3 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-900 transition-colors">
+                <div key={item.title} className="flex flex-col items-center text-center gap-1.5 p-3 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-900 transition-all hover:-translate-y-0.5">
                   <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
                     <item.icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   </div>
@@ -345,7 +346,7 @@ const ProductDetailPage = () => {
                   {activeTab === tab.id && (
                     <motion.div
                       layoutId="active-tab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 dark:bg-primary-400"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-primary-600 to-violet-500 dark:from-primary-400 dark:to-violet-400"
                     />
                   )}
                 </button>
@@ -381,7 +382,7 @@ const ProductDetailPage = () => {
                     { label: 'Rating',           value: product.ratings > 0 ? `${product.ratings.toFixed(1)} / 5` : 'Not rated' },
                     { label: 'Total Reviews',    value: `${product.numOfReviews}` },
                   ].map((spec) => (
-                    <div key={spec.label} className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800">
+                    <div key={spec.label} className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 hover:border-primary-200 dark:hover:border-primary-700 transition-colors">
                       <span className="text-sm text-surface-500 dark:text-surface-400">{spec.label}</span>
                       <span className="text-sm font-semibold text-surface-900 dark:text-white">{spec.value}</span>
                     </div>

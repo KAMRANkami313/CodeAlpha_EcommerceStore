@@ -19,19 +19,19 @@ const CartItem = ({ item }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.25 }}
-      className="group relative flex flex-col sm:flex-row gap-4 sm:gap-5 p-4 sm:p-5 rounded-2xl border border-surface-100 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-200 dark:hover:border-primary-700 hover:shadow-soft transition-all duration-200"
+      className="group relative flex flex-col sm:flex-row gap-4 sm:gap-5 p-4 sm:p-5 rounded-2xl border border-surface-100 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-200 dark:hover:border-primary-700 hover:shadow-premium transition-all duration-300"
     >
       {/* Image */}
       <Link
         to={productPath}
-        className="relative w-full sm:w-24 h-24 rounded-xl overflow-hidden bg-surface-100 dark:bg-surface-700 shrink-0 block"
+        className="relative w-full sm:w-24 h-24 rounded-xl overflow-hidden bg-surface-100 dark:bg-surface-700 shrink-0 block img-zoom"
       >
         {item.image ? (
           <img
             src={item.image}
             alt={item.name}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-full object-cover"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-surface-300 dark:text-surface-600">
@@ -68,50 +68,53 @@ const CartItem = ({ item }) => {
             </div>
           </div>
 
-          {/* Remove button — icon only on desktop, full row on mobile */}
-          <button
+          {/* Remove button */}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             type="button"
             onClick={() => removeItem(productId)}
             aria-label={`Remove ${item.name} from cart`}
             className="p-2 -mr-1 -mt-1 text-surface-400 dark:text-surface-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer shrink-0"
           >
             <Trash2 className="w-4 h-4" />
-          </button>
+          </motion.button>
         </div>
 
         {/* Bottom row: stepper + price */}
         <div className="flex items-center justify-between gap-3 mt-auto pt-3">
           {/* Quantity Stepper */}
-          <div className="inline-flex items-center bg-surface-50 dark:bg-surface-700/60 border border-surface-200 dark:border-surface-600 rounded-full">
-            <button
+          <div className="inline-flex items-center bg-surface-50 dark:bg-surface-700/60 border border-surface-200 dark:border-surface-600 rounded-full overflow-hidden">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               type="button"
               onClick={() => updateQuantity(productId, Math.max(1, qty - 1))}
               disabled={qty <= 1}
               aria-label="Decrease quantity"
-              className="p-2 rounded-full hover:bg-surface-200 dark:hover:bg-surface-600 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-2 hover:bg-surface-200 dark:hover:bg-surface-600 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Minus className="w-3.5 h-3.5 text-surface-700 dark:text-surface-300" />
-            </button>
+            </motion.button>
             <span className="min-w-8 text-center text-sm font-semibold text-surface-900 dark:text-white tabular-nums">
               {qty}
             </span>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               type="button"
               onClick={() => updateQuantity(productId, qty + 1)}
               aria-label="Increase quantity"
-              className="p-2 rounded-full hover:bg-surface-200 dark:hover:bg-surface-600 transition-colors cursor-pointer"
+              className="p-2 hover:bg-surface-200 dark:hover:bg-surface-600 transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 text-surface-700 dark:text-surface-300" />
-            </button>
+            </motion.button>
           </div>
 
           {/* Price */}
           <div className="text-right">
-            <div className="text-sm font-bold text-surface-900 dark:text-white">
+            <div className="text-sm font-bold text-surface-900 dark:text-white tabular-nums">
               {formatCurrency(lineTotal)}
             </div>
             {qty > 1 && (
-              <div className="text-xs text-surface-400 dark:text-surface-500">
+              <div className="text-xs text-surface-400 dark:text-surface-500 tabular-nums">
                 {formatCurrency(item.price)} each
               </div>
             )}

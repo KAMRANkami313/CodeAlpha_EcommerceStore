@@ -1,19 +1,12 @@
 /**
- * Badge — Phase 9 upgraded
+ * Badge — Enhanced
  *
- * Variants (existing + new):
- *   default  — neutral slate
- *   primary  — indigo
- *   success  — emerald
- *   warning  — amber
- *   danger   — red
- *   accent   — orange
- *   gradient — indigo→violet (NEW)
- *   glass    — frosted glass (NEW)
- *   gold     — premium gold (NEW)
+ * Variants:
+ *   default, primary, success, warning, danger, accent,
+ *   gradient (animated), glass, gold
  *
  * Props:
- *   children, variant, className, size [NEW: xs|sm|md], dot [NEW: boolean — shows a pulsing dot]
+ *   children, variant, className, size [xs|sm|md], dot [boolean]
  */
 const Badge = ({
   children,
@@ -29,7 +22,7 @@ const Badge = ({
     warning:  'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300',
     danger:   'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300',
     accent:   'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300',
-    gradient: 'bg-gradient-to-r from-primary-600 to-violet-600 text-white shadow-sm',
+    gradient: 'bg-gradient-to-r from-primary-600 to-violet-600 bg-[length:200%_auto] hover:bg-[position:right_center] text-white shadow-sm',
     glass:    'glass-card text-surface-800 dark:text-white',
     gold:     'bg-gold-soft dark:bg-amber-900/30 text-amber-800 dark:text-amber-300',
   };
@@ -42,7 +35,7 @@ const Badge = ({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full font-semibold tracking-wide ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full font-semibold tracking-wide transition-all ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {dot && (
         <span className="relative flex h-1.5 w-1.5">

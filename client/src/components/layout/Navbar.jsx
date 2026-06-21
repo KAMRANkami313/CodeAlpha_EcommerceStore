@@ -39,7 +39,6 @@ const Navbar = () => {
   const searchInputRef = useRef(null);
   const megaMenuTimeout = useRef(null);
 
-  // Sticky shrink on scroll
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     handleScroll();
@@ -47,7 +46,6 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close menus on route change
   useEffect(() => {
     setIsMenuOpen(false);
     setIsProfileOpen(false);
@@ -55,7 +53,6 @@ const Navbar = () => {
     setIsMegaMenuOpen(false);
   }, [location.pathname]);
 
-  // Animate cart badge when count changes
   useEffect(() => {
     if (cart.totalQuantity > 0) {
       setCartPulse(true);
@@ -64,7 +61,6 @@ const Navbar = () => {
     }
   }, [cart.totalQuantity]);
 
-  // Animate wishlist badge when count changes
   useEffect(() => {
     if (wishlistCount > 0) {
       setWishlistPulse(true);
@@ -73,7 +69,6 @@ const Navbar = () => {
     }
   }, [wishlistCount]);
 
-  // Focus search input when opened
   useEffect(() => {
     if (isSearchOpen) {
       setTimeout(() => searchInputRef.current?.focus(), 100);
@@ -110,7 +105,7 @@ const Navbar = () => {
     <nav
       className={`sticky top-0 z-40 transition-all duration-300 ${
         scrolled
-          ? 'glass-nav border-b border-surface-200/70 dark:border-surface-800/70'
+          ? 'glass-nav border-b border-surface-200/70 dark:border-surface-800/70 shadow-sm'
           : 'bg-white/95 dark:bg-surface-950/95 backdrop-blur-sm border-b border-transparent'
       }`}
     >
@@ -121,9 +116,11 @@ const Navbar = () => {
             <motion.div
               whileHover={{ rotate: -8, scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-9 h-9 bg-linear-to-br from-primary-600 to-violet-600 rounded-xl flex items-center justify-center shadow-brand"
+              className="relative w-9 h-9 bg-linear-to-br from-primary-600 to-violet-600 rounded-xl flex items-center justify-center shadow-brand overflow-hidden"
             >
-              <ShoppingBag className="w-5 h-5 text-white" strokeWidth={2.5} />
+              {/* Shine sweep on hover */}
+              <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+              <ShoppingBag className="w-5 h-5 text-white relative z-10" strokeWidth={2.5} />
             </motion.div>
             <span className="text-xl font-bold text-surface-900 dark:text-white font-display tracking-tight">
               Shop<span className="gradient-text-brand">Verse</span>
@@ -134,7 +131,7 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center gap-1">
             <Link
               to={ROUTES.HOME}
-              className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors no-underline ${
+              className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all no-underline relative ${
                 isActive(ROUTES.HOME)
                   ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20'
                   : 'text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800'
@@ -169,7 +166,7 @@ const Navbar = () => {
                     transition={{ duration: 0.15 }}
                     className="absolute left-1/2 -translate-x-1/2 top-full pt-3 w-160"
                   >
-                    <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-large border border-surface-200 dark:border-surface-800 p-4">
+                    <div className="glass-premium rounded-2xl p-4">
                       <div className="grid grid-cols-3 gap-1">
                         {NAV_CATEGORIES.map((cat) => (
                           <Link
@@ -177,7 +174,7 @@ const Navbar = () => {
                             to={`/products?category=${encodeURIComponent(cat.name)}`}
                             className="flex items-start gap-3 p-3 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors no-underline group"
                           >
-                            <span className="text-2xl shrink-0">{cat.icon}</span>
+                            <span className="text-2xl shrink-0 transition-transform group-hover:scale-110">{cat.icon}</span>
                             <div className="min-w-0">
                               <p className="font-semibold text-sm text-surface-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                 {cat.name}
@@ -220,9 +217,11 @@ const Navbar = () => {
             {/* Search */}
             <div className="hidden sm:block">
               {isSearchOpen ? (
-                <form
+                <motion.form
+                  initial={{ width: 40, opacity: 0 }}
+                  animate={{ width: 'auto', opacity: 1 }}
                   onSubmit={handleSearchSubmit}
-                  className="flex items-center bg-surface-100 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 focus-within:border-primary-400 dark:focus-within:border-primary-500 transition-colors"
+                  className="flex items-center bg-surface-100 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700 focus-within:border-primary-400 dark:focus-within:border-primary-500 focus-within:shadow-sm focus-within:shadow-primary-500/10 transition-all"
                 >
                   <Search className="w-4 h-4 text-surface-400 ml-3" />
                   <input
@@ -241,7 +240,7 @@ const Navbar = () => {
                   >
                     <X className="w-4 h-4" />
                   </button>
-                </form>
+                </motion.form>
               ) : (
                 <button
                   onClick={() => setIsSearchOpen(true)}
@@ -344,7 +343,7 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.97 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-12 w-60 bg-white dark:bg-surface-900 rounded-2xl shadow-large border border-surface-200 dark:border-surface-800 overflow-hidden z-20"
+                        className="absolute right-0 top-12 w-60 glass-premium rounded-2xl overflow-hidden z-20"
                       >
                         <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-linear-to-br from-primary-50 to-violet-50 dark:from-primary-900/20 dark:to-violet-900/20">
                           <p className="font-semibold text-surface-900 dark:text-white truncate">{user?.name}</p>
@@ -397,7 +396,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   to={ROUTES.REGISTER}
-                  className="px-4 py-2 text-sm font-semibold bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all hover:shadow-brand no-underline"
+                  className="px-4 py-2 text-sm font-semibold bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all hover:shadow-brand no-underline shine-effect"
                 >
                   Sign Up
                 </Link>

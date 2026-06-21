@@ -13,6 +13,7 @@ import { updateOrderStatus } from '../controllers/orderController.js';
 import { deleteReview } from '../controllers/reviewController.js';
 import { body, param } from 'express-validator';
 import validate from '../middleware/validateMiddleware.js';
+import auditLog from '../middleware/auditLog.js';
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ router.get('/orders', getAllOrders);
 router.get('/orders/:id', getOrderById);
 router.put(
   '/orders/:id/status',
+  auditLog('UPDATE_ORDER_STATUS'),
   [body('status').isIn(['processing', 'shipped', 'delivered', 'cancelled']).withMessage('Invalid status')],
   validate,
   updateOrderStatus
@@ -36,6 +38,7 @@ router.get('/users', getAllUsers);
 router.get('/users/:id', getUserById);
 router.put(
   '/users/:id/role',
+  auditLog('CHANGE_USER_ROLE'),
   [
     param('id').isMongoId().withMessage('Invalid user ID'),
     body('role').isIn(['user', 'admin']).withMessage('Role must be "user" or "admin"'),
@@ -45,6 +48,7 @@ router.put(
 );
 router.delete(
   '/users/:id',
+  auditLog('DELETE_USER'),
   param('id').isMongoId().withMessage('Invalid user ID'),
   validate,
   deleteUser
@@ -53,6 +57,7 @@ router.delete(
 // ─── Reviews (moderation) ─────────────────────────────
 router.delete(
   '/reviews/:id',
+  auditLog('DELETE_REVIEW'),
   param('id').isMongoId().withMessage('Invalid review ID'),
   validate,
   deleteReview

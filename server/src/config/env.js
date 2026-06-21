@@ -1,12 +1,34 @@
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env from server root directory (where server.js lives)
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+// Try multiple .env locations in order of priority:
+// 1. Server root (server/.env) — where server.js lives
+// 2. Project root (.env) — monorepo root
+// 3. Current working directory (.env) — fallback
+const envPaths = [
+  path.join(__dirname, "../../.env"),   // server/.env (two dirs up from src/config/)
+  path.join(__dirname, "../../../.env"), // project-root/.env (three dirs up)
+  path.resolve(process.cwd(), ".env"),   // wherever the process was started
+];
+
+let envLoaded = false;
+for (const envPath of envPaths) {
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath, override: true });
+    console.log(`📁 Loaded .env from: ${envPath}`);
+    envLoaded = true;
+    break;
+  }
+}
+
+if (!envLoaded) {
+  console.warn('⚠️  No .env file found. Using default/fallback values. Create a .env file for custom configuration.');
+}
 
 const env = {
   PORT: process.env.PORT || 5000,
@@ -40,7 +62,7 @@ const requiredInProduction = [
 if (env.NODE_ENV === 'production') {
   const missing = [];
   for (const { key, value, mustNotBe, mustBe } of requiredInProduction) {
-    if (mustBe && value !== mustBe) continue; // Skip mustBe checks that don't apply
+    if (mustBe && value !== mustBe) continue;
     if (mustNotBe && value === mustNotBe) {
       missing.push(`${key} is using a default/fallback value`);
     }

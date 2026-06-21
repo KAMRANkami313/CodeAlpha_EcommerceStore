@@ -34,9 +34,9 @@ const ProductDetailPage = () => {
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
-  // Related products (same category, exclude current)
+    // Related products — only fetch when we have a valid product (avoids unnecessary API call on error)
   const { products: related, loading: relatedLoading } = useProducts(
-    product?.category ? { category: product.category, limit: 5 } : { limit: 5 }
+    product?.category ? { category: product.category, limit: 5 } : null
   );
 
   const [quantity, setQuantity] = useState(1);

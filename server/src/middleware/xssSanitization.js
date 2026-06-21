@@ -2,15 +2,27 @@
 import xss from 'xss';
 
 /**
- * Recursively XSS-sanitize strings inside any value.
- * Returns a NEW value — does not mutate input.
+ * XSS Sanitization Middleware
+ *
+ * Strips ALL HTML tags from incoming request data (body, query, params).
+ *
+ * ⚠️ IMPORTANT: This middleware uses an aggressive whitelist (empty whiteList)
+ * that removes ALL HTML tags from user input. This means:
+ *   - If a user types "I love <script> discussions", the output becomes "I love  discussions"
+ *   - The `stripIgnoreTagBody: ['script']` option removes content BETWEEN <script> tags entirely
+ *   - This is intentional for security — never render user input as raw HTML on the frontend
+ *
+ * If you need to support rich text input in the future:
+ *   1. Use a rich-text editor (e.g., TipTap, Quill) that stores structured data, not raw HTML
+ *   2. Sanitize on output (rendering), not just on input
+ *   3. Never use dangerouslySetInnerHTML with user-generated content
  */
 const sanitizeValue = (value) => {
   if (typeof value === 'string') {
     return xss(value, {
-      whiteList: {},          // strip ALL HTML tags
-      stripIgnoreTag: true,
-      stripIgnoreTagBody: ['script'],
+      whiteList: {},          // strip ALL HTML tags — no HTML is allowed in user input
+      stripIgnoreTag: true,   // strip tags that aren't in the whitelist
+      stripIgnoreTagBody: ['script'], // remove content between <script> tags entirely
     });
   }
   if (Array.isArray(value)) {

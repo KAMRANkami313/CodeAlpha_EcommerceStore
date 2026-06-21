@@ -18,6 +18,7 @@ const cartItemSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
+      min: [0, 'Price cannot be negative'],
     },
     quantity: {
       type: Number,
@@ -51,9 +52,9 @@ const cartSchema = new mongoose.Schema(
   }
 );
 
-// Recalculate totals before saving
-// Mongoose 7+: sync middleware no longer receives `next` callback.
-// Just let the function complete — Mongoose auto-advances.
+// Recalculate totals before saving.
+// Note: item.price is kept in sync with the latest Product price
+// by cartService.syncCartPricesFromDB() before each save.
 cartSchema.pre('save', function () {
   this.totalQuantity = this.items.reduce((sum, item) => sum + item.quantity, 0);
   this.totalPrice = this.items.reduce((sum, item) => sum + item.price * item.quantity, 0);

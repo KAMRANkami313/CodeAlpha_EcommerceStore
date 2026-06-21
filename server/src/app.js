@@ -92,6 +92,14 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const searchLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30, // 30 search requests per 15 min (text search is expensive)
+  message: 'Too many search requests. Please slow down.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 app.use('/api/', globalLimiter);
 
 // ─── Stripe Webhook (MUST be before express.json() for raw body) ──

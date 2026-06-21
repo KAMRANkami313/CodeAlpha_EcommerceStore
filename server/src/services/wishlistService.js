@@ -35,7 +35,16 @@ const addToWishlist = async (userId, productId) => {
   }
 
   wishlist.items.push({ product: productId });
-  await wishlist.save();
+
+  try {
+    await wishlist.save();
+  } catch (err) {
+    // Catch duplicate key error from the compound unique index (race condition safeguard)
+    if (err.code === 11000) {
+      throw new ApiError(400, 'Product already in wishlist');
+    }
+    throw err;
+  }
 
   return wishlist.populate(
     'items.product',

@@ -1,5 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
+/**
+ * Custom hook for data fetching with abort support.
+ *
+ * IMPORTANT: Pass a STABLE function reference (e.g., wrapped in useCallback)
+ * as apiCall, NOT an inline arrow function. Inline arrows create new references
+ * on every render, causing infinite re-fetch loops.
+ *
+ * ✅ Correct:   useFetch(useCallback(() => service.getById(id), [id]))
+ * ❌ Wrong:     useFetch(() => service.getById(id), [id])
+ */
 const useFetch = (apiCall, dependencies = []) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,8 +28,9 @@ const useFetch = (apiCall, dependencies = []) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await apiCall();
-      // Ignore result if the request was aborted (component unmounted or deps changed)
+      // Pass the abort signal to the API call so axios can cancel the request
+      const response = await apiCall(controller.signal);
+      // Ignore result if the request was aborted
       if (controller.signal.aborted) return;
       setData(response.data);
     } catch (err) {
@@ -35,7 +46,6 @@ const useFetch = (apiCall, dependencies = []) => {
   useEffect(() => {
     execute();
 
-    // Cleanup: abort the request when component unmounts or deps change
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();

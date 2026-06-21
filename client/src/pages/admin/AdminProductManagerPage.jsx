@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
@@ -56,6 +56,17 @@ const AdminProductManagerPage = () => {
   const [imagePreview, setImagePreview] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
+  // FIX: Track blob URLs so we can revoke them to prevent memory leaks
+  const blobUrlsRef = useRef([]);
+
+  // Revoke any lingering blob URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      blobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      blobUrlsRef.current = [];
+    };
+  }, []);
+
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState(null);
 
@@ -87,6 +98,11 @@ const AdminProductManagerPage = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
+  const revokeBlobUrls = () => {
+    blobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    blobUrlsRef.current = [];
+  };
+
   const openCreateForm = () => {
     setEditingProduct(null);
     setFormData(emptyForm);
@@ -116,8 +132,17 @@ const AdminProductManagerPage = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setFormImages(files);
+    // FIX: Revoke previous blob URLs before creating new ones
+    revokeBlobUrls();
     const previews = files.map((f) => URL.createObjectURL(f));
+    blobUrlsRef.current = previews;
     setImagePreview(previews);
+  };
+
+  const closeForm = () => {
+    // FIX: Revoke blob URLs when form closes
+    revokeBlobUrls();
+    setIsFormOpen(false);
   };
 
   const handleSubmit = async (e) => {
@@ -153,7 +178,7 @@ const AdminProductManagerPage = () => {
         await productService.createProduct(fd);
         toast.success('Product created successfully');
       }
-      setIsFormOpen(false);
+      closeForm();
       fetchProducts();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to save product');
@@ -383,7 +408,7 @@ const AdminProductManagerPage = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setIsFormOpen(false)}
+            onClick={closeForm}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -408,7 +433,7 @@ const AdminProductManagerPage = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setIsFormOpen(false)}
+                  onClick={closeForm}
                   className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 cursor-pointer transition-colors"
                   aria-label="Close"
                 >
@@ -580,7 +605,7 @@ const AdminProductManagerPage = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setIsFormOpen(false)}
+                    onClick={closeForm}
                     className="px-6 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors font-medium text-sm cursor-pointer"
                   >
                     Cancel

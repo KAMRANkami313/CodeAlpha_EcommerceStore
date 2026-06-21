@@ -87,8 +87,9 @@ const CheckoutForm = ({ onStepChange }) => {
   }, [step, onStepChange]);
 
   // When user selects Card, create a payment intent
+  // FIX: Added !creatingIntent guard to prevent race condition
   useEffect(() => {
-    if (paymentMethod === 'Card' && isStripeConfigured && !clientSecret) {
+    if (paymentMethod === 'Card' && isStripeConfigured && !clientSecret && !creatingIntent) {
       handleCreatePaymentIntent();
     }
   }, [paymentMethod]);

@@ -11,8 +11,10 @@ const getMyOrders = async (params = {}) => {
   return response.data;
 };
 
-const getOrderById = async (id) => {
-  const response = await api.get(API.ORDER_DETAIL(id));
+const getOrderById = async (id, options = {}) => {
+  const config = {};
+  if (options.signal) config.signal = options.signal;
+  const response = await api.get(API.ORDER_DETAIL(id), config);
   return response.data;
 };
 

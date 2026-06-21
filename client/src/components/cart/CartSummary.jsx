@@ -9,6 +9,7 @@ import {
   Check,
   ChevronRight,
   ArrowRight,
+  AlertTriangle,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import formatCurrency from '../../utils/formatCurrency.js';
@@ -94,6 +95,16 @@ const CartSummary = ({ cart }) => {
           />
         </div>
       </div>
+
+      {/* FIX: Demo-only warning when a promo code is applied */}
+      {appliedPromo && (
+        <div className="mb-4 p-2.5 rounded-xl bg-warning/10 border border-warning/30 flex items-start gap-2">
+          <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+          <p className="text-xs text-surface-600 dark:text-surface-300">
+            <span className="font-semibold">Demo only</span> — promo discounts shown here are for preview and will be applied at checkout.
+          </p>
+        </div>
+      )}
 
       {/* Promo code input */}
       <div className="mb-5">

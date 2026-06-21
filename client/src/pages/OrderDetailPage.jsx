@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -39,7 +40,12 @@ const statusSteps = [
 
 const OrderDetailPage = () => {
   const { id } = useParams();
-  const { data: orderData, loading, error } = useFetch(() => orderService.getOrderById(id), [id]);
+  // Use useCallback to create a stable function reference — prevents infinite re-fetch loop
+  const fetchOrder = useCallback(
+    (signal) => orderService.getOrderById(id, { signal }),
+    [id]
+  );
+  const { data: orderData, loading, error } = useFetch(fetchOrder, [fetchOrder]);
 
   if (loading) return <Loader label="Loading order details..." />;
 

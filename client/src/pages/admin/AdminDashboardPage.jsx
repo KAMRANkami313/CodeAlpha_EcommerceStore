@@ -36,23 +36,23 @@ const statusIcons = {
 
 const StatCard = ({ icon: Icon, label, value, gradient, subtext, delay = 0 }) => (
   <motion.div
-    initial={{ opacity: 0, y: 15 }}
+    initial={{ opacity: 0, y: 12 }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ delay }}
-    className="relative bg-white dark:bg-surface-800 rounded-2xl p-5 border border-surface-200 dark:border-surface-700 hover:shadow-soft transition-all duration-300 overflow-hidden group"
+    transition={{ delay, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+    className="relative bg-white dark:bg-surface-900 rounded-2xl p-6 border border-surface-150 dark:border-surface-850/60 hover:shadow-premium hover:border-primary-500/20 dark:hover:border-primary-500/20 transition-all duration-300 overflow-hidden group hover:-translate-y-0.5"
   >
-    {/* Decorative gradient blob */}
-    <div className={`absolute -top-8 -right-8 w-24 h-24 rounded-full ${gradient} opacity-10 group-hover:opacity-20 transition-opacity blur-2xl`} />
-    <div className="flex items-start justify-between relative">
-      <div>
-        <p className="text-xs text-surface-500 dark:text-surface-400 font-medium uppercase tracking-wider">{label}</p>
-        <p className="text-2xl font-bold text-surface-900 dark:text-white mt-2 tabular-nums">{value}</p>
+    {/* Subtle visual gradient glow backdrops */}
+    <div className={`absolute -top-12 -right-12 w-28 h-28 rounded-full ${gradient} opacity-5 group-hover:opacity-10 transition-opacity blur-2xl`} />
+    <div className="flex items-start justify-between relative z-10">
+      <div className="min-w-0">
+        <p className="text-2xs font-extrabold text-surface-400 dark:text-surface-500 uppercase tracking-widest">{label}</p>
+        <p className="text-2xl sm:text-3xl font-black text-surface-900 dark:text-white mt-2.5 tabular-nums tracking-tight leading-none">{value}</p>
         {subtext && (
-          <p className="text-xs text-surface-400 dark:text-surface-500 mt-1.5">{subtext}</p>
+          <p className="text-[11px] text-surface-450 dark:text-surface-400 mt-2 font-medium truncate">{subtext}</p>
         )}
       </div>
-      <div className={`p-3 rounded-2xl ${gradient} shadow-md`}>
-        <Icon className="w-5 h-5 text-white" />
+      <div className={`p-3 rounded-xl ${gradient} shadow-md group-hover:scale-105 transition-transform duration-300`}>
+        <Icon className="w-5 h-5 text-white stroke-2" />
       </div>
     </div>
   </motion.div>
@@ -78,14 +78,15 @@ const AdminDashboardPage = () => {
     fetchStats();
   }, []);
 
-  if (loading) return <Loader label="Loading dashboard..." />;
+  if (loading) return <Loader label="Loading dashboard analytics..." />;
+  
   if (error) {
     return (
-      <div className="text-center py-16">
-        <div className="w-16 h-16 mx-auto rounded-2xl bg-danger/10 flex items-center justify-center mb-4">
+      <div className="text-center py-20 select-none">
+        <div className="w-16 h-16 mx-auto rounded-2xl bg-danger-soft/10 dark:bg-danger/10 flex items-center justify-center mb-5 border border-danger/15">
           <XCircle className="w-8 h-8 text-danger" />
         </div>
-        <p className="text-danger text-lg font-semibold">{error}</p>
+        <p className="text-danger text-sm font-bold uppercase tracking-widest">{error}</p>
       </div>
     );
   }
@@ -97,37 +98,38 @@ const AdminDashboardPage = () => {
   const maxStatusCount = Math.max(1, ...Object.values(statusCounts));
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
+    <div className="space-y-6 sm:space-y-8 py-2">
+      
+      {/* Top Welcome Title Grid */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between gap-4 flex-wrap"
+        className="flex items-center justify-between gap-4 flex-wrap select-none"
       >
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold gradient-text-brand">Dashboard</h1>
-          <p className="text-surface-500 dark:text-surface-400 mt-1 flex items-center gap-1.5">
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-surface-900 dark:text-white font-display">Dashboard</h1>
+          <p className="text-xs text-surface-500 dark:text-surface-400 mt-1 flex items-center gap-1.5 font-medium">
             <Sparkles className="w-3.5 h-3.5 text-gold" />
-            Welcome back! Here's an overview of your store.
+            Welcome back! Here is an overview of your store.
           </p>
         </div>
       </motion.div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      {/* Main Quantitative Stats Panels */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
         <StatCard
           icon={DollarSign}
           label="Total Revenue"
           value={formatCurrency(stats?.totalRevenue || 0)}
           gradient="bg-gradient-to-br from-success to-emerald-600"
-          subtext="From paid orders"
+          subtext="From completed transactions"
           delay={0}
         />
         <StatCard
           icon={ShoppingBag}
           label="Total Orders"
           value={totalOrders}
-          gradient="bg-gradient-to-br from-primary-600 to-violet-600"
+          gradient="bg-gradient-to-br from-primary-500 to-indigo-600"
           subtext={`${processingCount} processing · ${shippedCount} shipped`}
           delay={0.05}
         />
@@ -135,44 +137,45 @@ const AdminDashboardPage = () => {
           icon={Package}
           label="Active Products"
           value={stats?.totalProducts || 0}
-          gradient="bg-gradient-to-br from-accent-500 to-amber-600"
-          subtext="In catalog"
+          gradient="bg-gradient-to-br from-accent-400 to-orange-600"
+          subtext="Catalog inventory units"
           delay={0.1}
         />
         <StatCard
           icon={Users}
           label="Total Users"
           value={stats?.totalUsers || 0}
-          gradient="bg-gradient-to-br from-fuchsia-600 to-pink-600"
-          subtext="Registered customers"
+          gradient="bg-gradient-to-br from-violet-500 to-fuchsia-600"
+          subtext="Registered accounts"
           delay={0.15}
         />
       </div>
 
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Orders */}
+      {/* Central Double Listing Layout columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        
+        {/* Left Side: Recent Orders Module */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden"
+          className="bg-white dark:bg-surface-900 rounded-3xl border border-surface-150 dark:border-surface-850/60 overflow-hidden shadow-soft"
         >
-          <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-700">
-            <h2 className="text-base font-bold text-surface-900 dark:text-white flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
+          <div className="flex items-center justify-between p-5 sm:p-6 border-b border-surface-100 dark:border-surface-850 select-none">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-surface-900 dark:text-white flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center border border-primary-100/25 dark:border-primary-900/15">
                 <Clock className="w-4 h-4 text-primary-600 dark:text-primary-400" />
               </div>
               Recent Orders
             </h2>
             <Link
               to={ROUTES.ADMIN_ORDERS}
-              className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:gap-2 flex items-center gap-1 no-underline transition-all"
+              className="text-2xs font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400 hover:text-primary-750 flex items-center gap-1 transition-all no-underline"
             >
               View All <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-          <div className="divide-y divide-surface-100 dark:divide-surface-700">
+          <div className="divide-y divide-surface-100/80 dark:divide-surface-850">
             {stats?.recentOrders?.length > 0 ? (
               stats.recentOrders.map((order, i) => {
                 const StatusIcon = statusIcons[order.orderStatus] || Package;
@@ -182,16 +185,16 @@ const AdminDashboardPage = () => {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.25 + i * 0.04 }}
-                    className="flex items-center justify-between px-5 py-3.5 hover:bg-surface-50 dark:hover:bg-surface-700/40 transition-colors"
+                    className="flex items-center justify-between px-5 sm:px-6 py-4 hover:bg-surface-50 dark:hover:bg-surface-950/40 transition-colors"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                        order.orderStatus === 'delivered' ? 'bg-success/10' :
-                        order.orderStatus === 'cancelled' ? 'bg-danger/10' :
-                        order.orderStatus === 'shipped' ? 'bg-primary/10' :
-                        'bg-warning/10'
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className={`w-9.5 h-9.5 rounded-xl flex items-center justify-center shrink-0 border select-none ${
+                        order.orderStatus === 'delivered' ? 'bg-success-soft/20 dark:bg-success/10 border-success/15' :
+                        order.orderStatus === 'cancelled' ? 'bg-danger-soft/10 dark:bg-danger/10 border-danger/15' :
+                        order.orderStatus === 'shipped' ? 'bg-primary-50 dark:bg-primary-950/20 border-primary-100/30' :
+                        'bg-warning-soft/20 dark:bg-warning/10 border-warning/15'
                       }`}>
-                        <StatusIcon className={`w-4 h-4 ${
+                        <StatusIcon className={`w-4.5 h-4.5 ${
                           order.orderStatus === 'delivered' ? 'text-success' :
                           order.orderStatus === 'cancelled' ? 'text-danger' :
                           order.orderStatus === 'shipped' ? 'text-primary-600 dark:text-primary-400' :
@@ -199,19 +202,19 @@ const AdminDashboardPage = () => {
                         }`} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-surface-900 dark:text-white truncate">
-                          {order.user?.name || 'Unknown'}
+                        <p className="text-sm font-bold text-surface-850 dark:text-white truncate">
+                          {order.user?.name || 'Anonymous User'}
                         </p>
-                        <p className="text-xs text-surface-500 dark:text-surface-400">
+                        <p className="text-[11px] font-medium text-surface-450 dark:text-surface-500 mt-0.5">
                           {order.items.length} item{order.items.length > 1 ? 's' : ''} · {new Date(order.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <Badge variant={statusColors[order.orderStatus]} size="xs" className="capitalize">
+                    <div className="flex items-center gap-4 shrink-0 pl-3">
+                      <Badge variant={statusColors[order.orderStatus]} size="xs" className="capitalize text-3xs font-extrabold px-2 py-0.5 select-none">
                         {order.orderStatus}
                       </Badge>
-                      <span className="text-sm font-bold text-surface-900 dark:text-white">
+                      <span className="text-xs sm:text-sm font-black tabular-nums text-surface-900 dark:text-white">
                         {formatCurrency(order.totalPrice)}
                       </span>
                     </div>
@@ -219,36 +222,36 @@ const AdminDashboardPage = () => {
                 );
               })
             ) : (
-              <div className="px-5 py-12 text-center">
-                <Package className="w-10 h-10 text-surface-300 dark:text-surface-600 mx-auto mb-2" />
-                <p className="text-sm text-surface-400 dark:text-surface-500">No orders yet</p>
+              <div className="px-5 py-14 text-center select-none">
+                <Package className="w-10 h-10 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
+                <p className="text-xs font-bold uppercase tracking-wider text-surface-400 dark:text-surface-555">No orders found yet</p>
               </div>
             )}
           </div>
         </motion.div>
 
-        {/* Top Products */}
+        {/* Right Side: Popular Top Selling Catalog Items */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden"
+          className="bg-white dark:bg-surface-900 rounded-3xl border border-surface-150 dark:border-surface-850/60 overflow-hidden shadow-soft"
         >
-          <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-700">
-            <h2 className="text-base font-bold text-surface-900 dark:text-white flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-accent-50 dark:bg-accent-900/30 flex items-center justify-center">
-                <TrendingUp className="w-4 h-4 text-accent-500" />
+          <div className="flex items-center justify-between p-5 sm:p-6 border-b border-surface-100 dark:border-surface-850 select-none">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-surface-900 dark:text-white flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-accent-50 dark:bg-accent-950/40 flex items-center justify-center border border-accent-100/25 dark:border-accent-900/15">
+                <TrendingUp className="w-4 h-4 text-accent-550" />
               </div>
               Top Products
             </h2>
             <Link
               to={ROUTES.ADMIN_PRODUCTS}
-              className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:gap-2 flex items-center gap-1 no-underline transition-all"
+              className="text-2xs font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400 hover:text-primary-750 flex items-center gap-1 transition-all no-underline"
             >
               View All <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-          <div className="divide-y divide-surface-100 dark:divide-surface-700">
+          <div className="divide-y divide-surface-100/80 dark:divide-surface-850">
             {stats?.topProducts?.length > 0 ? (
               stats.topProducts.map((product, index) => (
                 <motion.div
@@ -256,49 +259,49 @@ const AdminDashboardPage = () => {
                   initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.35 + index * 0.04 }}
-                  className="flex items-center justify-between px-5 py-3.5 hover:bg-surface-50 dark:hover:bg-surface-700/40 transition-colors"
+                  className="flex items-center justify-between px-5 sm:px-6 py-4 hover:bg-surface-50 dark:hover:bg-surface-950/40 transition-colors"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                      index === 0 ? 'bg-gold text-white' :
-                      index === 1 ? 'bg-surface-400 text-white' :
-                      index === 2 ? 'bg-amber-700 text-white' :
-                      'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300'
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shrink-0 select-none ${
+                      index === 0 ? 'bg-gold text-white shadow-xs' :
+                      index === 1 ? 'bg-surface-350 text-white' :
+                      index === 2 ? 'bg-amber-600 text-white' :
+                      'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300'
                     }`}>
                       {index + 1}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-surface-900 dark:text-white truncate">
+                      <p className="text-sm font-bold text-surface-850 dark:text-white truncate">
                         {product.name}
                       </p>
-                      <p className="text-xs text-surface-500 dark:text-surface-400">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-surface-400 dark:text-surface-500 mt-0.5">
                         {product.totalSold} sold
                       </p>
                     </div>
                   </div>
-                  <span className="text-sm font-bold text-surface-900 dark:text-white shrink-0">
+                  <span className="text-xs sm:text-sm font-black tabular-nums text-surface-900 dark:text-white shrink-0 pl-3">
                     {formatCurrency(product.revenue)}
                   </span>
                 </motion.div>
               ))
             ) : (
-              <div className="px-5 py-12 text-center">
-                <TrendingUp className="w-10 h-10 text-surface-300 dark:text-surface-600 mx-auto mb-2" />
-                <p className="text-sm text-surface-400 dark:text-surface-500">No sales data yet</p>
+              <div className="px-5 py-14 text-center select-none">
+                <TrendingUp className="w-10 h-10 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
+                <p className="text-xs font-bold uppercase tracking-wider text-surface-400 dark:text-surface-555">No sales history yet</p>
               </div>
             )}
           </div>
         </motion.div>
       </div>
 
-      {/* Order Status Overview — chart-like bars */}
+      {/* Footer Grid: Analytical Status Overview Percentage Bar Widgets */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-5"
+        className="bg-white dark:bg-surface-900 rounded-3xl border border-surface-150 dark:border-surface-850/60 p-5 sm:p-6 shadow-soft"
       >
-        <h2 className="text-base font-bold text-surface-900 dark:text-white mb-5">Order Status Overview</h2>
+        <h2 className="text-sm font-bold uppercase tracking-wider text-surface-900 dark:text-white mb-5 select-none">Order Status Overview</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {['processing', 'shipped', 'delivered', 'cancelled'].map((status, i) => {
             const count = statusCounts[status] || 0;
@@ -315,23 +318,23 @@ const AdminDashboardPage = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.45 + i * 0.05 }}
-                className="p-4 rounded-xl bg-surface-50 dark:bg-surface-700/40 border border-surface-100 dark:border-surface-700"
+                className="p-4 rounded-2xl bg-surface-50 dark:bg-surface-950/20 border border-surface-100 dark:border-surface-850 select-none"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <StatusIcon className={`w-4 h-4 ${
+                <div className="flex items-center justify-between mb-3">
+                  <StatusIcon className={`w-4.5 h-4.5 ${
                     status === 'delivered' ? 'text-success' :
                     status === 'cancelled' ? 'text-danger' :
-                    status === 'shipped' ? 'text-primary-600 dark:text-primary-400' :
+                    status === 'shipped' ? 'text-primary-600 dark:text-primary-450' :
                     'text-warning'
                   }`} />
-                  <span className="text-2xl font-bold text-surface-900 dark:text-white tabular-nums">{count}</span>
+                  <span className="text-xl font-black text-surface-900 dark:text-white tabular-nums">{count}</span>
                 </div>
-                <p className="text-xs text-surface-500 dark:text-surface-400 capitalize mb-2">{status}</p>
-                <div className="h-1.5 bg-surface-200 dark:bg-surface-600 rounded-full overflow-hidden">
+                <p className="text-3xs font-extrabold text-surface-450 dark:text-surface-500 uppercase tracking-widest mb-3">{status}</p>
+                <div className="h-1.5 bg-surface-200 dark:bg-surface-800 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${percentage}%` }}
-                    transition={{ delay: 0.6 + i * 0.05, duration: 0.6 }}
+                    transition={{ delay: 0.6 + i * 0.05, duration: 0.7, ease: "easeOut" }}
                     className={`h-full rounded-full ${barColor}`}
                   />
                 </div>

@@ -9,12 +9,18 @@ import Badge from '../components/common/Badge.jsx';
 import ROUTES from '../constants/ROUTES.js';
 import { Link } from 'react-router-dom';
 
+/**
+ * ProductListPage — Premium Redesign
+ *
+ * A refined product catalog workspace featuring high-contrast layout controls,
+ * custom pagination pill grids, and smooth drawer transitions.
+ */
 const ProductListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [view, setView] = useState('grid'); // 'grid' | 'list'
 
-  // Initialize filters from URL params
+  // Initialize filters from URL params (original robust calculation)
   const buildFiltersFromURL = useCallback(() => ({
     category:  searchParams.get('category') || '',
     sort:      searchParams.get('sort') || 'newest',
@@ -74,62 +80,74 @@ const ProductListPage = () => {
   return (
     <div className="min-h-screen">
       {/* Page header with breadcrumb */}
-      <div className="bg-white dark:bg-surface-900 border-b border-surface-200 dark:border-surface-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-xs text-surface-500 dark:text-surface-400 mb-3" aria-label="Breadcrumb">
-            <Link to={ROUTES.HOME} className="hover:text-primary-600 dark:hover:text-primary-400 no-underline flex items-center gap-1">
-              <Home className="w-3 h-3" /> Home
+      <div className="bg-white dark:bg-surface-900 border-b border-surface-200/60 dark:border-surface-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
+          
+          {/* Breadcrumb Capsule Links */}
+          <nav className="flex items-center gap-2 text-2xs font-bold text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-4" aria-label="Breadcrumb">
+            <Link to={ROUTES.HOME} className="hover:text-primary-600 dark:hover:text-primary-400 no-underline flex items-center gap-1 transition-colors">
+              <Home className="w-3.5 h-3.5" /> Home
             </Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-surface-700 dark:text-surface-300 font-medium">Products</span>
+            <ChevronRight className="w-3.5 h-3.5 text-surface-300 dark:text-surface-700" />
+            <Link to={ROUTES.PRODUCTS} className="hover:text-primary-600 dark:hover:text-primary-400 no-underline transition-colors">
+              Products
+            </Link>
             {filters.category && (
               <>
-                <ChevronRight className="w-3 h-3" />
-                <span className="text-primary-600 dark:text-primary-400 font-medium">{filters.category}</span>
+                <ChevronRight className="w-3.5 h-3.5 text-surface-300 dark:text-surface-700" />
+                <span className="text-primary-600 dark:text-primary-400 font-extrabold">{filters.category}</span>
               </>
             )}
           </nav>
 
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-surface-900 dark:text-white font-display tracking-tight">
+              <h1 className="text-2xl md:text-3xl font-black text-surface-900 dark:text-white font-display tracking-tight leading-none">
                 {filters.category || 'All Products'}
               </h1>
-              <p className="text-surface-500 dark:text-surface-400 mt-1 text-sm">
-                {loading ? 'Loading...' : `${pagination.total || 0} ${pagination.total === 1 ? 'product' : 'products'} found`}
+              <p className="text-sm font-semibold text-surface-500 dark:text-surface-400 mt-2 select-none">
+                {loading ? 'Loading Catalog...' : `${pagination.total || 0} ${pagination.total === 1 ? 'product' : 'products'} found`}
               </p>
             </div>
 
-            {/* Mobile filter button + view toggle */}
-            <div className="flex items-center gap-2">
-              {/* View toggle (desktop) */}
-              <div className="hidden sm:flex items-center bg-surface-100 dark:bg-surface-800 rounded-lg p-1">
+            {/* Layout controls */}
+            <div className="flex items-center gap-2 select-none">
+              
+              {/* View Layout Toggle (Desktop) */}
+              <div className="hidden sm:flex items-center bg-surface-50 dark:bg-surface-955 rounded-xl p-1 border border-surface-200/30 dark:border-surface-800/30">
                 <button
                   onClick={() => setView('grid')}
                   aria-label="Grid view"
-                  className={`p-1.5 rounded-md transition-colors cursor-pointer ${view === 'grid' ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'}`}
+                  className={`p-1.5 rounded-lg transition-all duration-200 cursor-pointer ${
+                    view === 'grid' 
+                      ? 'bg-white dark:bg-surface-800 text-primary-600 dark:text-primary-400 shadow-sm' 
+                      : 'text-surface-400 hover:text-surface-700 dark:hover:text-surface-300'
+                  }`}
                 >
-                  <LayoutGrid className="w-4 h-4" />
+                  <LayoutGrid className="w-4.5 h-4.5" />
                 </button>
                 <button
                   onClick={() => setView('list')}
                   aria-label="List view"
-                  className={`p-1.5 rounded-md transition-colors cursor-pointer ${view === 'list' ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'}`}
+                  className={`p-1.5 rounded-lg transition-all duration-200 cursor-pointer ${
+                    view === 'list' 
+                      ? 'bg-white dark:bg-surface-800 text-primary-600 dark:text-primary-400 shadow-sm' 
+                      : 'text-surface-400 hover:text-surface-700 dark:hover:text-surface-300'
+                  }`}
                 >
-                  <List className="w-4 h-4" />
+                  <List className="w-4.5 h-4.5" />
                 </button>
               </div>
 
-              {/* Mobile filter button */}
+              {/* Mobile Filter Toggle Button */}
               <button
                 onClick={() => setShowMobileFilters(true)}
-                className="lg:hidden inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-sm font-medium text-surface-700 dark:text-surface-300 cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-700"
+                className="lg:hidden inline-flex items-center gap-2 px-4.5 py-2.5 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl text-xs font-bold uppercase tracking-wider text-surface-700 dark:text-surface-300 cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
               >
-                <SlidersHorizontal className="w-4 h-4" />
+                <SlidersHorizontal className="w-4 h-4 text-surface-400" />
                 Filters
                 {activeFilterCount > 0 && (
-                  <span className="w-5 h-5 bg-primary-600 text-white text-2xs rounded-full flex items-center justify-center font-bold">
+                  <span className="w-5 h-5 bg-primary-600 text-white text-2xs rounded-full flex items-center justify-center font-extrabold font-mono shadow-sm">
                     {activeFilterCount}
                   </span>
                 )}
@@ -139,36 +157,52 @@ const ProductListPage = () => {
 
           {/* Active filter chips */}
           {activeFilterCount > 0 && (
-            <div className="flex flex-wrap items-center gap-2 mt-4">
+            <div className="flex flex-wrap items-center gap-2 mt-4.5 animate-fade-in">
               {filters.category && (
-                <Badge variant="primary" size="sm" className="cursor-pointer" >
-                  {filters.category}
-                  <button onClick={() => handleFilterChange({ category: '', page: 1 })} className="ml-1 hover:text-white">
-                    <X className="w-3 h-3" />
+                <Badge variant="primary" size="sm" className="font-bold flex items-center gap-1.5 py-1 pl-3 pr-1.5 rounded-full border border-primary-200/30">
+                  Category: {filters.category}
+                  <button 
+                    onClick={() => handleFilterChange({ category: '', page: 1 })} 
+                    className="p-0.5 rounded-full hover:bg-primary-700 hover:text-white transition-all cursor-pointer"
+                    aria-label="Remove category filter"
+                  >
+                    <X className="w-3 h-3" strokeWidth={3} />
                   </button>
                 </Badge>
               )}
               {filters.search && (
-                <Badge variant="primary" size="sm">
-                  "{filters.search}"
-                  <button onClick={() => handleFilterChange({ search: '', page: 1 })} className="ml-1 hover:text-white">
-                    <X className="w-3 h-3" />
+                <Badge variant="primary" size="sm" className="font-bold flex items-center gap-1.5 py-1 pl-3 pr-1.5 rounded-full border border-primary-200/30">
+                  Query: "{filters.search}"
+                  <button 
+                    onClick={() => handleFilterChange({ search: '', page: 1 })} 
+                    className="p-0.5 rounded-full hover:bg-primary-700 hover:text-white transition-all cursor-pointer"
+                    aria-label="Remove search query"
+                  >
+                    <X className="w-3 h-3" strokeWidth={3} />
                   </button>
                 </Badge>
               )}
               {(filters.minPrice || filters.maxPrice) && (
-                <Badge variant="primary" size="sm">
+                <Badge variant="primary" size="sm" className="font-bold flex items-center gap-1.5 py-1 pl-3 pr-1.5 rounded-full border border-primary-200/30 font-mono">
                   {filters.minPrice ? `PKR ${filters.minPrice}` : 'PKR 0'} – {filters.maxPrice ? `PKR ${filters.maxPrice}` : '∞'}
-                  <button onClick={() => handleFilterChange({ minPrice: '', maxPrice: '', page: 1 })} className="ml-1 hover:text-white">
-                    <X className="w-3 h-3" />
+                  <button 
+                    onClick={() => handleFilterChange({ minPrice: '', maxPrice: '', page: 1 })} 
+                    className="p-0.5 rounded-full hover:bg-primary-700 hover:text-white transition-all cursor-pointer"
+                    aria-label="Remove price filter"
+                  >
+                    <X className="w-3 h-3" strokeWidth={3} />
                   </button>
                 </Badge>
               )}
               {filters.featured && (
-                <Badge variant="accent" size="sm">
+                <Badge variant="accent" size="sm" className="font-bold flex items-center gap-1.5 py-1 pl-3 pr-1.5 rounded-full border border-accent-200/30">
                   Featured
-                  <button onClick={() => handleFilterChange({ featured: '', page: 1 })} className="ml-1 hover:text-white">
-                    <X className="w-3 h-3" />
+                  <button 
+                    onClick={() => handleFilterChange({ featured: '', page: 1 })} 
+                    className="p-0.5 rounded-full hover:bg-accent-700 hover:text-white transition-all cursor-pointer"
+                    aria-label="Remove featured filter"
+                  >
+                    <X className="w-3 h-3" strokeWidth={3} />
                   </button>
                 </Badge>
               )}
@@ -177,17 +211,18 @@ const ProductListPage = () => {
         </div>
       </div>
 
-      {/* Main content */}
+      {/* Main Content Workspace */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
-          {/* Desktop sidebar — sticky */}
+          
+          {/* Desktop Filter Sidebar (Sticky Panel) */}
           <aside className="hidden lg:block w-72 shrink-0">
             <div className="sticky top-24">
               <ProductFilters filters={filters} onFilterChange={handleFilterChange} />
             </div>
           </aside>
 
-          {/* Product grid */}
+          {/* Product Grid Panel */}
           <div className="flex-1 min-w-0">
             <ProductGrid
               products={products}
@@ -196,77 +231,79 @@ const ProductListPage = () => {
               error={error}
             />
 
-            {/* Pagination */}
+            {/* Pagination Controls */}
             {pagination.pages > 1 && (
-              <nav className="flex items-center justify-center gap-1.5 mt-10" aria-label="Pagination">
-                {/* Prev */}
-                <button
-                  onClick={() => handleFilterChange({ page: (pagination.page || 1) - 1 })}
-                  disabled={pagination.page <= 1}
-                  className="p-2 rounded-lg text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                  aria-label="Previous page"
-                >
-                  <ChevronRight className="w-4 h-4 rotate-180" />
-                </button>
+              <nav className="flex flex-col items-center justify-center gap-3.5 mt-12 select-none" aria-label="Pagination">
+                <div className="flex items-center gap-1.5">
+                  {/* Prev Button */}
+                  <button
+                    onClick={() => handleFilterChange({ page: (pagination.page || 1) - 1 })}
+                    disabled={pagination.page <= 1}
+                    className="p-2.5 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors border border-surface-200/40 dark:border-surface-800/40"
+                    aria-label="Previous page"
+                  >
+                    <ChevronRight className="w-4.5 h-4.5 rotate-180" strokeWidth={2.5} />
+                  </button>
 
-                {buildPaginationItems().map((item, i) =>
-                  item === '...' ? (
-                    <span key={`ellipsis-${i}`} className="w-10 h-10 flex items-center justify-center text-surface-400">…</span>
-                  ) : (
-                    <button
-                      key={item}
-                      onClick={() => handleFilterChange({ page: item })}
-                      aria-current={pagination.page === item ? 'page' : undefined}
-                      className={`min-w-10 h-10 px-3 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
-                        pagination.page === item
-                          ? 'bg-primary-600 text-white shadow-brand'
-                          : 'text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800'
-                      }`}
-                    >
-                      {item}
-                    </button>
-                  )
-                )}
+                  {buildPaginationItems().map((item, i) =>
+                    item === '...' ? (
+                      <span key={`ellipsis-${i}`} className="w-11 h-11 flex items-center justify-center text-surface-400 font-mono tracking-widest select-none">…</span>
+                    ) : (
+                      <button
+                        key={item}
+                        onClick={() => handleFilterChange({ page: item })}
+                        aria-current={pagination.page === item ? 'page' : undefined}
+                        className={`min-w-11 h-11 px-3.5 rounded-xl text-xs font-bold transition-all cursor-pointer font-mono ${
+                          pagination.page === item
+                            ? 'bg-primary-600 text-white shadow-brand'
+                            : 'text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 border border-transparent'
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    )
+                  )}
 
-                {/* Next */}
-                <button
-                  onClick={() => handleFilterChange({ page: (pagination.page || 1) + 1 })}
-                  disabled={pagination.page >= pagination.pages}
-                  className="p-2 rounded-lg text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                  aria-label="Next page"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+                  {/* Next Button */}
+                  <button
+                    onClick={() => handleFilterChange({ page: (pagination.page || 1) + 1 })}
+                    disabled={pagination.page >= pagination.pages}
+                    className="p-2.5 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer transition-colors border border-surface-200/40 dark:border-surface-800/40"
+                    aria-label="Next page"
+                  >
+                    <ChevronRight className="w-4.5 h-4.5" strokeWidth={2.5} />
+                  </button>
+                </div>
+                
+                {/* Secondary Page Info Label */}
+                <p className="text-center text-[10px] font-bold text-surface-400 dark:text-surface-500 uppercase tracking-widest select-none">
+                  Page {pagination.page} of {pagination.pages} · {pagination.total} Total Products
+                </p>
               </nav>
-            )}
-
-            {/* Page info */}
-            {pagination.pages > 1 && (
-              <p className="text-center text-xs text-surface-400 dark:text-surface-500 mt-3">
-                Page {pagination.page} of {pagination.pages} · {pagination.total} total
-              </p>
             )}
           </div>
         </div>
       </div>
 
-      {/* Mobile filter drawer */}
+      {/* Mobile Filter Slide Drawer */}
       <AnimatePresence>
         {showMobileFilters && (
           <>
+            {/* Backdrop blur overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 bg-surface-950/50 backdrop-blur-sm z-50"
+              className="lg:hidden fixed inset-0 bg-surface-950/40 backdrop-blur-xs z-50"
               onClick={() => setShowMobileFilters(false)}
             />
+            {/* Sliding drawer panel */}
             <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-              className="lg:hidden fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] bg-surface-50 dark:bg-surface-950 z-50 overflow-y-auto p-4"
+              transition={{ type: 'spring', damping: 28, stiffness: 350 }}
+              className="lg:hidden fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] bg-surface-50 dark:bg-surface-950 z-50 overflow-y-auto p-4 shadow-premium border-r border-surface-200/40 dark:border-surface-800/40"
             >
               <ProductFilters
                 filters={filters}

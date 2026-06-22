@@ -26,57 +26,79 @@ const CartPage = () => {
     if (isAuthenticated) fetchCart();
   }, [isAuthenticated, fetchCart]);
 
-  // Not authenticated state
+  // Not authenticated state panel
   if (!isAuthenticated) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 flex items-center justify-center min-h-[60vh]">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md mx-auto text-center py-16"
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-md w-full text-center p-8 sm:p-10 rounded-3xl bg-white dark:bg-surface-900 border border-surface-150 dark:border-surface-850 shadow-premium relative overflow-hidden"
         >
-          <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 bg-primary-500/20 blur-3xl rounded-full" />
-            <div className="relative w-24 h-24 mx-auto rounded-3xl bg-linear-to-br from-primary-500 to-violet-600 flex items-center justify-center shadow-glow">
-              <ShoppingBag className="w-12 h-12 text-white" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 bg-primary-500/10 rounded-full blur-3xl pointer-events-none z-0" />
+          
+          <div className="relative z-10 space-y-6">
+            <div className="relative inline-block select-none">
+              <div className="relative w-20 h-24 mx-auto rounded-2xl bg-linear-to-br from-primary-500 to-indigo-600 flex items-center justify-center shadow-brand overflow-hidden">
+                <ShoppingBag className="w-10 h-10 text-white" strokeWidth={2} />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <h1 className="text-2xl sm:text-3xl font-black text-surface-900 dark:text-white font-display tracking-tight leading-none">Your Cart Awaits</h1>
+              <p className="text-xs sm:text-sm font-semibold text-surface-555 dark:text-surface-400 leading-relaxed">
+                Sign in to view your saved items, apply promo codes, and check out faster.
+              </p>
+            </div>
+            
+            <div className="pt-2">
+              <Link to={ROUTES.LOGIN} className="no-underline">
+                <Button variant="gradient" size="lg" iconRight={ArrowRight} className="w-full font-extrabold uppercase tracking-widest py-3.5 shadow-brand">
+                  Login to Continue
+                </Button>
+              </Link>
             </div>
           </div>
-          <h1 className="text-3xl font-bold gradient-text-brand mb-2 font-display tracking-tight">Your Cart Awaits</h1>
-          <p className="text-surface-500 dark:text-surface-400 mb-8">
-            Sign in to view your saved items, apply promo codes, and check out faster.
-          </p>
-          <Link to={ROUTES.LOGIN}>
-            <Button variant="gradient" size="lg" iconRight={ArrowRight}>Login to Continue</Button>
-          </Link>
         </motion.div>
       </div>
     );
   }
 
-  // Empty cart state
+  // Empty cart state panel
   if (cart.items.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 flex items-center justify-center min-h-[60vh]">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md mx-auto text-center py-16"
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-md w-full text-center p-8 sm:p-10 rounded-3xl bg-white dark:bg-surface-900 border border-surface-150 dark:border-surface-850 shadow-premium relative overflow-hidden"
         >
-          <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 bg-surface-400/20 blur-3xl rounded-full" />
-            <div className="relative w-24 h-24 mx-auto rounded-3xl bg-surface-100 dark:bg-surface-700 flex items-center justify-center">
-              <ShoppingBag className="w-12 h-12 text-surface-400 dark:text-surface-500" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 bg-surface-500/10 rounded-full blur-3xl pointer-events-none z-0" />
+          
+          <div className="relative z-10 space-y-6">
+            <div className="relative inline-block select-none">
+              <div className="relative w-20 h-24 mx-auto rounded-2xl bg-surface-50 dark:bg-surface-950 flex items-center justify-center border border-surface-150 dark:border-surface-850">
+                <ShoppingBag className="w-10 h-10 text-surface-400 dark:text-surface-500" strokeWidth={1.5} />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <h1 className="text-2xl sm:text-3xl font-black text-surface-900 dark:text-white font-display tracking-tight leading-none">Your Cart is Empty</h1>
+              <p className="text-xs sm:text-sm font-semibold text-surface-555 dark:text-surface-400 leading-relaxed">
+                Looks like you haven't added anything yet. Let's find something you'll love.
+              </p>
+            </div>
+            
+            <div className="pt-2">
+              <Link to={ROUTES.PRODUCTS} className="no-underline">
+                <Button variant="gradient" size="lg" icon={ShoppingBag} iconRight={ArrowRight} className="w-full font-extrabold uppercase tracking-widest py-3.5 shadow-brand">
+                  Start Shopping
+                </Button>
+              </Link>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-surface-800 dark:text-white mb-2 font-display tracking-tight">Your cart is empty</h1>
-          <p className="text-surface-500 dark:text-surface-400 mb-8">
-            Looks like you haven't added anything yet. Let's find something you'll love.
-          </p>
-          <Link to={ROUTES.PRODUCTS}>
-            <Button variant="gradient" size="lg" icon={ShoppingBag} iconRight={ArrowRight}>
-              Start Shopping
-            </Button>
-          </Link>
         </motion.div>
       </div>
     );
@@ -86,65 +108,69 @@ const CartPage = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
     >
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-surface-500 dark:text-surface-400 mb-4" aria-label="Breadcrumb">
+      {/* Breadcrumb Navigation */}
+      <nav className="flex items-center gap-2 text-2xs font-bold text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-5 select-none" aria-label="Breadcrumb">
         <Link to={ROUTES.HOME} className="hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-1 transition-colors no-underline">
           <HomeIcon className="w-3.5 h-3.5" /> Home
         </Link>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <span className="text-surface-800 dark:text-white font-medium">Cart</span>
+        <ChevronRight className="w-3.5 h-3.5 text-surface-300 dark:text-surface-750" />
+        <span className="text-primary-600 dark:text-primary-400 font-extrabold">Cart</span>
       </nav>
 
-      {/* Page header */}
-      <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
+      {/* Page Header */}
+      <div className="flex items-end justify-between gap-4 mb-7 flex-wrap">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold gradient-text-brand mb-1 font-display tracking-tight">Shopping Cart</h1>
-          <p className="text-sm text-surface-500 dark:text-surface-400">
+          <h1 className="text-2xl md:text-3xl font-black text-surface-900 dark:text-white font-display tracking-tight leading-none">Shopping Cart</h1>
+          <p className="text-sm font-semibold text-surface-500 dark:text-surface-400 mt-2 select-none">
             {cart.totalQuantity} {cart.totalQuantity === 1 ? 'item' : 'items'} in your cart
           </p>
         </div>
         <Link
           to={ROUTES.PRODUCTS}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2.5 transition-all no-underline"
+          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400 hover:text-primary-750 transition-colors no-underline"
         >
           Continue Shopping <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
 
-      {/* 2-column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        {/* Items list (left, 2/3) */}
-        <div className="lg:col-span-2 space-y-3">
-          {cart.items.map((item) => (
-            <CartItem key={item.product._id || item.product} item={item} />
-          ))}
+      {/* Strict 2-Column Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start relative">
+        
+        {/* Left Column: Cart Items List */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-3.5">
+            {cart.items.map((item) => (
+              <CartItem key={item.product._id || item.product} item={item} />
+            ))}
+          </div>
 
-          {/* Trust badges row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
+          {/* Premium Frosted Trust Badges Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 select-none">
             {[
               { icon: Lock, label: 'Secure Checkout', sub: '256-bit SSL' },
-              { icon: Truck, label: 'Fast Delivery', sub: '2-5 days' },
-              { icon: RotateCcw, label: 'Easy Returns', sub: 'Within 7 days' },
-              { icon: ShieldCheck, label: 'Authentic', sub: '100% genuine' },
+              { icon: Truck, label: 'Fast Delivery', sub: '2-5 business days' },
+              { icon: RotateCcw, label: 'Easy Returns', sub: 'Within 14 days' },
+              { icon: ShieldCheck, label: 'Authentic Gear', sub: '100% genuine' },
             ].map(({ icon: Icon, label, sub }) => (
               <div
                 key={label}
-                className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-surface-50 dark:bg-surface-800/60 border border-surface-100 dark:border-surface-700 text-center"
+                className="flex flex-col items-center gap-1.5 p-4 rounded-2xl bg-white dark:bg-surface-900 border border-surface-150 dark:border-surface-850 text-center shadow-xs"
               >
                 <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 <div>
-                  <div className="text-xs font-semibold text-surface-700 dark:text-surface-200">{label}</div>
-                  <div className="text-[10px] text-surface-400 dark:text-surface-500">{sub}</div>
+                  <div className="text-[10px] font-extrabold text-surface-800 dark:text-surface-200 uppercase tracking-wider leading-tight">{label}</div>
+                  <div className="text-[9px] font-bold text-surface-400 dark:text-surface-500 uppercase tracking-widest leading-none mt-1.5">{sub}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Order summary (right, 1/3, sticky) */}
-        <div className="lg:col-span-1">
+        {/* Right Column: Order Summary Column Wrapper */}
+        <div className="lg:col-span-1 lg:sticky lg:top-24 z-10 w-full">
           <CartSummary cart={cart} />
         </div>
       </div>

@@ -43,8 +43,18 @@ const getAllProducts = async (filters = {}) => {
     if (minPrice) query.price.$gte = parseFloat(minPrice);
     if (maxPrice) query.price.$lte = parseFloat(maxPrice);
   }
+  
   if (search) {
-    query.$text = { $search: search };
+    // Escape special regex characters to prevent query crash exploits
+    const escapedSearch = search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    
+    // Fuzzy search matching name, description, category, or brand
+    query.$or = [
+      { name: { $regex: escapedSearch, $options: 'i' } },
+      { description: { $regex: escapedSearch, $options: 'i' } },
+      { category: { $regex: escapedSearch, $options: 'i' } },
+      { brand: { $regex: escapedSearch, $options: 'i' } }
+    ];
   }
 
   // Build sort

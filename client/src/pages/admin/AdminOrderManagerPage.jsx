@@ -113,78 +113,82 @@ const AdminOrderManagerPage = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-6 sm:space-y-8 py-2">
+      
+      {/* Header Panel */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 select-none"
       >
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold gradient-text-brand">Orders</h1>
-          <p className="text-surface-500 dark:text-surface-400 mt-1 flex items-center gap-1.5">
-            <ShoppingBag className="w-3.5 h-3.5" />
-            Manage and track all customer orders · {pagination.total} total
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight text-surface-900 dark:text-white font-display">Orders</h1>
+          <p className="text-xs text-surface-500 dark:text-surface-400 mt-1.5 flex items-center gap-2 font-medium">
+            <ShoppingBag className="w-3.5 h-3.5 text-primary-500" />
+            Manage and track customer orders · <span className="font-bold text-surface-900 dark:text-white tabular-nums">{pagination.total}</span> total
           </p>
         </div>
       </motion.div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Control Filters Block */}
+      <div className="flex flex-col xl:flex-row gap-4">
+        {/* Search Input Bar */}
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 pointer-events-none" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 pointer-events-none" />
           <input
             type="text"
             placeholder="Search by customer name or phone..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-surface-150 dark:border-surface-850 bg-white dark:bg-surface-900 text-surface-900 dark:text-white text-xs font-medium placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all shadow-xs"
           />
         </div>
-        <div className="flex items-center gap-1.5 p-1 bg-surface-100 dark:bg-surface-800 rounded-xl overflow-x-auto">
+        
+        {/* Status Capsule Filters */}
+        <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-950 rounded-2xl overflow-x-auto scrollbar-hide select-none border border-surface-150/45 dark:border-surface-850/50 self-start xl:self-center">
           {STATUS_OPTIONS.map((status) => (
             <button
               key={status}
               onClick={() => { setStatusFilter(status); setPage(1); }}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                 statusFilter === status
-                  ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-sm'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white'
+                  ? 'bg-white dark:bg-surface-850 text-primary-600 dark:text-primary-400 shadow-sm border border-surface-200/50 dark:border-surface-750/30'
+                  : 'text-surface-500 dark:text-surface-400 hover:text-surface-850 dark:hover:text-white'
               }`}
             >
-              {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
+              {status === 'all' ? 'All' : status}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Orders Table */}
+      {/* Main Order Workspace */}
       {loading ? (
         <Loader label="Loading orders..." />
       ) : orders.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-surface-800 rounded-2xl border border-dashed border-surface-200 dark:border-surface-700">
-          <div className="w-20 h-20 mx-auto rounded-3xl bg-surface-100 dark:bg-surface-700 flex items-center justify-center mb-4">
-            <Package className="w-10 h-10 text-surface-300 dark:text-surface-500" />
+        <div className="text-center py-20 bg-white dark:bg-surface-900 rounded-3xl border border-dashed border-surface-200 dark:border-surface-800 select-none">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-surface-100 dark:bg-surface-950 flex items-center justify-center mb-4 border border-surface-150 dark:border-surface-850">
+            <Package className="w-7 h-7 text-surface-300 dark:text-surface-700" />
           </div>
-          <p className="text-surface-700 dark:text-surface-200 font-semibold">No orders found</p>
-          <p className="text-sm text-surface-400 dark:text-surface-500 mt-1">Try adjusting filters</p>
+          <p className="text-surface-800 dark:text-surface-200 font-bold uppercase tracking-wider text-xs">No orders found</p>
+          <p className="text-xs text-surface-400 dark:text-surface-500 mt-1">Try adjusting the search criteria or status filter tabs</p>
         </div>
       ) : (
-        <div className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 overflow-hidden shadow-soft">
+        <div className="bg-white dark:bg-surface-900 rounded-3xl border border-surface-150 dark:border-surface-850/60 overflow-hidden shadow-soft">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-700/50">
-                  <th className="text-left px-5 py-3 font-semibold text-surface-600 dark:text-surface-300 text-xs uppercase tracking-wider">Order ID</th>
-                  <th className="text-left px-5 py-3 font-semibold text-surface-600 dark:text-surface-300 text-xs uppercase tracking-wider">Customer</th>
-                  <th className="text-left px-5 py-3 font-semibold text-surface-600 dark:text-surface-300 text-xs uppercase tracking-wider">Items</th>
-                  <th className="text-left px-5 py-3 font-semibold text-surface-600 dark:text-surface-300 text-xs uppercase tracking-wider">Total</th>
-                  <th className="text-left px-5 py-3 font-semibold text-surface-600 dark:text-surface-300 text-xs uppercase tracking-wider">Status</th>
-                  <th className="text-left px-5 py-3 font-semibold text-surface-600 dark:text-surface-300 text-xs uppercase tracking-wider">Date</th>
-                  <th className="text-right px-5 py-3 font-semibold text-surface-600 dark:text-surface-300 text-xs uppercase tracking-wider">Actions</th>
+                <tr className="border-b border-surface-100 dark:border-surface-850 bg-surface-50/50 dark:bg-surface-950/20 select-none">
+                  <th className="px-6 py-4.5 font-bold text-surface-450 dark:text-surface-500 text-3xs uppercase tracking-widest">Order ID</th>
+                  <th className="px-6 py-4.5 font-bold text-surface-450 dark:text-surface-500 text-3xs uppercase tracking-widest">Customer</th>
+                  <th className="px-6 py-4.5 font-bold text-surface-450 dark:text-surface-500 text-3xs uppercase tracking-widest">Items</th>
+                  <th className="px-6 py-4.5 font-bold text-surface-450 dark:text-surface-500 text-3xs uppercase tracking-widest">Total</th>
+                  <th className="px-6 py-4.5 font-bold text-surface-450 dark:text-surface-500 text-3xs uppercase tracking-widest">Status</th>
+                  <th className="px-6 py-4.5 font-bold text-surface-450 dark:text-surface-500 text-3xs uppercase tracking-widest">Date</th>
+                  <th className="px-6 py-4.5 font-bold text-surface-450 dark:text-surface-500 text-3xs uppercase tracking-widest text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
+              <tbody className="divide-y divide-surface-100 dark:divide-surface-850">
                 {orders.map((order, i) => {
                   const StatusIcon = statusIcons[order.orderStatus] || Package;
                   return (
@@ -193,51 +197,51 @@ const AdminOrderManagerPage = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: i * 0.02 }}
-                      className="hover:bg-surface-50 dark:hover:bg-surface-700/30 transition-colors"
+                      className="hover:bg-surface-50/60 dark:hover:bg-surface-950/20 transition-colors"
                     >
-                      <td className="px-5 py-3.5">
-                        <span className="font-mono text-xs text-primary-600 dark:text-primary-400 font-semibold">
+                      <td className="px-6 py-4">
+                        <span className="font-mono text-2xs text-primary-600 dark:text-primary-400 font-bold tracking-wider select-all">
                           #{order._id.slice(-8).toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5">
-                        <p className="font-semibold text-surface-900 dark:text-white">
-                          {order.shippingAddress?.fullName || order.user?.name || 'Unknown'}
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-sm text-surface-850 dark:text-white leading-snug">
+                          {order.shippingAddress?.fullName || order.user?.name || 'Anonymous User'}
                         </p>
-                        <p className="text-xs text-surface-400 truncate max-w-45">{order.user?.email}</p>
+                        <p className="text-2xs font-semibold text-surface-400 dark:text-surface-500 mt-0.5 truncate max-w-48">{order.user?.email}</p>
                       </td>
-                      <td className="px-5 py-3.5 text-surface-600 dark:text-surface-400">
-                        <span className="inline-flex items-center gap-1">
-                          <Package className="w-3.5 h-3.5 text-surface-400" />
-                          {order.items.length}
+                      <td className="px-6 py-4 text-surface-600 dark:text-surface-400">
+                        <span className="inline-flex items-center gap-1.5 font-bold text-2xs select-none">
+                          <Package className="w-3.5 h-3.5 text-surface-300 dark:text-surface-700" />
+                          {order.items.length} units
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 font-bold text-surface-900 dark:text-white">
+                      <td className="px-6 py-4 font-black tabular-nums text-surface-900 dark:text-white text-xs sm:text-sm">
                         {formatCurrency(order.totalPrice)}
                       </td>
-                      <td className="px-5 py-3.5">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          order.orderStatus === 'delivered' ? 'bg-success/10 text-success' :
-                          order.orderStatus === 'cancelled' ? 'bg-danger/10 text-danger' :
-                          order.orderStatus === 'shipped' ? 'bg-primary/10 text-primary-600 dark:text-primary-400' :
-                          'bg-warning/10 text-warning'
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-3xs font-extrabold uppercase tracking-wider select-none ${
+                          order.orderStatus === 'delivered' ? 'bg-success-soft/20 text-success border border-success/10' :
+                          order.orderStatus === 'cancelled' ? 'bg-danger-soft/10 text-danger border border-danger/10' :
+                          order.orderStatus === 'shipped' ? 'bg-primary-50 text-primary-600 dark:text-primary-400 border border-primary-100/20 dark:border-primary-900/10' :
+                          'bg-warning-soft/20 text-warning border border-warning/10'
                         }`}>
-                          <StatusIcon className="w-3 h-3" />
+                          <StatusIcon className="w-3 h-3 stroke-[2.2]" />
                           <span className="capitalize">{order.orderStatus}</span>
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-surface-500 dark:text-surface-400 text-xs">
+                      <td className="px-6 py-4 text-surface-500 dark:text-surface-500 text-2xs font-bold tabular-nums">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center justify-end gap-1">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end">
                           <button
                             onClick={() => openOrderDetail(order)}
-                            className="p-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 text-surface-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors cursor-pointer"
+                            className="p-2 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-950/40 text-surface-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors cursor-pointer border border-transparent hover:border-primary-100/30 dark:hover:border-primary-900/10"
                             title="View Details"
                             aria-label="View order details"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-4.5 h-4.5" />
                           </button>
                         </div>
                       </td>
@@ -248,29 +252,29 @@ const AdminOrderManagerPage = () => {
             </table>
           </div>
 
-          {/* Pagination */}
+          {/* Table Pagination Bar */}
           {pagination.pages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-surface-200 dark:border-surface-700 bg-surface-50/50 dark:bg-surface-700/30">
-              <p className="text-xs text-surface-500 dark:text-surface-400">
-                Showing <span className="font-semibold">{(page - 1) * 10 + 1}</span> to <span className="font-semibold">{Math.min(page * 10, pagination.total)}</span> of <span className="font-semibold">{pagination.total}</span>
+            <div className="flex items-center justify-between px-6 py-4 border-t border-surface-100 dark:border-surface-850 bg-surface-50/30 dark:bg-surface-950/10 select-none">
+              <p className="text-2xs font-bold uppercase tracking-wider text-surface-450 dark:text-surface-555">
+                Showing <span className="font-extrabold text-surface-800 dark:text-white tabular-nums">{(page - 1) * 10 + 1}</span> to <span className="font-extrabold text-surface-800 dark:text-white tabular-nums">{Math.min(page * 10, pagination.total)}</span> of <span className="font-extrabold text-surface-800 dark:text-white tabular-nums">{pagination.total}</span>
               </p>
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                  className="p-1.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
                   aria-label="Previous page"
                 >
-                  <ChevronLeft className="w-4 h-4 text-surface-600 dark:text-surface-400" />
+                  <ChevronLeft className="w-4.5 h-4.5 text-surface-600 dark:text-surface-400" />
                 </button>
                 {Array.from({ length: Math.min(pagination.pages, 5) }, (_, i) => i + 1).map((p) => (
                   <button
                     key={p}
                     onClick={() => setPage(p)}
-                    className={`min-w-8 h-8 px-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                    className={`min-w-8 h-8 px-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
                       p === page
-                        ? 'bg-linear-to-r from-primary-600 to-violet-600 text-white shadow-sm'
-                        : 'hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-600 dark:text-surface-400'
+                        ? 'bg-linear-to-r from-primary-600 to-violet-600 text-white shadow-xs'
+                        : 'hover:bg-surface-100 dark:hover:bg-surface-800 text-surface-600 dark:text-surface-400'
                     }`}
                   >
                     {p}
@@ -279,10 +283,10 @@ const AdminOrderManagerPage = () => {
                 <button
                   onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))}
                   disabled={page === pagination.pages}
-                  className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                  className="p-1.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
                   aria-label="Next page"
                 >
-                  <ChevronRight className="w-4 h-4 text-surface-600 dark:text-surface-400" />
+                  <ChevronRight className="w-4.5 h-4.5 text-surface-600 dark:text-surface-400" />
                 </button>
               </div>
             </div>
@@ -290,103 +294,105 @@ const AdminOrderManagerPage = () => {
         </div>
       )}
 
-      {/* ───────────────────────── Order Detail Modal ───────────────────────── */}
+      {/* ───────────────────────── Order Detail Inspection Modal ───────────────────────── */}
       <AnimatePresence>
         {selectedOrder && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4"
             onClick={() => { setSelectedOrder(null); setOrderDetail(null); }}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.96, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white dark:bg-surface-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              exit={{ opacity: 0, scale: 0.96, y: 15 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="bg-white dark:bg-surface-900 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto border border-surface-150 dark:border-surface-850"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-700 sticky top-0 bg-white dark:bg-surface-800 z-10">
+              {/* Sticky Modal Header */}
+              <div className="flex items-center justify-between p-5 sm:p-6 border-b border-surface-100 dark:border-surface-850 sticky top-0 bg-white/95 dark:bg-surface-900/95 backdrop-blur-sm z-10 select-none">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary-500 to-violet-600 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary-500 to-indigo-600 flex items-center justify-center border border-primary-400/20">
                     <ShoppingBag className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-base font-bold text-surface-900 dark:text-white">
+                    <h2 className="text-sm font-black text-surface-900 dark:text-white uppercase tracking-wider font-display">
                       Order #{selectedOrder._id.slice(-8).toUpperCase()}
                     </h2>
-                    <p className="text-xs text-surface-500 dark:text-surface-400">
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-surface-400 mt-1">
                       {new Date(selectedOrder.createdAt).toLocaleString()}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => { setSelectedOrder(null); setOrderDetail(null); }}
-                  className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 cursor-pointer transition-colors"
+                  className="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer transition-colors text-surface-400 hover:text-surface-700"
                   aria-label="Close"
                 >
-                  <X className="w-5 h-5 text-surface-500" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
               {detailLoading ? (
-                <div className="p-8"><Loader /></div>
+                <div className="p-12"><Loader /></div>
               ) : orderDetail ? (
-                <div className="p-5 space-y-5">
-                  {/* Customer Info */}
+                <div className="p-6 space-y-6">
+                  
+                  {/* Customer Information Panel */}
                   <div>
-                    <h3 className="text-xs font-bold text-surface-700 dark:text-surface-300 mb-2 uppercase tracking-wider flex items-center gap-1.5">
-                      <Mail className="w-3.5 h-3.5" /> Customer
+                    <h3 className="text-3xs font-extrabold text-surface-450 dark:text-surface-500 uppercase tracking-widest mb-3.5 flex items-center gap-1.5 select-none">
+                      <Mail className="w-3.5 h-3.5 text-primary-500" /> Customer Information
                     </h3>
-                    <div className="bg-surface-50 dark:bg-surface-700/40 rounded-xl p-3.5 border border-surface-100 dark:border-surface-700">
-                      <p className="text-sm font-semibold text-surface-900 dark:text-white">
+                    <div className="bg-surface-50 dark:bg-surface-950/20 rounded-2xl p-4 border border-surface-100 dark:border-surface-850/60">
+                      <p className="text-sm font-bold text-surface-850 dark:text-white">
                         {orderDetail.shippingAddress?.fullName || orderDetail.user?.name}
                       </p>
-                      <div className="flex flex-col gap-0.5 mt-1">
-                        <p className="text-xs text-surface-500 dark:text-surface-400 flex items-center gap-1.5">
-                          <Mail className="w-3 h-3" /> {orderDetail.user?.email}
+                      <div className="flex flex-col gap-1.5 mt-2.5">
+                        <p className="text-xs text-surface-500 dark:text-surface-400 flex items-center gap-2">
+                          <Mail className="w-3.5 h-3.5 text-surface-400" /> {orderDetail.user?.email}
                         </p>
                         {orderDetail.shippingAddress?.phone && (
-                          <p className="text-xs text-surface-500 dark:text-surface-400 flex items-center gap-1.5">
-                            <Phone className="w-3 h-3" /> {orderDetail.shippingAddress.phone}
+                          <p className="text-xs text-surface-500 dark:text-surface-400 flex items-center gap-2">
+                            <Phone className="w-3.5 h-3.5 text-surface-400" /> {orderDetail.shippingAddress.phone}
                           </p>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  {/* Shipping Address */}
+                  {/* Shipping Address Panel */}
                   <div>
-                    <h3 className="text-xs font-bold text-surface-700 dark:text-surface-300 mb-2 uppercase tracking-wider flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5" /> Shipping Address
+                    <h3 className="text-3xs font-extrabold text-surface-450 dark:text-surface-500 uppercase tracking-widest mb-3.5 flex items-center gap-1.5 select-none">
+                      <MapPin className="w-3.5 h-3.5 text-primary-500" /> Shipping Address
                     </h3>
-                    <div className="bg-surface-50 dark:bg-surface-700/40 rounded-xl p-3.5 border border-surface-100 dark:border-surface-700">
-                      <p className="text-sm text-surface-700 dark:text-surface-300">{orderDetail.shippingAddress?.street}</p>
-                      <p className="text-sm text-surface-700 dark:text-surface-300">
+                    <div className="bg-surface-50 dark:bg-surface-950/20 rounded-2xl p-4 border border-surface-100 dark:border-surface-850/60">
+                      <p className="text-xs sm:text-sm font-semibold text-surface-700 dark:text-surface-300">{orderDetail.shippingAddress?.street}</p>
+                      <p className="text-xs sm:text-sm font-semibold text-surface-700 dark:text-surface-300 mt-1">
                         {orderDetail.shippingAddress?.city}, {orderDetail.shippingAddress?.state}{' '}
                         {orderDetail.shippingAddress?.zipCode}
                       </p>
                       {orderDetail.shippingAddress?.country && (
-                        <p className="text-xs text-surface-500 mt-1">{orderDetail.shippingAddress.country}</p>
+                        <p className="text-3xs font-extrabold uppercase tracking-widest text-surface-400 mt-3">{orderDetail.shippingAddress.country}</p>
                       )}
                     </div>
                   </div>
 
-                  {/* Order Items */}
+                  {/* Order Items Catalog Loop */}
                   <div>
-                    <h3 className="text-xs font-bold text-surface-700 dark:text-surface-300 mb-2 uppercase tracking-wider flex items-center gap-1.5">
-                      <Package className="w-3.5 h-3.5" /> Items ({orderDetail.items?.length})
+                    <h3 className="text-3xs font-extrabold text-surface-450 dark:text-surface-500 uppercase tracking-widest mb-3.5 flex items-center gap-1.5 select-none">
+                      <Package className="w-3.5 h-3.5 text-primary-500" /> Items ({orderDetail.items?.length})
                     </h3>
-                    <div className="space-y-2">
+                    <div className="space-y-2.5">
                       {orderDetail.items?.map((item, i) => (
                         <div
                           key={i}
-                          className="flex items-center justify-between bg-surface-50 dark:bg-surface-700/40 rounded-xl p-3 border border-surface-100 dark:border-surface-700"
+                          className="flex items-center justify-between bg-surface-50/60 dark:bg-surface-950/10 rounded-2xl p-3 border border-surface-100 dark:border-surface-850"
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-10 h-10 rounded-lg overflow-hidden bg-surface-200 dark:bg-surface-600 shrink-0">
+                            <div className="w-10 h-10 rounded-xl overflow-hidden bg-surface-200 dark:bg-surface-950 shrink-0 border border-surface-100 dark:border-surface-800">
                               {item.image ? (
                                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                               ) : (
@@ -396,11 +402,11 @@ const AdminOrderManagerPage = () => {
                               )}
                             </div>
                             <div className="min-w-0">
-                              <p className="text-sm font-medium text-surface-900 dark:text-white truncate">{item.name}</p>
-                              <p className="text-xs text-surface-500">Qty: {item.quantity} × {formatCurrency(item.price)}</p>
+                              <p className="text-xs sm:text-sm font-bold text-surface-850 dark:text-white truncate leading-snug">{item.name}</p>
+                              <p className="text-2xs font-semibold text-surface-450 mt-1">Qty: {item.quantity} · {formatCurrency(item.price)}</p>
                             </div>
                           </div>
-                          <span className="text-sm font-bold text-surface-900 dark:text-white shrink-0">
+                          <span className="text-xs sm:text-sm font-extrabold tabular-nums text-surface-900 dark:text-white shrink-0 pl-3">
                             {formatCurrency(item.price * item.quantity)}
                           </span>
                         </div>
@@ -408,57 +414,60 @@ const AdminOrderManagerPage = () => {
                     </div>
                   </div>
 
-                  {/* Totals */}
-                  <div className="bg-linear-to-r from-primary-50/50 to-violet-50/50 dark:from-primary-900/10 dark:to-violet-900/10 rounded-xl p-4 border border-primary-100 dark:border-primary-800/40 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-surface-500 dark:text-surface-400">Subtotal</span>
-                      <span className="text-surface-900 dark:text-white font-medium">{formatCurrency(orderDetail.itemsPrice)}</span>
+                  {/* Totals Summary Panel */}
+                  <div className="bg-linear-to-r from-primary-50/30 to-violet-50/30 dark:from-primary-950/10 dark:to-violet-950/10 rounded-2xl p-4.5 border border-primary-100/30 dark:border-primary-900/10 space-y-2.5">
+                    <div className="flex justify-between text-xs font-semibold text-surface-500 dark:text-surface-450">
+                      <span>Subtotal</span>
+                      <span className="tabular-nums text-surface-900 dark:text-white font-bold">{formatCurrency(orderDetail.itemsPrice)}</span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-surface-500 dark:text-surface-400">Shipping</span>
-                      <span className="text-surface-900 dark:text-white font-medium">
+                    <div className="flex justify-between text-xs font-semibold text-surface-500 dark:text-surface-450">
+                      <span>Shipping Fee</span>
+                      <span className="tabular-nums text-surface-900 dark:text-white font-bold">
                         {orderDetail.shippingPrice === 0 ? 'FREE' : formatCurrency(orderDetail.shippingPrice)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-base font-bold pt-2 border-t border-primary-200/50 dark:border-primary-700/50">
+                    <div className="flex justify-between text-sm sm:text-base font-black pt-3.5 mt-1 border-t border-dashed border-primary-100 dark:border-primary-900/30">
                       <span className="text-surface-900 dark:text-white">Total</span>
-                      <span className="gradient-text-brand">{formatCurrency(orderDetail.totalPrice)}</span>
+                      <span className="gradient-text-brand tabular-nums">{formatCurrency(orderDetail.totalPrice)}</span>
                     </div>
                   </div>
 
-                  {/* Payment & Status */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3.5 rounded-xl bg-surface-50 dark:bg-surface-700/40 border border-surface-100 dark:border-surface-700">
-                      <h3 className="text-[10px] font-bold text-surface-500 dark:text-surface-400 mb-1.5 uppercase tracking-wider flex items-center gap-1">
-                        <CreditCard className="w-3 h-3" /> Payment
+                  {/* Payment & Status Blocks */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-surface-50 dark:bg-surface-950/20 border border-surface-100 dark:border-surface-850">
+                      <h3 className="text-3xs font-extrabold text-surface-450 dark:text-surface-500 mb-2 uppercase tracking-widest flex items-center gap-1.5 select-none">
+                        <CreditCard className="w-3.5 h-3.5 text-primary-500" /> Payment
                       </h3>
-                      <p className="text-sm font-semibold text-surface-900 dark:text-white">
+                      <p className="text-xs sm:text-sm font-bold text-surface-850 dark:text-white leading-snug">
                         {orderDetail.paymentMethod === 'COD' ? 'Cash on Delivery' : orderDetail.paymentMethod}
                       </p>
                       <Badge
                         variant={orderDetail.paymentStatus === 'paid' ? 'success' : 'warning'}
                         size="xs"
-                        className="mt-1.5 capitalize"
+                        className="mt-2.5 capitalize text-3xs font-black select-none"
                       >
                         {orderDetail.paymentStatus}
                       </Badge>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-surface-50 dark:bg-surface-700/40 border border-surface-100 dark:border-surface-700">
-                      <h3 className="text-[10px] font-bold text-surface-500 dark:text-surface-400 mb-1.5 uppercase tracking-wider">
+                    <div className="p-4 rounded-2xl bg-surface-50 dark:bg-surface-950/20 border border-surface-100 dark:border-surface-850">
+                      <h3 className="text-3xs font-extrabold text-surface-450 dark:text-surface-500 mb-2 uppercase tracking-widest select-none">
                         Order Status
                       </h3>
-                      <Badge variant={statusColors[orderDetail.orderStatus]} size="xs" className="capitalize">
+                      <p className="text-xs sm:text-sm font-bold text-surface-850 dark:text-white leading-snug capitalize">
+                        {orderDetail.orderStatus}
+                      </p>
+                      <Badge variant={statusColors[orderDetail.orderStatus]} size="xs" className="mt-2.5 capitalize text-3xs font-black select-none">
                         {orderDetail.orderStatus}
                       </Badge>
                     </div>
                   </div>
 
-                  {/* Update Status */}
-                  <div className="pt-3 border-t border-surface-200 dark:border-surface-700">
-                    <h3 className="text-xs font-bold text-surface-700 dark:text-surface-300 mb-3 uppercase tracking-wider">
+                  {/* Status Transition Updates Actions */}
+                  <div className="pt-4 border-t border-surface-100 dark:border-surface-850">
+                    <h3 className="text-3xs font-extrabold text-surface-450 dark:text-surface-500 mb-3.5 uppercase tracking-widest select-none">
                       Update Order Status
                     </h3>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2.5">
                       {['processing', 'shipped', 'delivered', 'cancelled']
                         .filter((s) => s !== orderDetail.orderStatus)
                         .map((status) => {
@@ -468,18 +477,18 @@ const AdminOrderManagerPage = () => {
                               key={status}
                               onClick={() => handleStatusChange(orderDetail._id, status)}
                               disabled={updatingStatus === orderDetail._id}
-                              className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer disabled:opacity-50 border ${
+                              className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer disabled:opacity-40 border select-none ${
                                 status === 'delivered'
-                                  ? 'bg-success/10 text-success border-success/30 hover:bg-success/20'
+                                  ? 'bg-success-soft/20 text-success border-success/15 hover:bg-success-soft/30'
                                   : status === 'cancelled'
-                                  ? 'bg-danger/10 text-danger border-danger/30 hover:bg-danger/20'
+                                  ? 'bg-danger-soft/10 text-danger border-danger/15 hover:bg-danger-soft/20'
                                   : status === 'shipped'
-                                  ? 'bg-primary/10 text-primary-600 dark:text-primary-400 border-primary/30 hover:bg-primary/20'
-                                  : 'bg-warning/10 text-warning border-warning/30 hover:bg-warning/20'
+                                  ? 'bg-primary-50 text-primary-600 dark:text-primary-450 border-primary-100/20 dark:border-primary-900/10 hover:bg-primary-100/20'
+                                  : 'bg-warning-soft/20 text-warning border-warning/15 hover:bg-warning-soft/30'
                               }`}
                             >
-                              <StatusIcon className="w-3.5 h-3.5" />
-                              Mark as {status.charAt(0).toUpperCase() + status.slice(1)}
+                              <StatusIcon className="w-4 h-4 stroke-[2.2]" />
+                              {status}
                             </button>
                           );
                         })}

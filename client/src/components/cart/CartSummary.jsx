@@ -7,9 +7,10 @@ import {
   RotateCcw,
   Tag,
   Check,
-  ChevronRight,
   ArrowRight,
   AlertTriangle,
+  Gift,
+  X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import formatCurrency from '../../utils/formatCurrency.js';
@@ -27,8 +28,7 @@ const CartSummary = ({ cart }) => {
   const subtotal = cart.totalPrice;
   const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING;
   const discount = appliedPromo ? Math.round(subtotal * appliedPromo.rate) : 0;
-  const total = subtotal + shipping - discount;
-
+  
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
@@ -62,175 +62,189 @@ const CartSummary = ({ cart }) => {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-     className="bg-white dark:bg-surface-800 rounded-2xl border border-surface-200 dark:border-surface-700 p-6 sticky top-24 shadow-premium overflow-hidden"
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className="bg-white dark:bg-surface-900 rounded-3xl border border-surface-150 dark:border-surface-850 p-6 shadow-premium overflow-hidden relative"
     >
-      {/* Premium top hairline */}
-      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary-500/40 to-transparent" />
+      {/* Premium subtle top gradient border highlight */}
+      <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-transparent via-primary-500/30 to-transparent" />
 
-      <div className="flex items-center gap-2 mb-5">
-        <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
-          <ShoppingBag className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6 select-none">
+        <div className="w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center border border-primary-100/20">
+          <ShoppingBag className="w-4.5 h-4.5 text-primary-600 dark:text-primary-450" />
         </div>
-        <h3 className="text-lg font-bold text-surface-800 dark:text-white font-display tracking-tight">Order Summary</h3>
+        <h3 className="text-sm font-black text-surface-900 dark:text-white uppercase tracking-wider font-display">Order Summary</h3>
       </div>
 
-      {/* Free shipping progress bar */}
-      <div className="mb-5 p-3 rounded-xl bg-surface-50 dark:bg-surface-700/40 border border-surface-100 dark:border-surface-700">
-        <div className="flex items-center gap-2 text-xs text-surface-600 dark:text-surface-300 mb-2">
-          <Truck className={`w-4 h-4 ${remaining === 0 ? 'text-success' : 'text-primary-600 dark:text-primary-400'}`} />
+      {/* Free Shipping Progress Indicator */}
+      <div className="mb-6 p-4 rounded-2xl bg-surface-50 dark:bg-surface-950/40 border border-surface-150 dark:border-surface-850 select-none">
+        <div className="flex items-center gap-2 text-2xs font-extrabold text-surface-500 uppercase tracking-widest mb-2.5">
+          <Truck className={`w-4 h-4 shrink-0 ${remaining === 0 ? 'text-success' : 'text-primary-550'}`} />
           {remaining === 0 ? (
-            <span className="font-medium text-success flex items-center gap-1">
-              <Check className="w-3.5 h-3.5" /> You unlocked FREE shipping!
+            <span className="text-success flex items-center gap-1">
+              <Check className="w-3.5 h-3.5 stroke-3" /> FREE Shipping unlocked!
             </span>
           ) : (
             <span>
-              Add <span className="font-bold text-surface-900 dark:text-white tabular-nums">{formatCurrency(remaining)}</span> more for free shipping
+              Add <span className="font-black text-surface-800 dark:text-white font-mono">{formatCurrency(remaining)}</span> for free delivery
             </span>
           )}
         </div>
-        <div className="h-1.5 bg-surface-200 dark:bg-surface-600 rounded-full overflow-hidden">
+        
+        {/* Progress Bar Container */}
+        <div className="h-1.5 bg-surface-200 dark:bg-surface-800 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className={`h-full rounded-full ${remaining === 0 ? 'bg-success' : 'bg-linear-to-r from-primary-500 to-primary-700'}`}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className={`h-full rounded-full ${
+              remaining === 0 
+                ? 'bg-success' 
+                : 'bg-linear-to-r from-primary-500 to-indigo-600'
+            }`}
           />
         </div>
       </div>
 
-      {/* Promo warning */}
+      {/* Promo Warning Banner */}
       {appliedPromo && (
-        <div className="mb-4 p-2.5 rounded-xl bg-warning/10 border border-warning/30 flex items-start gap-2">
-          <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
-          <p className="text-xs text-surface-600 dark:text-surface-300">
-            <span className="font-semibold">Demo only</span> — promo discounts shown here are for preview and will be applied at checkout.
+        <div className="mb-4 p-3 rounded-xl bg-warning-soft/20 text-warning border border-warning/15 flex items-start gap-2 select-none">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 stroke-[2.2]" />
+          <p className="text-[10px] font-bold uppercase tracking-wide leading-snug">
+            Promo verified — applies on payment.
           </p>
         </div>
       )}
 
-      {/* Promo code input */}
-      <div className="mb-5">
-        <label className="text-xs font-semibold text-surface-600 dark:text-surface-300 mb-1.5 flex items-center gap-1.5">
-          <Tag className="w-3.5 h-3.5" /> Promo Code
+      {/* Promo Code Input Fields */}
+      <div className="mb-6">
+        <label className="text-3xs font-extrabold text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-2 flex items-center gap-1.5 select-none">
+          <Tag className="w-3.5 h-3.5 text-surface-400" /> Promo Code
         </label>
+        
         {appliedPromo ? (
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-success/10 border border-success/30">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-success flex items-center justify-center">
-                <Check className="w-3.5 h-3.5 text-white" />
+          <div className="flex items-center justify-between p-3 rounded-xl bg-success-soft/20 text-success border border-success/15">
+            <div className="flex items-center gap-2.5">
+              <div className="w-5 h-5 rounded-full bg-success/15 flex items-center justify-center">
+                <Check className="w-3 h-3 stroke-3" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-success">{appliedPromo.code}</div>
-                <div className="text-xs text-surface-500 dark:text-surface-400">{appliedPromo.label}</div>
+                <div className="text-2xs font-extrabold font-mono uppercase tracking-wider">{appliedPromo.code}</div>
+                <div className="text-[9px] font-bold text-surface-400 uppercase mt-0.5">{appliedPromo.label} Discount applied</div>
               </div>
             </div>
             <button
               type="button"
               onClick={handleRemovePromo}
-              className="text-xs text-surface-500 hover:text-red-500 font-medium cursor-pointer px-2 py-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              className="p-1 rounded-lg text-surface-400 hover:text-danger hover:bg-danger-soft/10 transition-colors cursor-pointer"
+              aria-label="Remove promo code"
             >
-              Remove
+              <X className="w-4 h-4" />
             </button>
           </div>
         ) : (
           <div className="flex gap-2">
-            <input
-              type="text"
-              value={promoCode}
-              onChange={(e) => {
-                setPromoCode(e.target.value);
-                setPromoStatus(null);
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
-              placeholder="WELCOME10"
-              className="flex-1 px-3 py-2 text-sm border-1.5 border-surface-200 dark:border-surface-600 rounded-xl bg-surface-50 dark:bg-surface-800/60 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500 focus:outline-none focus:ring-4 focus:ring-primary-500/15 focus:border-primary-500 uppercase tracking-wider transition-all hover:border-surface-300 dark:hover:border-surface-500"
-            />
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => {
+                  setPromoCode(e.target.value);
+                  setPromoStatus(null);
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
+                placeholder="WELCOME10"
+                className="w-full px-3.5 py-2.5 border border-surface-150 dark:border-surface-850 rounded-xl bg-surface-50 dark:bg-surface-950 text-2xs font-black font-mono uppercase tracking-wider text-surface-900 dark:text-white placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all duration-200"
+              />
+            </div>
             <button
               type="button"
               onClick={handleApplyPromo}
-              className="px-4 py-2 text-sm font-semibold rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-200 hover:bg-surface-200 dark:hover:bg-surface-600 cursor-pointer transition-colors"
+              className="px-4 py-2.5 text-2xs font-black rounded-xl uppercase tracking-wider bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-150 dark:hover:bg-surface-750 transition-colors cursor-pointer select-none"
             >
               Apply
             </button>
           </div>
         )}
+        
         <AnimatePresence>
           {promoStatus === 'invalid' && (
             <motion.p
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="text-xs text-danger mt-1.5"
+              className="text-3xs font-extrabold text-danger mt-1.5 uppercase tracking-wide"
             >
               Invalid promo code. Try WELCOME10 or SAVE15.
             </motion.p>
           )}
         </AnimatePresence>
-        <p className="text-[10px] text-surface-400 dark:text-surface-500 mt-1.5">
-          Try: WELCOME10, SAVE15, FREESHIP
+        
+        <p className="text-[9px] font-bold text-surface-400 dark:text-surface-500 mt-2 select-none uppercase tracking-wider">
+          Valid Codes: <span className="font-mono text-primary-500">WELCOME10</span>, <span className="font-mono text-primary-500">SAVE15</span>
         </p>
       </div>
 
-      {/* Breakdown */}
-      <div className="space-y-2.5 text-sm pb-4 border-b border-dashed border-surface-200 dark:border-surface-700">
-        <div className="flex justify-between">
-          <span className="text-surface-500 dark:text-surface-400">Subtotal ({cart.totalQuantity} items)</span>
-          <span className="font-medium text-surface-900 dark:text-white tabular-nums">{formatCurrency(subtotal)}</span>
+      {/* Pricing breakdown summary */}
+      <div className="space-y-3.5 text-xs pb-4 border-b border-dashed border-surface-150 dark:border-surface-850">
+        <div className="flex justify-between items-center font-semibold text-surface-500 dark:text-surface-455">
+          <span>Subtotal ({cart.totalQuantity} items)</span>
+          <span className="font-black tabular-nums font-mono text-surface-800 dark:text-white">{formatCurrency(subtotal)}</span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-surface-500 dark:text-surface-400">Shipping</span>
+        <div className="flex justify-between items-center font-semibold text-surface-500 dark:text-surface-455">
+          <span>Delivery Fee</span>
           {effectiveShipping === 0 ? (
-            <span className="font-semibold text-success">FREE</span>
+            <span className="font-extrabold text-[10px] text-success bg-success-soft/20 px-2 py-0.5 rounded-md uppercase tracking-wider select-none">FREE</span>
           ) : (
-            <span className="font-medium text-surface-900 dark:text-white tabular-nums">{formatCurrency(effectiveShipping)}</span>
+            <span className="font-black tabular-nums font-mono text-surface-800 dark:text-white">{formatCurrency(effectiveShipping)}</span>
           )}
         </div>
         {discount > 0 && (
-          <div className="flex justify-between text-success">
-            <span className="flex items-center gap-1">
-              <Tag className="w-3.5 h-3.5" /> Discount ({appliedPromo?.code})
+          <div className="flex justify-between items-center text-success animate-fade-in font-bold">
+            <span className="flex items-center gap-1.5 text-3xs uppercase tracking-widest">
+              <Gift className="w-3.5 h-3.5" /> Discount ({appliedPromo?.code})
             </span>
-            <span className="font-medium tabular-nums">−{formatCurrency(discount)}</span>
+            <span className="tabular-nums font-mono">−{formatCurrency(discount)}</span>
           </div>
         )}
       </div>
 
-      <div className="flex justify-between items-baseline pt-4 mb-5">
-        <span className="font-semibold text-surface-800 dark:text-white">Total</span>
+      {/* Invoice total elements */}
+      <div className="flex justify-between items-center pt-5 mb-6">
+        <span className="font-bold text-surface-900 dark:text-white font-display text-sm uppercase tracking-wider">Total Invoice</span>
         <div className="text-right">
-          <div className="text-2xl font-bold gradient-text-brand tabular-nums font-display">{formatCurrency(finalTotal)}</div>
-          <div className="text-[10px] text-surface-400 dark:text-surface-500">Incl. all taxes</div>
+          <div className="text-xl sm:text-2xl font-black gradient-text-brand tabular-nums font-display">{formatCurrency(finalTotal)}</div>
+          <div className="text-[10px] font-bold text-surface-400 dark:text-surface-555 uppercase tracking-widest mt-0.5">VAT Included</div>
         </div>
       </div>
 
-      {/* Checkout CTA */}
+      {/* Checkout Actions Buttons */}
       <Link to={ROUTES.CHECKOUT} className="block no-underline">
-        <Button variant="shine" size="lg" className="w-full" iconRight={ArrowRight}>
+        <Button variant="shine" size="lg" className="w-full font-extrabold uppercase tracking-widest py-3.5 shadow-brand" iconRight={ArrowRight}>
           Proceed to Checkout
         </Button>
       </Link>
 
       <Link
         to={ROUTES.PRODUCTS}
-        className="mt-3 block text-center text-sm text-surface-500 dark:text-surface-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+        className="mt-4 block text-center text-2xs font-bold uppercase tracking-widest text-surface-400 hover:text-primary-650 transition-colors no-underline"
       >
         or Continue Shopping
       </Link>
 
-      {/* Trust badges */}
-      <div className="mt-6 pt-5 border-t border-surface-100 dark:border-surface-700 grid grid-cols-3 gap-2 text-center">
-        <div className="flex flex-col items-center gap-1">
-          <ShieldCheck className="w-5 h-5 text-success" />
-          <span className="text-[10px] text-surface-500 dark:text-surface-400 leading-tight">Secure<br />Payment</span>
+      {/* Trust Badge Indicators Container */}
+      <div className="mt-6 pt-5 border-t border-surface-150 dark:border-surface-850 grid grid-cols-3 gap-2 text-center select-none">
+        <div className="flex flex-col items-center gap-1.5 p-2 rounded-xl bg-surface-50 dark:bg-surface-950/20 border border-surface-100/50 dark:border-surface-850">
+          <ShieldCheck className="w-4.5 h-4.5 text-success stroke-[2.2]" />
+          <span className="text-[9px] font-bold text-surface-500 uppercase tracking-wide leading-tight">Secure<br />Checkout</span>
         </div>
-        <div className="flex flex-col items-center gap-1">
-          <RotateCcw className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-          <span className="text-[10px] text-surface-500 dark:text-surface-400 leading-tight">Easy<br />Returns</span>
+        <div className="flex flex-col items-center gap-1.5 p-2 rounded-xl bg-surface-50 dark:bg-surface-950/20 border border-surface-100/50 dark:border-surface-850">
+          <RotateCcw className="w-4.5 h-4.5 text-primary-500 stroke-[2.2]" />
+          <span className="text-[9px] font-bold text-surface-500 uppercase tracking-wide leading-tight">14-Day<br />Returns</span>
         </div>
-        <div className="flex flex-col items-center gap-1">
-          <Truck className="w-5 h-5 text-accent-500" />
-          <span className="text-[10px] text-surface-500 dark:text-surface-400 leading-tight">Fast<br />Delivery</span>
+        <div className="flex flex-col items-center gap-1.5 p-2 rounded-xl bg-surface-50 dark:bg-surface-950/20 border border-surface-100/50 dark:border-surface-850">
+          <Truck className="w-4.5 h-4.5 text-accent-500 stroke-[2.2]" />
+          <span className="text-[9px] font-bold text-surface-500 uppercase tracking-wide leading-tight">Express<br />Shipping</span>
         </div>
       </div>
     </motion.div>

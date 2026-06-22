@@ -314,7 +314,7 @@ h6 {
   @apply bg-surface-100;
 }
 .dark ::-webkit-scrollbar-track {
-  @apply bg-surface-900;
+  @apply bg-surface-950;
 }
 ::-webkit-scrollbar-thumb {
   @apply bg-surface-300 rounded;
@@ -322,7 +322,7 @@ h6 {
   background-clip: padding-box;
 }
 .dark ::-webkit-scrollbar-thumb {
-  @apply bg-surface-700 rounded;
+  @apply bg-surface-800 rounded;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
@@ -330,7 +330,7 @@ h6 {
   @apply bg-surface-400;
 }
 .dark ::-webkit-scrollbar-thumb:hover {
-  @apply bg-surface-600;
+  @apply bg-surface-700;
 }
 
 /* Hide scrollbar for horizontal scroll containers */

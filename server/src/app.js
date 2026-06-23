@@ -22,6 +22,8 @@ import { stripeWebhook } from './controllers/paymentController.js';
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // ─── Security Middleware ─────────────────────────────────────
 
 // 1. Helmet — Hardened HTTP headers

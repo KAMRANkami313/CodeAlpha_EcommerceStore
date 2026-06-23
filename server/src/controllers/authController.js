@@ -8,17 +8,17 @@ import * as authService from '../services/authService.js';
 const getAccessTokenCookieOptions = () => ({
   httpOnly: true,
   secure: env.NODE_ENV === 'production',
-  sameSite: 'strict',
-  maxAge: 15 * 60 * 1000, // 15 minutes (matches JWT_EXPIRE)
+  sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+  maxAge: 15 * 60 * 1000,
   path: '/',
 });
 
 const getRefreshTokenCookieOptions = () => ({
   httpOnly: true,
   secure: env.NODE_ENV === 'production',
-  sameSite: 'strict',
+  sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
   maxAge: parseInt(env.COOKIE_EXPIRE) * 24 * 60 * 60 * 1000,
-  path: '/api/auth/refresh', // Only sent on refresh endpoint
+  path: '/api/auth/refresh',
 });
 
 const setTokenCookies = (res, accessToken, refreshToken) => {
@@ -44,8 +44,8 @@ const logout = asyncHandler(async (req, res) => {
     await User.updateOne({ _id: req.user._id }, { $unset: { refreshToken: 1 } });
   }
   // Clear cookies with the same options they were set with
-  res.cookie('accessToken', '', { httpOnly: true, secure: env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 0, path: '/' });
-  res.cookie('refreshToken', '', { httpOnly: true, secure: env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 0, path: '/api/auth/refresh' });
+  res.cookie('accessToken', '', { httpOnly: true, secure: env.NODE_ENV === 'production', sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax', maxAge: 0, path: '/' });
+  res.cookie('refreshToken', '', { httpOnly: true, secure: env.NODE_ENV === 'production', sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax', maxAge: 0, path: '/api/auth/refresh' });
   res.status(200).json(new ApiResponse(200, null, 'User logged out successfully'));
 });
 

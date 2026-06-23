@@ -41,7 +41,7 @@ const createPaymentIntent = async (userId) => {
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: amountInPaisa,
-    currency: 'pkr',
+    currency: 'usd',
     metadata: {
       userId: userId.toString(),
       itemsPrice: itemsPrice.toString(),

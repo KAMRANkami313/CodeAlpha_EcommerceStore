@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShoppingBag, Minus, Plus, ChevronRight, Truck, ShieldCheck, RotateCcw,
@@ -45,6 +45,7 @@ const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState('description');
   const [addingToCart, setAddingToCart] = useState(false);
+  const navigate = useNavigate();
 
   if (loading) return <Loader size="lg" label="Loading product..." className="min-h-[60vh]" />;
   if (error) return (
@@ -80,11 +81,11 @@ const ProductDetailPage = () => {
     }
   };
 
-  const handleBuyNow = async () => {
-    if (outOfStock) return;
-    await handleAddToCart();
-    window.location.href = ROUTES.CART;
-  };
+const handleBuyNow = async () => {
+  if (outOfStock) return;
+  await handleAddToCart();
+  navigate(ROUTES.CART);
+};
 
   return (
     <div className="animate-fade-in">

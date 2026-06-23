@@ -38,7 +38,7 @@ const StripePaymentForm = ({ onSuccess, clientSecret }) => {
         confirmParams: {
           return_url: `${window.location.origin}/checkout`,
         },
-        redirect: 'ifRequired',
+        redirect: 'if_required',
       });
 
       if (error) {

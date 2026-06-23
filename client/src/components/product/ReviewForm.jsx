@@ -9,6 +9,17 @@ const RATING_LABELS = {
   1: 'Poor', 2: 'Fair', 3: 'Good', 4: 'Very Good', 5: 'Excellent',
 };
 
+/**
+ * ReviewForm — Editorial Modern Redesign
+ *
+ * Clean card, sentence case labels, refined textarea.
+ * Same props, validation, and service call — fully backward compatible.
+ *
+ * Props (unchanged):
+ *   productId   — product ID to review
+ *   onSubmitted — callback after successful submission
+ *   onCancel    — callback to close form
+ */
 const ReviewForm = ({ productId, onSubmitted, onCancel }) => {
   const [loading, setLoading] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
@@ -35,27 +46,27 @@ const ReviewForm = ({ productId, onSubmitted, onCancel }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-surface-900 rounded-3xl border border-primary-500/35 dark:border-primary-500/20 p-6 sm:p-7 relative shadow-medium">
+    <div className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-5 sm:p-6 relative">
       {/* Close button */}
       <button
         onClick={onCancel}
-        className="absolute top-4 right-4 p-1.5 rounded-lg text-surface-400 hover:text-surface-700 dark:hover:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-850 cursor-pointer transition-colors select-none"
+        className="absolute top-4 right-4 p-1.5 rounded-md text-surface-400 hover:text-surface-700 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer transition-colors"
         aria-label="Close form"
       >
         <X className="w-4 h-4" />
       </button>
 
-      <h4 className="font-extrabold text-surface-900 dark:text-white font-display text-lg mb-1 select-none">Write Your Review</h4>
-      <p className="text-xs text-surface-500 dark:text-surface-400 mb-6 select-none">Share your honest experience with this product</p>
+      <h4 className="font-semibold text-surface-900 dark:text-white font-display text-base mb-1">Write a Review</h4>
+      <p className="text-xs text-surface-500 dark:text-surface-400 mb-5">Share your honest experience with this product</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Star Rating selector */}
+        {/* Star rating selector */}
         <div>
-          <label className="block text-xs font-extrabold uppercase tracking-wider text-surface-750 dark:text-surface-300 mb-2 select-none">
+          <label className="block text-xs font-medium text-surface-600 dark:text-surface-300 mb-2">
             Your Rating <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center gap-3">
-            <div className="flex gap-1 select-none">
+            <div className="flex gap-0.5">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
@@ -67,34 +78,35 @@ const ReviewForm = ({ productId, onSubmitted, onCancel }) => {
                   aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
                 >
                   <Star
-                    size={30}
-                    className={`transition-colors duration-150 ${
+                    size={28}
+                    className={`transition-colors ${
                       star <= (hoverRating || selectedRating)
-                        ? 'fill-amber-400 text-amber-400 stroke-[1.8]'
-                        : 'text-surface-300 dark:text-surface-750 stroke-[1.5]'
+                        ? 'fill-amber-400 text-amber-400'
+                        : 'fill-surface-200 dark:fill-surface-800 text-surface-200 dark:text-surface-800'
                     }`}
+                    strokeWidth={1.5}
                   />
                 </button>
               ))}
             </div>
             {(hoverRating || selectedRating) > 0 && (
-              <span className="text-xs font-bold uppercase tracking-wider text-surface-700 dark:text-surface-200 bg-surface-50 dark:bg-surface-800 py-1 px-2 rounded-md border border-surface-100 dark:border-surface-750 select-none">
+              <span className="text-xs font-medium text-surface-700 dark:text-surface-200 bg-surface-100 dark:bg-surface-800 py-1 px-2.5 rounded-md">
                 {RATING_LABELS[hoverRating || selectedRating]}
               </span>
             )}
           </div>
           {selectedRating === 0 && (
-            <p className="text-[10px] font-bold uppercase tracking-wider text-surface-400 dark:text-surface-555 mt-2 select-none">Click a star to rate</p>
+            <p className="text-[11px] text-surface-400 mt-1.5">Click a star to rate</p>
           )}
         </div>
 
         {/* Comment field */}
         <div>
-          <div className="flex items-center justify-between mb-2 select-none">
-            <label className="block text-xs font-extrabold uppercase tracking-wider text-surface-750 dark:text-surface-300">
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-xs font-medium text-surface-600 dark:text-surface-300">
               Your Review <span className="text-red-500">*</span>
             </label>
-            <span className={`text-[10px] font-bold uppercase tracking-wider ${charCount > 500 ? 'text-red-500' : 'text-surface-400'}`}>
+            <span className={`text-[11px] font-medium tabular-nums ${charCount > 500 ? 'text-red-500' : 'text-surface-400'}`}>
               {charCount}/500
             </span>
           </div>
@@ -104,23 +116,23 @@ const ReviewForm = ({ productId, onSubmitted, onCancel }) => {
               maxLength: { value: 500, message: 'Comment cannot exceed 500 characters' },
             })}
             rows={4}
-            className="w-full px-4 py-3 border border-surface-150 dark:border-surface-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm font-medium resize-none bg-surface-50 dark:bg-surface-800 text-surface-900 dark:text-white placeholder:text-surface-400 transition-all shadow-inner"
+            className="w-full px-3.5 py-2.5 border border-surface-200 dark:border-surface-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/15 focus:border-primary-500 text-sm font-medium resize-none bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-white placeholder:text-surface-400 transition-all"
             placeholder="Share your experience with this product. What did you like or dislike? How was the quality?"
           />
           {errors.comment && (
-            <p className="text-red-500 text-[11px] font-semibold mt-1.5 flex items-center gap-1 select-none">
+            <p className="text-red-500 text-xs font-medium mt-1.5 flex items-center gap-1.5">
               <span className="w-1 h-1 bg-red-500 rounded-full" />
               {errors.comment.message}
             </p>
           )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 pt-2 select-none">
-          <Button type="submit" variant="primary" loading={loading} size="md" className="flex-1 sm:flex-none font-bold uppercase tracking-wider text-xs px-5">
+        {/* Actions */}
+        <div className="flex gap-2.5 pt-1">
+          <Button type="submit" variant="primary" loading={loading} size="md" className="flex-1 sm:flex-none">
             Submit Review
           </Button>
-          <Button type="button" variant="ghost" onClick={onCancel} size="md" className="font-bold uppercase tracking-wider text-xs">
+          <Button type="button" variant="ghost" onClick={onCancel} size="md">
             Cancel
           </Button>
         </div>

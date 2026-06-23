@@ -1,18 +1,18 @@
 import { Star } from 'lucide-react';
 
 /**
- * StarRating — Premium Redesign
+ * StarRating — Editorial Modern Redesign
  *
- * Props:
- *   rating     — number 0-5 (supports fractions)
- *   size       — sm=13 | md=16 | lg=20 | xl=24
- *   showNumber — show numeric rating next to stars
- *   count      — review count to display after rating
+ * Props (unchanged):
+ *   rating      — number 0-5 (supports fractions, rounds to nearest)
+ *   size        — sm=14 | md=16 | lg=20 | xl=24
+ *   showNumber  — show numeric rating next to stars
+ *   count       — review count to display after rating
  *   interactive — boolean, makes stars clickable
  *   onChange    — callback(starNumber) when interactive
  */
 const sizeMap = {
-  sm: 13,
+  sm: 14,
   md: 16,
   lg: 20,
   xl: 24,
@@ -41,18 +41,22 @@ const StarRating = ({
             key={star}
             size={px}
             onClick={() => handleClick(star)}
-            className={`${star <= rounded ? 'fill-amber-400 text-amber-400' : 'fill-surface-200 dark:fill-surface-700 text-surface-200 dark:text-surface-700'} ${interactive ? 'cursor-pointer hover:scale-110 transition-transform' : ''}`}
+            className={`${
+              star <= rounded
+                ? 'fill-amber-400 text-amber-400'
+                : 'fill-surface-200 dark:fill-surface-800 text-surface-200 dark:text-surface-800'
+            } ${interactive ? 'cursor-pointer hover:scale-110 transition-transform' : ''}`}
             strokeWidth={1.5}
           />
         ))}
       </div>
       {showNumber && (
-        <span className="text-xs font-semibold text-surface-700 dark:text-surface-300">
+        <span className="text-xs font-semibold text-surface-700 dark:text-surface-300 tabular-nums">
           {rating.toFixed(1)}
         </span>
       )}
       {count !== null && (
-        <span className="text-xs text-surface-500 dark:text-surface-400">
+        <span className="text-xs text-surface-500 dark:text-surface-400 tabular-nums">
           ({count})
         </span>
       )}

@@ -10,7 +10,15 @@ import Loader from '../common/Loader.jsx';
 import ReviewForm from './ReviewForm.jsx';
 
 /**
- * ReviewList — Redesigned with dynamic, real-time ratings calculation
+ * ReviewList — Editorial Modern Redesign
+ *
+ * Single cohesive avatar gradient, sentence case, rounded-xl cards.
+ * Same props, logic, and memos — fully backward compatible.
+ *
+ * Props (unchanged):
+ *   productId      — product ID
+ *   productRating  — fallback rating from product (default: 0)
+ *   numOfReviews   — fallback review count from product (default: 0)
  */
 const ReviewList = ({ productId, productRating = 0, numOfReviews = 0 }) => {
   const [reviews, setReviews] = useState([]);
@@ -79,49 +87,53 @@ const ReviewList = ({ productId, productRating = 0, numOfReviews = 0 }) => {
     return arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [reviews, sortBy]);
 
+  // Bar color by star level
+  const barColor = (star) => {
+    if (star === 5) return 'bg-emerald-500';
+    if (star === 4) return 'bg-lime-500';
+    if (star === 3) return 'bg-amber-500';
+    if (star === 2) return 'bg-orange-500';
+    return 'bg-red-500';
+  };
+
   return (
-    <div className="space-y-6">
-      {/* ============ Reviews Summary Card ============ */}
-      <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-150 dark:border-surface-850/60 p-6 sm:p-8 shadow-soft">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-          
-          {/* Left: big rating */}
-          <div className="md:col-span-4 text-center md:border-r md:border-surface-100 dark:md:border-surface-800 md:pr-6 select-none">
-            <p className="text-5xl sm:text-6xl font-black text-surface-900 dark:text-white font-display tracking-tight">
+    <div className="space-y-5">
+      {/* ─── Summary Card ─── */}
+      <div className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-5 sm:p-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+
+          {/* Big rating */}
+          <div className="md:col-span-4 text-center md:border-r md:border-surface-200 dark:md:border-surface-800 md:pr-5">
+            <p className="text-4xl sm:text-5xl font-bold text-surface-900 dark:text-white font-display tracking-tight tabular-nums">
               {derivedRating.toFixed(1)}
             </p>
-            <div className="flex justify-center my-3">
+            <div className="flex justify-center my-2">
               <StarRating rating={derivedRating} size="md" />
             </div>
-            <p className="text-xs font-bold uppercase tracking-wider text-surface-400 dark:text-surface-500">
+            <p className="text-xs text-surface-500 dark:text-surface-400">
               Based on {derivedNumOfReviews} {derivedNumOfReviews === 1 ? 'review' : 'reviews'}
             </p>
           </div>
 
-          {/* Right: distribution bars */}
-          <div className="md:col-span-5 space-y-2.5">
+          {/* Distribution bars */}
+          <div className="md:col-span-5 space-y-2">
             {[5, 4, 3, 2, 1].map((star) => {
               const count = distribution[star] || 0;
               const pct = reviews.length ? (count / reviews.length) * 100 : 0;
               return (
                 <div key={star} className="flex items-center gap-2.5 text-xs">
-                  <span className="w-8 flex items-center gap-0.5 font-bold text-surface-500 dark:text-surface-400 select-none">
-                    {star} <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 stroke-2" />
+                  <span className="w-7 flex items-center gap-0.5 font-medium text-surface-500 dark:text-surface-400">
+                    {star} <Star className="w-3 h-3 fill-amber-400 text-amber-400" strokeWidth={1.5} />
                   </span>
-                  <div className="flex-1 h-2 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden select-none">
+                  <div className="flex-1 h-1.5 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}
-                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                      className={`h-full rounded-full ${
-                        star === 5 ? 'bg-emerald-500' :
-                        star === 4 ? 'bg-lime-500' :
-                        star === 3 ? 'bg-amber-500' :
-                        star === 2 ? 'bg-orange-500' : 'bg-red-550'
-                      }`}
+                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                      className={`h-full rounded-full ${barColor(star)}`}
                     />
                   </div>
-                  <span className="w-8 text-right font-bold text-surface-400 dark:text-surface-500 tabular-nums">{count}</span>
+                  <span className="w-6 text-right font-medium text-surface-400 dark:text-surface-500 tabular-nums">{count}</span>
                 </div>
               );
             })}
@@ -130,13 +142,13 @@ const ReviewList = ({ productId, productRating = 0, numOfReviews = 0 }) => {
           {/* Action button */}
           <div className="md:col-span-3 flex flex-col gap-2 md:items-end">
             {isAuthenticated && !hasReviewed ? (
-              <Button variant="primary" size="md" icon={MessageSquare} onClick={() => setShowForm(!showForm)} className="w-full md:w-auto font-bold uppercase tracking-wider text-xs">
+              <Button variant="primary" size="md" icon={MessageSquare} onClick={() => setShowForm(!showForm)} className="w-full md:w-auto">
                 Write a Review
               </Button>
             ) : isAuthenticated && hasReviewed ? (
-              <Badge variant="success" size="sm" dot className="font-bold uppercase tracking-wider py-1 px-2.5">You reviewed this</Badge>
+              <Badge variant="success" size="sm" dot>You reviewed this</Badge>
             ) : (
-              <a href="/login" className="text-xs text-primary-600 dark:text-primary-400 font-extrabold uppercase tracking-widest hover:underline no-underline">
+              <a href="/login" className="text-xs text-primary-600 dark:text-primary-400 font-medium hover:underline no-underline">
                 Login to write a review →
               </a>
             )}
@@ -144,14 +156,14 @@ const ReviewList = ({ productId, productRating = 0, numOfReviews = 0 }) => {
         </div>
       </div>
 
-      {/* Review Form container */}
+      {/* Review form (expandable) */}
       <AnimatePresence mode="wait">
         {showForm && (
           <motion.div
-            initial={{ opacity: 0, height: 0, y: -10 }}
+            initial={{ opacity: 0, height: 0, y: -8 }}
             animate={{ opacity: 1, height: 'auto', y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            exit={{ opacity: 0, height: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
             <ReviewForm
@@ -165,16 +177,16 @@ const ReviewList = ({ productId, productRating = 0, numOfReviews = 0 }) => {
 
       {/* Sort header */}
       {reviews.length > 0 && (
-        <div className="flex items-center justify-between gap-3 flex-wrap pt-2 select-none">
-          <p className="text-xs font-bold uppercase tracking-wider text-surface-600 dark:text-surface-300">
+        <div className="flex items-center justify-between gap-3 flex-wrap pt-1">
+          <p className="text-sm font-medium text-surface-600 dark:text-surface-300">
             {reviews.length} {reviews.length === 1 ? 'Review' : 'Reviews'}
           </p>
           <div className="flex items-center gap-2">
-            <label className="text-2xs font-extrabold uppercase tracking-wider text-surface-450 dark:text-surface-500">Sort by:</label>
+            <label className="text-xs text-surface-500 dark:text-surface-400">Sort by:</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-1.5 border border-surface-200 dark:border-surface-700 rounded-lg text-xs font-bold bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-1.5 border border-surface-200 dark:border-surface-800 rounded-md text-xs font-medium bg-white dark:bg-surface-900 text-surface-700 dark:text-surface-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500/15 focus:border-primary-500"
             >
               <option value="newest">Newest First</option>
               <option value="highest">Highest Rating</option>
@@ -184,45 +196,45 @@ const ReviewList = ({ productId, productRating = 0, numOfReviews = 0 }) => {
         </div>
       )}
 
-      {/* Reviews List Cards */}
+      {/* Reviews list */}
       {loading ? (
         <Loader size="md" label="Loading reviews..." />
       ) : reviews.length === 0 ? (
-        <div className="text-center py-14 bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 select-none">
-          <div className="w-16 h-16 bg-surface-50 dark:bg-surface-800 rounded-full flex items-center justify-center mx-auto mb-3">
-            <MessageSquare className="w-7 h-7 text-surface-300 dark:text-surface-600 animate-float" strokeWidth={1.5} />
+        <div className="text-center py-12 bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800">
+          <div className="w-14 h-14 bg-surface-100 dark:bg-surface-800 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <MessageSquare className="w-6 h-6 text-surface-400" strokeWidth={1.5} />
           </div>
-          <p className="text-surface-700 dark:text-surface-200 font-bold uppercase tracking-wider text-xs">No reviews yet</p>
+          <p className="text-surface-700 dark:text-surface-200 font-medium text-sm">No reviews yet</p>
           <p className="text-xs text-surface-400 dark:text-surface-500 mt-1">Be the first to share your thoughts!</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {sortedReviews.map((review, idx) => {
             const isOwner = user?._id === review.user?._id;
-            const avatarColor = ['from-primary-500 to-violet-600', 'from-emerald-500 to-teal-600', 'from-amber-500 to-orange-600', 'from-pink-500 to-rose-600', 'from-blue-500 to-cyan-600'][idx % 5];
             return (
               <motion.div
                 key={review._id}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.04 }}
-                className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-150 dark:border-surface-850/60 p-5 shadow-xs"
+                transition={{ delay: idx * 0.04, duration: 0.3 }}
+                className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-4 sm:p-5"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className={`w-11 h-11 rounded-full bg-linear-to-br ${avatarColor} flex items-center justify-center text-white font-black text-sm shrink-0 shadow-xs select-none`}>
+                    {/* Single cohesive avatar gradient */}
+                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary-500 to-violet-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
                       {review.user?.name?.charAt(0)?.toUpperCase() || '?'}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="font-bold text-sm text-surface-850 dark:text-white leading-tight">{review.user?.name || 'Anonymous'}</p>
-                        <Badge variant="success" size="xs" className="text-4xs font-black uppercase tracking-widest flex items-center gap-1 select-none">
+                        <p className="font-semibold text-sm text-surface-900 dark:text-white leading-tight">{review.user?.name || 'Anonymous'}</p>
+                        <Badge variant="success" size="xs" className="flex items-center gap-0.5">
                           <ThumbsUp className="w-2.5 h-2.5" /> Verified
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-2 mt-1 select-none">
+                      <div className="flex items-center gap-2 mt-1">
                         <StarRating rating={review.rating} size="sm" />
-                        <span className="text-[10px] font-bold text-surface-400 dark:text-surface-500">
+                        <span className="text-[11px] text-surface-400 dark:text-surface-500 tabular-nums">
                           {new Date(review.createdAt).toLocaleDateString('en-PK', { year: 'numeric', month: 'short', day: 'numeric' })}
                         </span>
                       </div>
@@ -231,7 +243,7 @@ const ReviewList = ({ productId, productRating = 0, numOfReviews = 0 }) => {
                   {isOwner && (
                     <button
                       onClick={() => handleDeleteReview(review._id)}
-                      className="p-2 text-surface-400 dark:text-surface-500 hover:text-red-550 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors cursor-pointer select-none"
+                      className="p-1.5 text-surface-400 dark:text-surface-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-md transition-colors cursor-pointer"
                       title="Delete review"
                       aria-label="Delete review"
                     >
@@ -239,7 +251,7 @@ const ReviewList = ({ productId, productRating = 0, numOfReviews = 0 }) => {
                     </button>
                   )}
                 </div>
-                <p className="text-surface-650 dark:text-surface-300 mt-3 leading-relaxed text-sm font-medium">{review.comment}</p>
+                <p className="text-surface-700 dark:text-surface-300 mt-3 leading-relaxed text-sm">{review.comment}</p>
               </motion.div>
             );
           })}

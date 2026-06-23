@@ -41,7 +41,6 @@ const statusSteps = [
 const OrderDetailPage = () => {
   const { id } = useParams();
 
-  // Stable function reference prevents infinite re-fetch loops
   const fetchOrder = useCallback(
     (signal) => orderService.getOrderById(id, { signal }),
     [id]
@@ -52,12 +51,12 @@ const OrderDetailPage = () => {
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center select-none">
-        <div className="w-16 h-16 mx-auto rounded-2xl bg-danger/10 flex items-center justify-center mb-5 border border-danger/20">
-          <XCircle className="w-8 h-8 text-danger" />
+      <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+        <div className="w-14 h-14 mx-auto rounded-xl bg-red-50 dark:bg-red-950/20 flex items-center justify-center mb-5 border border-red-200 dark:border-red-900/30">
+          <XCircle className="w-7 h-7 text-red-500" />
         </div>
-        <h2 className="text-xl font-bold text-surface-900 dark:text-white mb-2 font-display">Couldn't load order</h2>
-        <p className="text-danger text-xs font-semibold mb-8 max-w-sm mx-auto leading-relaxed">{error}</p>
+        <h2 className="text-xl font-semibold text-surface-900 dark:text-white mb-2 font-display">Couldn't load order</h2>
+        <p className="text-red-500 text-sm mb-8 max-w-sm mx-auto">{error}</p>
         <Link to={ROUTES.PROFILE} className="no-underline">
           <Button variant="outline" icon={ChevronLeft}>Back to Profile</Button>
         </Link>
@@ -73,79 +72,73 @@ const OrderDetailPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-      
-      {/* Breadcrumb (Sleek Tactical Link Stack) */}
-      <nav className="flex items-center gap-1.5 text-2xs font-bold uppercase tracking-widest text-surface-450 dark:text-surface-555 mb-5 flex-wrap select-none" aria-label="Breadcrumb">
-        <Link to={ROUTES.HOME} className="hover:text-primary-600 dark:hover:text-primary-450 flex items-center gap-1 transition-colors no-underline">
+
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1.5 text-xs text-surface-500 dark:text-surface-400 mb-5 flex-wrap" aria-label="Breadcrumb">
+        <Link to={ROUTES.HOME} className="hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-1 transition-colors no-underline">
           <HomeIcon className="w-3.5 h-3.5" /> Home
         </Link>
-        <ChevronRight className="w-3 h-3 text-surface-300 dark:text-surface-750" />
-        <Link to={ROUTES.PROFILE} className="hover:text-primary-600 dark:hover:text-primary-450 transition-colors no-underline">
+        <ChevronRight className="w-3 h-3 text-surface-300 dark:text-surface-700" />
+        <Link to={ROUTES.PROFILE} className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors no-underline">
           My Account
         </Link>
-        <ChevronRight className="w-3 h-3 text-surface-300 dark:text-surface-750" />
-        <span className="text-surface-800 dark:text-white truncate font-extrabold">Order #{order._id?.slice(-8).toUpperCase()}</span>
+        <ChevronRight className="w-3 h-3 text-surface-300 dark:text-surface-700" />
+        <span className="text-surface-800 dark:text-white truncate font-medium">Order #{order._id?.slice(-8).toUpperCase()}</span>
       </nav>
 
       <Link
         to={ROUTES.PROFILE}
-        className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-surface-450 dark:text-surface-500 hover:text-primary-600 dark:hover:text-primary-400 mb-6 no-underline transition-colors select-none"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-surface-500 dark:text-surface-400 hover:text-primary-600 dark:hover:text-primary-400 mb-6 no-underline transition-colors"
       >
         <ChevronLeft className="w-4 h-4" /> Back to Orders
       </Link>
 
-      {/* Order Main Header Card */}
+      {/* Header card */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-surface-900 rounded-3xl border border-surface-150 dark:border-surface-850/60 p-6 sm:p-8 mb-8 shadow-premium"
+        className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-6 sm:p-7 mb-8"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-          <div className="flex items-center gap-4">
-            <div className={`w-13 h-13 rounded-2xl flex items-center justify-center shrink-0 border select-none ${
-              isCancelled ? 'bg-danger-soft/10 dark:bg-danger/10 border-danger/15' :
-              order.orderStatus === 'delivered' ? 'bg-success-soft/20 dark:bg-success/10 border-success/15' :
-              order.orderStatus === 'shipped' ? 'bg-primary-50 dark:bg-primary-950/20 border-primary-100/30' :
-              'bg-warning-soft/20 dark:bg-warning/10 border-warning/15'
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+              isCancelled ? 'bg-red-50 dark:bg-red-950/20' :
+              order.orderStatus === 'delivered' ? 'bg-emerald-50 dark:bg-emerald-950/20' :
+              order.orderStatus === 'shipped' ? 'bg-primary-50 dark:bg-primary-950/30' :
+              'bg-amber-50 dark:bg-amber-950/20'
             }`}>
-              <Package className={`w-6.5 h-6.5 ${
-                isCancelled ? 'text-danger' :
-                order.orderStatus === 'delivered' ? 'text-success' :
+              <Package className={`w-6 h-6 ${
+                isCancelled ? 'text-red-500' :
+                order.orderStatus === 'delivered' ? 'text-emerald-500' :
                 order.orderStatus === 'shipped' ? 'text-primary-600 dark:text-primary-400' :
-                'text-warning'
-              }`} />
+                'text-amber-500'
+              }`} strokeWidth={2} />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-black text-surface-900 dark:text-white font-display tracking-tight leading-none">
+              <h1 className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-white font-display tracking-tight">
                 Order #{order._id?.slice(-8).toUpperCase()}
               </h1>
-              <p className="text-2xs font-extrabold uppercase tracking-wider text-surface-450 dark:text-surface-500 mt-2 flex items-center gap-1.5 select-none">
+              <p className="text-sm text-surface-500 dark:text-surface-400 mt-1 flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-primary-500" />
-                Placed on {new Date(order.createdAt).toLocaleDateString('en-PK', {
-                  year: 'numeric', month: 'long', day: 'numeric'
-                })}
+                Placed on {new Date(order.createdAt).toLocaleDateString('en-PK', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
           </div>
-          <Badge variant={statusColors[order.orderStatus]} size="md" className="capitalize self-start sm:self-center font-bold px-3 py-1 text-2xs select-none">
+          <Badge variant={statusColors[order.orderStatus]} size="md" className="capitalize self-start sm:self-center">
             {order.orderStatus}
           </Badge>
         </div>
 
-        {/* Dynamic Timeline Component */}
+        {/* Timeline */}
         {!isCancelled && (
-          <div className="mt-8 pt-8 border-t border-surface-100 dark:border-surface-850">
-            <div className="relative flex items-start justify-between max-w-2xl mx-auto select-none">
-              
-              {/* Background Connection Bar */}
-              <div className="absolute top-5 left-[10%] right-[10%] h-0.5 bg-surface-150 dark:bg-surface-800" />
-              
-              {/* Animated Completed Connection Bar */}
+          <div className="mt-7 pt-7 border-t border-surface-200 dark:border-surface-800">
+            <div className="relative flex items-start justify-between max-w-2xl mx-auto">
+              <div className="absolute top-5 left-[10%] right-[10%] h-0.5 bg-surface-200 dark:bg-surface-800" />
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${(currentStepIndex / (statusSteps.length - 1)) * 80}%` }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute top-5 left-[10%] h-0.5 bg-linear-to-r from-primary-500 to-violet-500"
+                transition={{ duration: 0.6 }}
+                className="absolute top-5 left-[10%] h-0.5 bg-primary-600"
               />
 
               {statusSteps.map((step, i) => {
@@ -155,24 +148,24 @@ const OrderDetailPage = () => {
                 return (
                   <div key={step.key} className="relative flex flex-col items-center z-10 flex-1">
                     <motion.div
-                      initial={{ scale: 0.85 }}
-                      animate={{ scale: isActive ? 1.15 : 1 }}
+                      initial={{ scale: 0.9 }}
+                      animate={{ scale: isActive ? 1.1 : 1 }}
                       transition={{ type: 'spring', damping: 15 }}
-                      className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                      className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors ${
                         isComplete
-                          ? 'bg-primary-600 border-primary-600 text-white shadow-xs'
+                          ? 'bg-primary-600 border-primary-600 text-white'
                           : isActive
-                          ? 'bg-white dark:bg-surface-900 border-primary-500 text-primary-500 dark:text-primary-400 shadow-md'
-                          : 'bg-white dark:bg-surface-900 border-surface-200 dark:border-surface-750 text-surface-400'
+                          ? 'bg-white dark:bg-surface-900 border-primary-500 text-primary-500'
+                          : 'bg-white dark:bg-surface-900 border-surface-200 dark:border-surface-800 text-surface-400'
                       }`}
                     >
-                      {isComplete ? <CheckCircle className="w-5 h-5 stroke-[2.2]" /> : <StepIcon className="w-5 h-5 stroke-2" />}
+                      {isComplete ? <CheckCircle className="w-5 h-5" strokeWidth={2} /> : <StepIcon className="w-5 h-5" strokeWidth={2} />}
                     </motion.div>
                     <div className="text-center mt-3">
-                      <div className={`text-2xs font-extrabold uppercase tracking-wider ${isActive || isComplete ? 'text-surface-850 dark:text-white' : 'text-surface-400 dark:text-surface-555'}`}>
+                      <div className={`text-sm font-medium ${isActive || isComplete ? 'text-surface-900 dark:text-white' : 'text-surface-400 dark:text-surface-500'}`}>
                         {step.label}
                       </div>
-                      <div className="text-[10px] text-surface-400 dark:text-surface-500 mt-1 font-medium hidden sm:block">
+                      <div className="text-xs text-surface-400 dark:text-surface-500 mt-0.5 hidden sm:block">
                         {step.desc}
                       </div>
                     </div>
@@ -184,166 +177,163 @@ const OrderDetailPage = () => {
         )}
 
         {isCancelled && (
-          <div className="mt-6 p-4.5 rounded-xl bg-danger-soft/10 dark:bg-danger/10 border border-danger/20 flex items-center gap-3">
-            <XCircle className="w-5 h-5 text-danger shrink-0" />
-            <p className="text-xs font-bold uppercase tracking-wider text-danger">This order was cancelled.</p>
+          <div className="mt-6 p-4 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 flex items-center gap-3">
+            <XCircle className="w-5 h-5 text-red-500 shrink-0" />
+            <p className="text-sm font-medium text-red-600 dark:text-red-400">This order was cancelled.</p>
           </div>
         )}
       </motion.div>
 
-      {/* Main Double Column Layout */}
+      {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Side: Items & Payments (2/3 width) */}
+
+        {/* Left: items + payment */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="lg:col-span-2 space-y-5"
+          className="lg:col-span-2 space-y-4"
         >
-          <div className="flex items-center justify-between select-none">
-            <h2 className="text-base font-bold uppercase tracking-wider text-surface-800 dark:text-white">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold text-surface-800 dark:text-white">
               Items ({order.items?.length})
             </h2>
-            <span className="text-2xs font-extrabold uppercase tracking-wider text-surface-450 dark:text-surface-500">
+            <span className="text-sm text-surface-500 dark:text-surface-400">
               {order.items?.reduce((sum, i) => sum + i.quantity, 0)} total units
             </span>
           </div>
 
-          {/* Cart Items Loop */}
           {order.items?.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, x: -12 }}
+              initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-150 dark:border-surface-850/60 p-4 flex gap-4 hover:shadow-soft transition-shadow"
+              className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-4 flex gap-4"
             >
-              <div className="w-20 h-20 rounded-xl overflow-hidden bg-surface-100 dark:bg-surface-950 shrink-0 border border-surface-150 dark:border-surface-850/40 select-none">
+              <div className="w-18 h-18 rounded-lg overflow-hidden bg-surface-100 dark:bg-surface-950 shrink-0 border border-surface-200 dark:border-surface-800">
                 {item.image ? (
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Package className="w-8 h-8 text-surface-300 dark:text-surface-600" />
+                    <Package className="w-7 h-7 text-surface-300 dark:text-surface-600" strokeWidth={1.5} />
                   </div>
                 )}
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                 <div>
-                  <p className="font-semibold text-sm text-surface-850 dark:text-white line-clamp-1 leading-snug">{item.name}</p>
-                  <p className="text-2xs font-bold uppercase tracking-wider text-surface-450 dark:text-surface-500 mt-1">Qty: {item.quantity}</p>
+                  <p className="font-medium text-sm text-surface-900 dark:text-white line-clamp-1 leading-snug">{item.name}</p>
+                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">Qty: {item.quantity}</p>
                 </div>
                 <div className="flex items-baseline justify-between mt-1 flex-wrap gap-2">
-                  <p className="font-extrabold text-sm tabular-nums text-surface-900 dark:text-white">{formatCurrency(item.price * item.quantity)}</p>
-                  <p className="text-2xs font-bold uppercase tracking-wider text-surface-450 dark:text-surface-500">{formatCurrency(item.price)} each</p>
+                  <p className="font-semibold text-sm tabular-nums text-surface-900 dark:text-white">{formatCurrency(item.price * item.quantity)}</p>
+                  <p className="text-xs text-surface-400 dark:text-surface-500 font-mono">{formatCurrency(item.price)} each</p>
                 </div>
               </div>
             </motion.div>
           ))}
 
-          {/* Subtotal & Totals Billing Card */}
-          <div className="bg-white dark:bg-surface-900 rounded-3xl border border-surface-150 dark:border-surface-850/60 p-6">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-surface-800 dark:text-white mb-4">Payment Summary</h3>
-            <div className="space-y-3 text-xs">
-              <div className="flex justify-between font-medium text-surface-500 dark:text-surface-450">
+          {/* Payment summary */}
+          <div className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-5">
+            <h3 className="text-sm font-semibold text-surface-800 dark:text-white mb-4">Payment Summary</h3>
+            <div className="space-y-2.5 text-sm">
+              <div className="flex justify-between text-surface-500 dark:text-surface-400">
                 <span>Subtotal</span>
-                <span className="tabular-nums font-semibold">{formatCurrency(order.itemsPrice)}</span>
+                <span className="tabular-nums font-medium text-surface-900 dark:text-white">{formatCurrency(order.itemsPrice)}</span>
               </div>
-              <div className="flex justify-between font-medium text-surface-500 dark:text-surface-450">
+              <div className="flex justify-between text-surface-500 dark:text-surface-400">
                 <span>Shipping</span>
-                <span className="tabular-nums font-semibold">{order.shippingPrice === 0 ? 'FREE' : formatCurrency(order.shippingPrice)}</span>
+                <span className="tabular-nums font-medium text-surface-900 dark:text-white">{order.shippingPrice === 0 ? 'FREE' : formatCurrency(order.shippingPrice)}</span>
               </div>
-              <div className="flex justify-between font-black text-surface-900 dark:text-white text-sm pt-4 mt-2 border-t border-dashed border-surface-150 dark:border-surface-800">
-                <span>Total Amount</span>
-                <span className="gradient-text-brand text-base sm:text-lg tabular-nums">{formatCurrency(order.totalPrice)}</span>
+              <div className="flex justify-between font-semibold text-surface-900 dark:text-white pt-3 mt-2 border-t border-surface-200 dark:border-surface-800">
+                <span>Total</span>
+                <span className="text-base sm:text-lg tabular-nums">{formatCurrency(order.totalPrice)}</span>
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Right Side: Shipping & Sidebar meta (1/3 width) */}
+        {/* Right: shipping + payment */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="space-y-5"
+          className="space-y-4"
         >
-          {/* Deliveries Address Information Card */}
-          <div className="bg-white dark:bg-surface-900 rounded-3xl border border-surface-150 dark:border-surface-850/60 p-6">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-surface-850 dark:text-white flex items-center gap-2 mb-4 select-none">
-              <div className="w-7 h-7 rounded-lg bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center border border-primary-100/20 dark:border-primary-900/15">
+          {/* Shipping address */}
+          <div className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-5">
+            <h3 className="text-sm font-semibold text-surface-800 dark:text-white flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
                 <MapPin className="w-4 h-4 text-primary-600 dark:text-primary-400" />
               </div>
               Shipping Address
             </h3>
             {order.shippingAddress ? (
-              <div className="text-xs text-surface-600 dark:text-surface-355 space-y-2 font-medium">
-                <p className="font-bold text-sm text-surface-850 dark:text-white">{order.shippingAddress.fullName}</p>
-                <p className="flex items-center gap-1.5 text-surface-500 dark:text-surface-450 select-none">
+              <div className="text-sm text-surface-600 dark:text-surface-300 space-y-2">
+                <p className="font-semibold text-surface-900 dark:text-white">{order.shippingAddress.fullName}</p>
+                <p className="flex items-center gap-1.5 text-surface-500 dark:text-surface-400">
                   <Phone className="w-3.5 h-3.5 shrink-0 text-surface-400" />
                   {order.shippingAddress.phone}
                 </p>
-                <p className="pt-2 border-t border-dashed border-surface-100 dark:border-surface-850 text-surface-600 dark:text-surface-400">
+                <p className="pt-2 border-t border-surface-200 dark:border-surface-800 text-surface-600 dark:text-surface-400">
                   {order.shippingAddress.street}
                 </p>
                 <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}</p>
-                {order.shippingAddress.country && <p className="uppercase text-surface-400 font-bold">{order.shippingAddress.country}</p>}
+                {order.shippingAddress.country && <p className="text-surface-400 font-medium">{order.shippingAddress.country}</p>}
               </div>
             ) : (
-              <p className="text-xs text-surface-400 select-none">No shipping information available</p>
+              <p className="text-sm text-surface-400">No shipping information available</p>
             )}
           </div>
 
-          {/* Secure Payments Details Card */}
-          <div className="bg-white dark:bg-surface-900 rounded-3xl border border-surface-150 dark:border-surface-850/60 p-6">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-surface-850 dark:text-white flex items-center gap-2 mb-4 select-none">
-              <div className="w-7 h-7 rounded-lg bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center border border-primary-100/20 dark:border-primary-900/15">
+          {/* Payment status */}
+          <div className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-5">
+            <h3 className="text-sm font-semibold text-surface-800 dark:text-white flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
                 <CreditCard className="w-4 h-4 text-primary-600 dark:text-primary-400" />
               </div>
               Payment Status
             </h3>
-            <div className="text-xs space-y-3 font-medium">
+            <div className="text-sm space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-surface-500 dark:text-surface-455">Method</span>
-                <span className="font-bold text-surface-850 dark:text-white">
+                <span className="text-surface-500 dark:text-surface-400">Method</span>
+                <span className="font-medium text-surface-900 dark:text-white">
                   {order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-surface-500 dark:text-surface-455">Status</span>
-                <Badge variant={order.paymentStatus === 'paid' ? 'success' : 'warning'} className="capitalize font-bold text-3xs select-none">
+                <span className="text-surface-500 dark:text-surface-400">Status</span>
+                <Badge variant={order.paymentStatus === 'paid' ? 'success' : 'warning'} className="capitalize">
                   {order.paymentStatus}
                 </Badge>
               </div>
-              <div className="flex items-center gap-2 pt-3 border-t border-dashed border-surface-100 dark:border-surface-850 text-3xs text-surface-400 select-none font-bold uppercase tracking-wider">
-                <ShieldCheck className="w-3.5 h-3.5 text-success" />
+              <div className="flex items-center gap-2 pt-3 border-t border-surface-200 dark:border-surface-800 text-xs text-surface-400">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" strokeWidth={2} />
                 <span>Secured transaction</span>
               </div>
             </div>
           </div>
 
-          {/* Confirmed Delivery Badge Banner */}
+          {/* Delivered badge */}
           {order.deliveredAt && (
-            <div className="bg-success-soft/20 dark:bg-success/10 rounded-2xl border border-success/15 p-5 text-center select-none">
-              <CheckCircle className="w-8 h-8 text-success mx-auto mb-2" />
-              <p className="text-success font-bold text-xs uppercase tracking-wider">Delivered on</p>
-              <p className="text-surface-850 dark:text-white font-black text-sm mt-1">
-                {new Date(order.deliveredAt).toLocaleDateString('en-PK', {
-                  year: 'numeric', month: 'long', day: 'numeric'
-                })}
+            <div className="bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-200 dark:border-emerald-900/30 p-5 text-center">
+              <CheckCircle className="w-8 h-8 text-emerald-500 mx-auto mb-2" strokeWidth={2} />
+              <p className="text-emerald-600 dark:text-emerald-400 font-medium text-sm">Delivered on</p>
+              <p className="text-surface-900 dark:text-white font-semibold text-sm mt-1">
+                {new Date(order.deliveredAt).toLocaleDateString('en-PK', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
           )}
 
-          {/* Integrated Dynamic Support Help Box */}
-          <div className="bg-linear-to-br from-primary-50 to-violet-50 dark:from-primary-950/20 dark:to-violet-950/20 rounded-3xl border border-primary-100/40 dark:border-primary-900/10 p-6 select-none">
-            <h3 className="font-extrabold text-surface-850 dark:text-white text-xs uppercase tracking-wider mb-1">Need help?</h3>
-            <p className="text-2xs font-semibold text-surface-500 dark:text-surface-400 mb-4 leading-relaxed">
-              Our professional checkout & dispatch support team is ready to assist you.
+          {/* Help */}
+          <div className="bg-primary-50 dark:bg-primary-950/20 rounded-xl border border-primary-200 dark:border-primary-900/30 p-5">
+            <h3 className="font-semibold text-surface-900 dark:text-white text-sm mb-1">Need help?</h3>
+            <p className="text-xs text-surface-500 dark:text-surface-400 mb-3 leading-relaxed">
+              Our support team is ready to assist you with any questions.
             </p>
             <a
               href="mailto:support@shopverse.com"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 dark:text-primary-400 hover:text-primary-750 transition-colors no-underline"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 transition-colors no-underline"
             >
               <Mail className="w-3.5 h-3.5" />
               support@shopverse.com

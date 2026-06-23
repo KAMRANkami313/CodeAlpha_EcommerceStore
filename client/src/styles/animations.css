@@ -1,7 +1,12 @@
+/* =================================================================
+   ShopVerse — Animations (Editorial Modern Redesign)
+   Streamlined keyframes, smoother easing, preserved class names.
+   ================================================================= */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -21,7 +26,7 @@
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(24px);
   }
   to {
     opacity: 1;
@@ -35,7 +40,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.7;
+    opacity: 0.65;
   }
 }
 
@@ -48,8 +53,9 @@
   }
 }
 
+/* ---------- Animation utility classes ---------- */
 .animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out forwards;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-fade-in {
@@ -57,9 +63,10 @@
 }
 
 .animate-slide-in-right {
-  animation: slideInRight 0.4s ease-out forwards;
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* ---------- Skeleton shimmer ---------- */
 .skeleton {
   background: linear-gradient(
     90deg,
@@ -74,9 +81,9 @@
 .dark .skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-surface-700) 25%,
-    var(--color-surface-600) 50%,
-    var(--color-surface-700) 75%
+    var(--color-surface-800) 25%,
+    var(--color-surface-700) 50%,
+    var(--color-surface-800) 75%
   );
   background-size: 200% 100%;
 }

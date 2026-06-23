@@ -9,10 +9,10 @@ import Button from '../common/Button.jsx';
 import ROUTES from '../../constants/ROUTES.js';
 
 /**
- * LoginForm — Premium Redesign
+ * LoginForm — Editorial Modern Redesign
  *
- * A high-fidelity, micro-interactive login card featuring tactile inputs,
- * styled checkboxes, and robust input validation states.
+ * Clean brand icon, sentence case labels, primary CTA.
+ * Same props, hooks, validation, and logic — fully backward compatible.
  */
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,39 +30,37 @@ const LoginForm = () => {
     }
   };
 
-  // Shared premium input class — consistent across all auth forms (Tactile Minimalist)
-  const inputBase = "w-full pl-11 pr-12 py-3 text-sm font-semibold border-1.5 border-surface-200 dark:border-surface-850 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-white placeholder-surface-400 dark:placeholder-surface-500 transition-all duration-300 hover:border-surface-300 dark:hover:border-surface-700";
+  // Shared input class — consistent with RegisterForm
+  const inputBase = "w-full pl-10 pr-11 py-2.5 text-sm font-medium border border-surface-200 dark:border-surface-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/15 focus:border-primary-500 bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-white placeholder:text-surface-400 transition-all hover:border-surface-300 dark:hover:border-surface-700";
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className="max-w-md mx-auto"
     >
-      {/* Brand Header */}
-      <div className="text-center mb-7 select-none">
+      {/* Brand header */}
+      <div className="text-center mb-7">
         <motion.div
-          initial={{ scale: 0, rotate: -8 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: 'spring', damping: 12, stiffness: 200 }}
-          className="relative w-16 h-16 mx-auto mb-4 rounded-2xl bg-linear-to-br from-primary-600 to-violet-600 flex items-center justify-center shadow-brand overflow-hidden border border-white/10"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', damping: 18, stiffness: 250 }}
+          className="w-12 h-12 mx-auto mb-4 rounded-xl bg-linear-to-br from-primary-600 to-violet-600 flex items-center justify-center shadow-sm"
         >
-          {/* Shine Sweep Overlay */}
-          <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shine_3s_ease-in-out_infinite]" />
-          <Lock className="w-6.5 h-6.5 text-white relative z-10 stroke-[2.2]" />
+          <Lock className="w-5 h-5 text-white" strokeWidth={2.2} />
         </motion.div>
-        <h1 className="text-2xl sm:text-3xl font-black text-surface-900 dark:text-white font-display tracking-tight leading-none">Welcome Back</h1>
-        <p className="text-xs font-semibold text-surface-400 dark:text-surface-500 mt-2">Sign in to your premium account to continue</p>
+        <h1 className="text-2xl font-bold text-surface-900 dark:text-white font-display tracking-tight">Welcome back</h1>
+        <p className="text-sm text-surface-500 dark:text-surface-400 mt-1.5">Sign in to your account to continue</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4.5">
-        
-        {/* Email Address Input */}
-        <div className="space-y-2">
-          <label className="block text-2xs font-extrabold text-surface-450 dark:text-surface-550 uppercase tracking-widest select-none">Email Address</label>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        {/* Email */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-surface-600 dark:text-surface-300">Email</label>
           <div className="relative group">
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-surface-400 group-focus-within:text-primary-500 transition-colors" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 group-focus-within:text-primary-500 transition-colors" strokeWidth={2} />
             <input
               type="email"
               {...register('email', { required: 'Email is required' })}
@@ -71,18 +69,18 @@ const LoginForm = () => {
             />
           </div>
           {errors.email && (
-            <p className="text-danger text-2xs font-bold mt-1.5 flex items-center gap-1.5 uppercase tracking-wider select-none animate-fade-in">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+            <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
+              <span className="w-1 h-1 bg-red-500 rounded-full" />
               {errors.email.message}
             </p>
           )}
         </div>
 
-        {/* Password Input */}
-        <div className="space-y-2">
-          <label className="block text-2xs font-extrabold text-surface-450 dark:text-surface-550 uppercase tracking-widest select-none">Password</label>
+        {/* Password */}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-surface-600 dark:text-surface-300">Password</label>
           <div className="relative group">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-surface-400 group-focus-within:text-primary-500 transition-colors" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 group-focus-within:text-primary-500 transition-colors" strokeWidth={2} />
             <input
               type={showPassword ? 'text' : 'password'}
               {...register('password', { required: 'Password is required' })}
@@ -92,56 +90,54 @@ const LoginForm = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 cursor-pointer transition-colors p-1 rounded-md"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 cursor-pointer transition-colors p-1 rounded-md"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
           {errors.password && (
-            <p className="text-danger text-2xs font-bold mt-1.5 flex items-center gap-1.5 uppercase tracking-wider select-none animate-fade-in">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+            <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5">
+              <span className="w-1 h-1 bg-red-500 rounded-full" />
               {errors.password.message}
             </p>
           )}
         </div>
 
-        {/* Options Row */}
-        <div className="flex items-center justify-between text-xs font-semibold select-none pt-1">
-          <label className="inline-flex items-center gap-2 cursor-pointer select-none text-surface-550 dark:text-surface-400">
-            <input
-              type="checkbox"
-              className="check-premium"
-            />
+        {/* Options */}
+        <div className="flex items-center justify-between text-sm">
+          <label className="inline-flex items-center gap-2 cursor-pointer text-surface-600 dark:text-surface-400">
+            <input type="checkbox" className="check-premium" />
             Remember me
           </label>
-          <a href="#" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 no-underline link-underline">
+          <a href="#" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 no-underline link-underline">
             Forgot password?
           </a>
         </div>
 
-        {/* Sign In CTA */}
-        <div className="pt-2">
-          <Button type="submit" variant="shine" loading={loading} className="w-full font-bold uppercase tracking-wider py-3.5 shadow-brand" size="lg">
+        {/* Submit */}
+        <div className="pt-1">
+          <Button type="submit" variant="primary" loading={loading} className="w-full" size="lg">
             Sign In
           </Button>
         </div>
       </form>
 
-      {/* Styled Secondary Divider */}
-      <div className="relative my-6 select-none">
+      {/* Divider */}
+      <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-surface-200/60 dark:border-surface-800/40" />
+          <div className="w-full border-t border-surface-200 dark:border-surface-800" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="bg-surface-50 dark:bg-surface-950 px-3 text-surface-400 dark:text-surface-550 font-bold uppercase tracking-widest text-2xs">or</span>
+          <span className="bg-white dark:bg-surface-950 px-3 text-surface-400 font-medium">or</span>
         </div>
       </div>
 
-      <p className="text-center text-xs font-bold uppercase tracking-widest text-surface-400 dark:text-surface-500 select-none">
+      {/* Sign up link */}
+      <p className="text-center text-sm text-surface-500 dark:text-surface-400">
         Don't have an account?{' '}
-        <Link to={ROUTES.REGISTER} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 no-underline font-extrabold link-underline ml-1">
-          Sign Up
+        <Link to={ROUTES.REGISTER} className="text-primary-600 dark:text-primary-400 hover:text-primary-700 no-underline font-medium link-underline ml-0.5">
+          Sign up
         </Link>
       </p>
     </motion.div>

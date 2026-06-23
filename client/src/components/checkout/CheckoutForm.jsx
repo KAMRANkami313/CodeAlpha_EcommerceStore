@@ -6,7 +6,6 @@ import {
   Phone,
   MapPin,
   CreditCard,
-  Truck,
   Loader2,
   Check,
   ChevronLeft,
@@ -16,7 +15,7 @@ import {
   PackageCheck,
   Banknote,
   PencilLine,
-  RotateCcw, // Added missing Lucide import
+  RotateCcw,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { loadStripe } from '@stripe/stripe-js';
@@ -43,26 +42,35 @@ const getStripe = () => {
 
 const isStripeConfigured = !!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
+// Shared input classes
 const inputClass =
-  'w-full pl-11 pr-4 py-2.5 border border-surface-150 dark:border-surface-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 text-sm font-semibold bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-white placeholder-surface-400 transition-all duration-300';
+  'w-full pl-10 pr-3 py-2.5 border border-surface-200 dark:border-surface-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/15 focus:border-primary-500 text-sm font-medium bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-white placeholder:text-surface-400 transition-all';
 const inputClassNoIcon =
-  'w-full px-4 py-2.5 border border-surface-150 dark:border-surface-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 text-sm font-semibold bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-white placeholder-surface-400 transition-all duration-300';
+  'w-full px-3.5 py-2.5 border border-surface-200 dark:border-surface-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/15 focus:border-primary-500 text-sm font-medium bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-white placeholder:text-surface-400 transition-all';
 
 const Field = ({ label, error, children, icon: Icon }) => (
-  <div className="space-y-2">
-    <label className="block text-3xs font-extrabold text-surface-400 dark:text-surface-500 uppercase tracking-widest select-none">
+  <div className="space-y-1.5">
+    <label className="block text-xs font-medium text-surface-600 dark:text-surface-300">
       {label}
     </label>
     <div className="relative">
       {Icon && (
-        <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-surface-400 pointer-events-none" />
+        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 pointer-events-none" strokeWidth={2} />
       )}
       {children}
     </div>
-    {error && <p className="text-danger text-3xs font-bold mt-1.5 flex items-center gap-1 uppercase tracking-wider select-none animate-fade-in">{error}</p>}
+    {error && <p className="text-xs text-red-500 mt-1 flex items-center gap-1.5"><span className="w-1 h-1 bg-red-500 rounded-full" />{error}</p>}
   </div>
 );
 
+/**
+ * CheckoutForm — Editorial Modern Redesign
+ *
+ * Same 3-step flow (Shipping → Payment → Review), same Stripe + COD logic,
+ * same validation. Refined inputs, sentence case labels.
+ *
+ * Props (unchanged): onStepChange
+ */
 const CheckoutForm = ({ onStepChange }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -71,7 +79,7 @@ const CheckoutForm = ({ onStepChange }) => {
   const [creatingIntent, setCreatingIntent] = useState(false);
   const { cart, emptyCart } = useCart();
   const navigate = useNavigate();
-  
+
   const {
     register,
     handleSubmit,
@@ -80,7 +88,7 @@ const CheckoutForm = ({ onStepChange }) => {
     trigger,
   } = useForm({
     mode: 'onTouched',
-    shouldUnregister: false, // Prevents values from being deleted when steps unmount
+    shouldUnregister: false,
   });
 
   useEffect(() => {
@@ -131,8 +139,6 @@ const CheckoutForm = ({ onStepChange }) => {
   };
 
   const handlePaymentSuccess = async (paymentIntentId) => {
-    // Shipping validation was already completed at Step 1 ➔ Step 2.
-    // Reading values directly from memory now avoids conditional unmounting bugs.
     const shippingData = getValues();
     setLoading(true);
     try {
@@ -186,26 +192,26 @@ const CheckoutForm = ({ onStepChange }) => {
   const shipping = subtotal > 5000 ? 0 : 150;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AnimatePresence mode="wait">
-        
-        {/* ───────────────────────── STEP 1: Shipping Address ───────────────────────── */}
+
+        {/* ─── STEP 1: Shipping Address ─── */}
         {step === 1 && (
           <motion.div
             key="step-1"
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, x: -16 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-5"
           >
-            <div className="flex items-center gap-3 pb-4 border-b border-surface-150 dark:border-surface-800 select-none">
-              <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center border border-primary-100/20">
-                <MapPin className="w-5 h-5 text-primary-600 dark:text-primary-450" />
+            <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
+              <div className="w-9 h-9 rounded-lg bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
+                <MapPin className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <h3 className="text-sm font-black text-surface-900 dark:text-white uppercase tracking-wider font-display">Shipping Address</h3>
-                <p className="text-2xs font-extrabold text-surface-450 uppercase tracking-widest mt-1">Where should we deliver your order?</p>
+                <h3 className="text-sm font-semibold text-surface-900 dark:text-white font-display">Shipping Address</h3>
+                <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">Where should we deliver your order?</p>
               </div>
             </div>
 
@@ -259,14 +265,13 @@ const CheckoutForm = ({ onStepChange }) => {
               </Field>
             </div>
 
-            <div className="flex justify-end pt-4 select-none">
+            <div className="flex justify-end pt-2">
               <Button
                 type="button"
-                variant="gradient"
+                variant="primary"
                 size="lg"
                 iconRight={ChevronRight}
                 onClick={() => goToStep(2)}
-                className="font-extrabold uppercase tracking-widest py-3 shadow-brand"
               >
                 Continue to Payment
               </Button>
@@ -274,50 +279,51 @@ const CheckoutForm = ({ onStepChange }) => {
           </motion.div>
         )}
 
-        {/* ───────────────────────── STEP 2: Payment Method ───────────────────────── */}
+        {/* ─── STEP 2: Payment Method ─── */}
         {step === 2 && (
           <motion.div
             key="step-2"
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, x: -16 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-5"
           >
-            <div className="flex items-center gap-3 pb-4 border-b border-surface-150 dark:border-surface-800 select-none">
-              <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center border border-primary-100/20">
-                <CreditCard className="w-5 h-5 text-primary-600 dark:text-primary-450" />
+            <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
+              <div className="w-9 h-9 rounded-lg bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
+                <CreditCard className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <h3 className="text-sm font-black text-surface-900 dark:text-white uppercase tracking-wider font-display">Payment Method</h3>
-                <p className="text-2xs font-extrabold text-surface-450 uppercase tracking-widest mt-1">Choose how you would like to pay</p>
+                <h3 className="text-sm font-semibold text-surface-900 dark:text-white font-display">Payment Method</h3>
+                <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">Choose how you would like to pay</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+              {/* COD option */}
               <button
                 type="button"
                 onClick={() => setPaymentMethod('COD')}
-                className={`relative flex items-start gap-4.5 p-5 border rounded-2xl cursor-pointer transition-all duration-300 text-left ${
+                className={`relative flex items-start gap-3 p-4 border rounded-xl cursor-pointer transition-colors text-left ${
                   paymentMethod === 'COD'
-                    ? 'border-primary-600 bg-primary-500/5 dark:bg-primary-500/10'
-                    : 'border-surface-200 dark:border-surface-800 hover:border-primary-500/30'
+                    ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-950/20'
+                    : 'border-surface-200 dark:border-surface-800 hover:border-surface-300 dark:hover:border-surface-700'
                 }`}
               >
                 <div
-                  className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-300 ${
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                     paymentMethod === 'COD'
                       ? 'bg-primary-600 text-white'
-                      : 'bg-surface-100 dark:bg-surface-950 text-surface-400 dark:text-surface-555'
+                      : 'bg-surface-100 dark:bg-surface-800 text-surface-400'
                   }`}
                 >
-                  <Banknote className="w-5.5 h-5.5 stroke-2" />
+                  <Banknote className="w-5 h-5" strokeWidth={2} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-black text-surface-900 dark:text-white text-xs uppercase tracking-wider">Cash on Delivery</div>
-                  <div className="text-3xs font-extrabold uppercase tracking-widest text-surface-450 mt-1 leading-normal">
-                    Pay with cash upon package receipt
+                  <div className="font-medium text-surface-900 dark:text-white text-sm">Cash on Delivery</div>
+                  <div className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
+                    Pay with cash upon receipt
                   </div>
                 </div>
                 <div
@@ -325,10 +331,11 @@ const CheckoutForm = ({ onStepChange }) => {
                     paymentMethod === 'COD' ? 'border-primary-600 bg-primary-600' : 'border-surface-300 dark:border-surface-700'
                   }`}
                 >
-                  {paymentMethod === 'COD' && <Check className="w-3 h-3 text-white stroke-[3.5]" />}
+                  {paymentMethod === 'COD' && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
                 </div>
               </button>
 
+              {/* Card option */}
               <button
                 type="button"
                 disabled={!isStripeConfigured}
@@ -339,24 +346,24 @@ const CheckoutForm = ({ onStepChange }) => {
                     toast.error('Card payment is not available. Please use Cash on Delivery.');
                   }
                 }}
-                className={`relative flex items-start gap-4.5 p-5 border rounded-2xl cursor-pointer transition-all duration-300 text-left ${
+                className={`relative flex items-start gap-3 p-4 border rounded-xl cursor-pointer transition-colors text-left ${
                   paymentMethod === 'Card'
-                    ? 'border-primary-600 bg-primary-500/5 dark:bg-primary-500/10'
-                    : 'border-surface-200 dark:border-surface-800 hover:border-primary-500/30'
+                    ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-950/20'
+                    : 'border-surface-200 dark:border-surface-800 hover:border-surface-300 dark:hover:border-surface-700'
                 } ${!isStripeConfigured ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <div
-                  className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-300 ${
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                     paymentMethod === 'Card'
                       ? 'bg-primary-600 text-white'
-                      : 'bg-surface-100 dark:bg-surface-950 text-surface-450 dark:text-surface-555'
+                      : 'bg-surface-100 dark:bg-surface-800 text-surface-400'
                   }`}
                 >
-                  <CreditCard className="w-5.5 h-5.5 stroke-2" />
+                  <CreditCard className="w-5 h-5" strokeWidth={2} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-black text-surface-900 dark:text-white text-xs uppercase tracking-wider">Credit/Debit Card</div>
-                  <div className="text-3xs font-extrabold uppercase tracking-widest text-surface-450 mt-1 leading-normal">
+                  <div className="font-medium text-surface-900 dark:text-white text-sm">Credit / Debit Card</div>
+                  <div className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
                     {isStripeConfigured ? 'Pay securely with Stripe' : 'Unavailable'}
                   </div>
                 </div>
@@ -365,137 +372,139 @@ const CheckoutForm = ({ onStepChange }) => {
                     paymentMethod === 'Card' ? 'border-primary-600 bg-primary-600' : 'border-surface-300 dark:border-surface-700'
                   }`}
                 >
-                  {paymentMethod === 'Card' && <Check className="w-3 h-3 text-white stroke-[3.5]" />}
+                  {paymentMethod === 'Card' && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
                 </div>
               </button>
             </div>
 
             {paymentMethod === 'Card' && (
-              <div className="p-4 rounded-2xl bg-primary-500/5 dark:bg-primary-500/10 border border-primary-500/10 flex items-start gap-2.5 animate-fade-in">
-                <Lock className="w-4.5 h-4.5 text-primary-500 shrink-0 mt-0.5" />
-                <p className="text-2xs font-extrabold uppercase tracking-wider leading-relaxed text-surface-500 dark:text-surface-400">
+              <div className="p-3.5 rounded-lg bg-primary-50/50 dark:bg-primary-950/20 border border-primary-200 dark:border-primary-900/30 flex items-start gap-2.5">
+                <Lock className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" strokeWidth={2} />
+                <p className="text-xs text-surface-600 dark:text-surface-400 leading-relaxed">
                   {creatingIntent
                     ? 'Initializing secure payment session...'
                     : clientSecret
-                    ? 'Secure session initialized. Review your order details to proceed with stripe payment.'
-                    : 'Stripe gateway session failed. Select retry or fall back to cash.'}
-                  {!isStripeConfigured && ' Stripe publishable API credential missing.'}
+                    ? 'Secure session ready. Continue to review your order.'
+                    : 'Stripe session failed. Retry or use Cash on Delivery.'}
+                  {!isStripeConfigured && ' Stripe publishable key missing.'}
                 </p>
               </div>
             )}
 
-            <div className="flex justify-between gap-3 pt-4 select-none">
-              <Button type="button" variant="ghost" size="lg" icon={ChevronLeft} onClick={() => goToStep(1)} className="font-extrabold uppercase tracking-widest py-3">
+            <div className="flex justify-between gap-3 pt-2">
+              <Button type="button" variant="ghost" size="lg" icon={ChevronLeft} onClick={() => goToStep(1)}>
                 Back
               </Button>
               <Button
                 type="button"
-                variant="gradient"
+                variant="primary"
                 size="lg"
                 iconRight={ChevronRight}
                 onClick={() => goToStep(3)}
                 disabled={paymentMethod === 'Card' && !clientSecret && !creatingIntent}
-                className="font-extrabold uppercase tracking-widest py-3 shadow-brand"
               >
-                {paymentMethod === 'Card' && creatingIntent ? 'Preparing Gateway...' : 'Continue to Review'}
+                {paymentMethod === 'Card' && creatingIntent ? 'Preparing...' : 'Continue to Review'}
               </Button>
             </div>
           </motion.div>
         )}
 
-        {/* ───────────────────────── STEP 3: Review & Place Order ───────────────────────── */}
+        {/* ─── STEP 3: Review & Place Order ─── */}
         {step === 3 && (
           <motion.div
             key="step-3"
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, x: -16 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-5"
           >
-            <div className="flex items-center gap-3 pb-4 border-b border-surface-150 dark:border-surface-800 select-none">
-              <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 flex items-center justify-center border border-primary-100/20">
-                <PackageCheck className="w-5 h-5 text-primary-600 dark:text-primary-450" />
+            <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
+              <div className="w-9 h-9 rounded-lg bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
+                <PackageCheck className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <h3 className="text-sm font-black text-surface-900 dark:text-white uppercase tracking-wider font-display">Review Your Order</h3>
-                <p className="text-2xs font-extrabold text-surface-455 uppercase tracking-widest mt-1">Please confirm your metrics before checkout</p>
+                <h3 className="text-sm font-semibold text-surface-900 dark:text-white font-display">Review Your Order</h3>
+                <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">Please confirm before placing your order</p>
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-surface-50/50 dark:bg-surface-950/30 border border-surface-150 dark:border-surface-850">
-              <div className="flex items-center justify-between mb-3.5 select-none">
+            {/* Delivery address review */}
+            <div className="p-4 rounded-xl bg-surface-50 dark:bg-surface-950/30 border border-surface-200 dark:border-surface-800">
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4.5 h-4.5 text-primary-500" />
-                  <span className="text-2xs font-extrabold uppercase tracking-widest text-surface-400 dark:text-surface-500">Delivery Address</span>
+                  <MapPin className="w-4 h-4 text-primary-500" />
+                  <span className="text-xs font-medium text-surface-500 dark:text-surface-400">Delivery Address</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="inline-flex items-center gap-1.5 text-2xs font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400 hover:text-primary-750 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 transition-colors cursor-pointer"
                 >
-                  <PencilLine className="w-4 h-4" /> Edit
+                  <PencilLine className="w-3.5 h-3.5" /> Edit
                 </button>
               </div>
               <div className="text-sm text-surface-700 dark:text-surface-200 space-y-0.5">
-                <div className="font-bold text-surface-900 dark:text-white">{shippingData.fullName}</div>
-                <div className="text-xs font-semibold text-surface-500 dark:text-surface-400 font-mono mt-1">{shippingData.phone}</div>
-                <div className="font-medium text-surface-600 dark:text-surface-300 mt-2 text-xs">
+                <div className="font-medium text-surface-900 dark:text-white">{shippingData.fullName}</div>
+                <div className="text-xs text-surface-500 dark:text-surface-400 font-mono mt-1">{shippingData.phone}</div>
+                <div className="text-sm text-surface-600 dark:text-surface-300 mt-1.5">
                   {shippingData.street}, {shippingData.city}, {shippingData.state} {shippingData.zipCode}
                 </div>
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-surface-50/50 dark:bg-surface-950/30 border border-surface-150 dark:border-surface-850">
-              <div className="flex items-center justify-between mb-3.5 select-none">
+            {/* Payment method review */}
+            <div className="p-4 rounded-xl bg-surface-50 dark:bg-surface-950/30 border border-surface-200 dark:border-surface-800">
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <CreditCard className="w-4.5 h-4.5 text-primary-500" />
-                  <span className="text-2xs font-extrabold uppercase tracking-widest text-surface-400 dark:text-surface-500">Selected Payment</span>
+                  <CreditCard className="w-4 h-4 text-primary-500" />
+                  <span className="text-xs font-medium text-surface-500 dark:text-surface-400">Payment Method</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="inline-flex items-center gap-1.5 text-2xs font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400 hover:text-primary-750 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 transition-colors cursor-pointer"
                 >
-                  <PencilLine className="w-4 h-4" /> Edit
+                  <PencilLine className="w-3.5 h-3.5" /> Edit
                 </button>
               </div>
-              <div className="flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider text-surface-800 dark:text-white">
+              <div className="flex items-center gap-2 text-sm font-medium text-surface-900 dark:text-white">
                 {paymentMethod === 'COD' ? (
                   <>
-                    <Banknote className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                    <Banknote className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
                     <span>Cash on Delivery</span>
                   </>
                 ) : (
                   <>
-                    <CreditCard className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                    <CreditCard className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
                     <span>Secure Card Payment (Stripe)</span>
                   </>
                 )}
               </div>
             </div>
 
+            {/* COD flow */}
             {paymentMethod === 'COD' && (
               <>
-                <div className="p-4 rounded-2xl bg-success-soft/20 text-success border border-success/15 flex items-center gap-3.5 select-none animate-fade-in">
-                  <ShieldCheck className="w-5.5 h-5.5 shrink-0 stroke-[2.5]" />
-                  <p className="text-2xs font-extrabold uppercase tracking-widest leading-relaxed text-surface-500 dark:text-surface-400">
-                    By submitting this transaction, you authorize payment of <span className="font-black text-surface-850 dark:text-white font-mono">{formatCurrency(subtotal + shipping)}</span> in cash upon delivery.
+                <div className="p-3.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 flex items-center gap-3">
+                  <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" strokeWidth={2} />
+                  <p className="text-xs text-surface-600 dark:text-surface-400 leading-relaxed">
+                    By placing this order, you agree to pay <span className="font-semibold text-surface-900 dark:text-white font-mono">{formatCurrency(subtotal + shipping)}</span> in cash upon delivery.
                   </p>
                 </div>
 
-                <div className="flex justify-between gap-3 pt-4 select-none">
-                  <Button type="button" variant="ghost" size="lg" icon={ChevronLeft} onClick={() => goToStep(2)} className="font-extrabold uppercase tracking-widest py-3">
+                <div className="flex justify-between gap-3 pt-2">
+                  <Button type="button" variant="ghost" size="lg" icon={ChevronLeft} onClick={() => goToStep(2)}>
                     Back
                   </Button>
                   <Button
                     type="button"
-                    variant="gradient"
+                    variant="primary"
                     size="lg"
                     loading={loading}
                     icon={PackageCheck}
                     onClick={handleSubmit(onSubmit)}
-                    className="flex-1 sm:flex-initial font-extrabold uppercase tracking-widest py-3 shadow-brand"
+                    className="flex-1 sm:flex-initial"
                   >
                     Place Order · {formatCurrency(subtotal + shipping)}
                   </Button>
@@ -503,12 +512,13 @@ const CheckoutForm = ({ onStepChange }) => {
               </>
             )}
 
+            {/* Card flow */}
             {paymentMethod === 'Card' && (
               <div className="space-y-4">
                 {creatingIntent ? (
-                  <div className="flex flex-col items-center justify-center py-10 gap-3 text-surface-500 select-none animate-fade-in">
-                    <Loader2 className="w-6 h-6 animate-spin text-primary-550 stroke-2" />
-                    <span className="text-2xs font-extrabold uppercase tracking-widest">Initializing Secure Gateway...</span>
+                  <div className="flex flex-col items-center justify-center py-10 gap-3 text-surface-500">
+                    <Loader2 className="w-6 h-6 animate-spin text-primary-500" strokeWidth={2} />
+                    <span className="text-sm">Initializing secure gateway...</span>
                   </div>
                 ) : clientSecret ? (
                   <Elements
@@ -518,7 +528,7 @@ const CheckoutForm = ({ onStepChange }) => {
                       appearance: {
                         theme: 'stripe',
                         variables: {
-                          borderRadius: '14px',
+                          borderRadius: '8px',
                         },
                       },
                     }}
@@ -530,22 +540,22 @@ const CheckoutForm = ({ onStepChange }) => {
                     />
                   </Elements>
                 ) : (
-                  <div className="text-center py-6 select-none animate-fade-in space-y-3">
-                    <p className="text-2xs font-extrabold uppercase tracking-wider text-danger">
-                      Failed to configure payment session. Select Cash on Delivery or retry.
+                  <div className="text-center py-6 space-y-3">
+                    <p className="text-sm text-red-500">
+                      Failed to initialize payment. Use Cash on Delivery or retry.
                     </p>
                     <button
                       type="button"
                       onClick={handleCreatePaymentIntent}
-                      className="inline-flex items-center gap-1.5 text-2xs font-extrabold uppercase tracking-widest text-primary-600 dark:text-primary-400 hover:text-primary-750 transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 transition-colors cursor-pointer"
                     >
                       <RotateCcw className="w-3.5 h-3.5" /> Retry Connection
                     </button>
                   </div>
                 )}
 
-                <div className="flex justify-start select-none pt-2">
-                  <Button type="button" variant="ghost" size="md" icon={ChevronLeft} onClick={() => goToStep(2)} className="font-extrabold uppercase tracking-widest">
+                <div className="flex justify-start pt-2">
+                  <Button type="button" variant="ghost" size="md" icon={ChevronLeft} onClick={() => goToStep(2)}>
                     Back to Payment
                   </Button>
                 </div>

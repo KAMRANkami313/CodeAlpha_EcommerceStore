@@ -1,11 +1,11 @@
 /* =================================================================
-   ShopVerse — index.css (Premium Redesign v2)
-   Elevated design tokens, refined animations, premium base styles.
+   ShopVerse — index.css (Editorial Modern Redesign)
+   Refined warm-neutral palette, restrained shadows, premium typography.
    ================================================================= */
 @import "tailwindcss";
 
 @theme {
-  /* ---------- Brand: Indigo ---------- */
+  /* ---------- Brand: Indigo (primary CTAs) ---------- */
   --color-primary-50: #eef2ff;
   --color-primary-100: #e0e7ff;
   --color-primary-200: #c7d2fe;
@@ -18,19 +18,20 @@
   --color-primary-900: #312e81;
   --color-primary-950: #1e1b4b;
 
-  /* ---------- Accent: Orange ---------- */
-  --color-accent-50: #fff7ed;
-  --color-accent-100: #ffedd5;
-  --color-accent-200: #fed7aa;
-  --color-accent-300: #fdba74;
-  --color-accent-400: #fb923c;
-  --color-accent-500: #f97316;
-  --color-accent-600: #ea580c;
-  --color-accent-700: #c2410c;
-  --color-accent-800: #9a3412;
-  --color-accent-900: #7c2d12;
+  /* ---------- Accent: Amber (highlights, ratings, deals) ---------- */
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
+  --color-accent-950: #451a03;
 
-  /* ---------- Secondary: Violet (for gradients) ---------- */
+  /* ---------- Violet (gradient pairing) ---------- */
   --color-violet-50: #f5f3ff;
   --color-violet-100: #ede9fe;
   --color-violet-200: #ddd6fe;
@@ -42,84 +43,101 @@
   --color-violet-800: #5b21b6;
   --color-violet-900: #4c1d95;
 
-  /* ---------- Surface: Slate ---------- */
-  --color-surface-50: #f8fafc;
-  --color-surface-100: #f1f5f9;
-  --color-surface-200: #e2e8f0;
-  --color-surface-300: #cbd5e1;
-  --color-surface-400: #94a3b8;
-  --color-surface-500: #64748b;
-  --color-surface-600: #475569;
-  --color-surface-700: #334155;
-  --color-surface-800: #1e293b;
-  --color-surface-900: #0f172a;
-  --color-surface-950: #020617;
+  /* ---------- Surface: Warm Stone (editorial neutrals) ----------
+     Replaces the old cool slate scale. Stone is warmer, more premium,
+     and pairs better with indigo + amber. */
+  --color-surface-50: #fafaf9; /* page background */
+  --color-surface-100: #f5f5f4; /* muted surface */
+  --color-surface-150: #efeeec; /* subtle hover */
+  --color-surface-200: #e7e5e4; /* borders */
+  --color-surface-205: #e2e0de; /* hover border */
+  --color-surface-300: #d6d3d1; /* strong border */
+  --color-surface-400: #a8a29e; /* muted text */
+  --color-surface-450: #8c8682; /* soft text */
+  --color-surface-455: #857f7b; /* tiny text */
+  --color-surface-500: #78716c; /* secondary text */
+  --color-surface-550: #6b6560; /* tertiary text */
+  --color-surface-600: #57534e; /* body text soft */
+  --color-surface-650: #4a4540; /* body text */
+  --color-surface-700: #44403c; /* strong text */
+  --color-surface-750: #3a3633; /* dark hover */
+  --color-surface-800: #292524; /* dark surface */
+  --color-surface-850: #1f1c1a; /* dark surface hover */
+  --color-surface-900: #1c1917; /* dark card */
+  --color-surface-950: #0c0a09; /* dark page bg */
 
   /* ---------- Semantic ---------- */
-  --color-success: #10b981;
+  --color-success: #059669;
   --color-success-soft: #d1fae5;
-  --color-warning: #f59e0b;
+  --color-warning: #d97706;
   --color-warning-soft: #fef3c7;
-  --color-danger: #ef4444;
+  --color-danger: #dc2626;
   --color-danger-soft: #fee2e2;
-  --color-info: #3b82f6;
+  --color-info: #2563eb;
   --color-info-soft: #dbeafe;
   --color-gold: #d4af37;
   --color-gold-soft: #fef3c7;
 
   /* ---------- Typography ---------- */
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 
-  /* ---------- Refined radius scale ---------- */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
-  --radius-3xl: 2rem;
+  /* ---------- Radius scale (4 levels) ---------- */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
 
-  /* ---------- Shadows (refined premium) ---------- */
-  --shadow-soft:
-    0 1px 2px -1px rgba(15, 23, 42, 0.04), 0 2px 8px -2px rgba(15, 23, 42, 0.05);
+  /* ---------- Shadow scale (4 levels only) ----------
+     Replaces the old 10+ shadow variants. */
+  --shadow-xs: 0 1px 2px 0 rgba(28, 25, 23, 0.04);
+  --shadow-sm:
+    0 1px 3px 0 rgba(28, 25, 23, 0.06), 0 1px 2px -1px rgba(28, 25, 23, 0.04);
+  --shadow-md:
+    0 4px 6px -1px rgba(28, 25, 23, 0.07), 0 2px 4px -2px rgba(28, 25, 23, 0.05);
+  --shadow-lg:
+    0 10px 15px -3px rgba(28, 25, 23, 0.08),
+    0 4px 6px -4px rgba(28, 25, 23, 0.05);
+  --shadow-xl:
+    0 20px 25px -5px rgba(28, 25, 23, 0.1),
+    0 8px 10px -6px rgba(28, 25, 23, 0.05);
+
+  /* Aliases kept for backward compatibility with existing components.
+     They all map onto the 4-level scale above so visual weight is consistent. */
+  --shadow-soft: 0 1px 2px 0 rgba(28, 25, 23, 0.04);
   --shadow-medium:
-    0 2px 4px -1px rgba(15, 23, 42, 0.05),
-    0 6px 16px -4px rgba(15, 23, 42, 0.07);
+    0 4px 6px -1px rgba(28, 25, 23, 0.07), 0 2px 4px -2px rgba(28, 25, 23, 0.05);
   --shadow-large:
-    0 4px 8px -2px rgba(15, 23, 42, 0.06),
-    0 12px 28px -6px rgba(15, 23, 42, 0.08),
-    0 24px 56px -12px rgba(15, 23, 42, 0.06);
-  --shadow-glow:
-    0 0 0 1px rgba(99, 102, 241, 0.18), 0 6px 20px -4px rgba(99, 102, 241, 0.4);
-  --shadow-brand:
-    0 2px 8px -1px rgba(79, 70, 229, 0.25),
-    0 6px 16px -4px rgba(79, 70, 229, 0.3);
-  --shadow-accent:
-    0 2px 8px -1px rgba(249, 115, 22, 0.25),
-    0 6px 16px -4px rgba(249, 115, 22, 0.3);
-  --shadow-premium:
-    0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px -2px rgba(15, 23, 42, 0.06),
-    0 16px 40px -8px rgba(15, 23, 42, 0.08);
-  --shadow-premium-hover:
-    0 2px 4px rgba(15, 23, 42, 0.05), 0 8px 20px -4px rgba(15, 23, 42, 0.1),
-    0 24px 48px -8px rgba(99, 102, 241, 0.15);
+    0 10px 15px -3px rgba(28, 25, 23, 0.08),
+    0 4px 6px -4px rgba(28, 25, 23, 0.05);
   --shadow-card:
-    0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+    0 1px 3px 0 rgba(28, 25, 23, 0.06), 0 1px 2px -1px rgba(28, 25, 23, 0.04);
   --shadow-card-hover:
-    0 4px 8px -2px rgba(15, 23, 42, 0.08),
-    0 12px 28px -6px rgba(15, 23, 42, 0.1),
-    0 20px 40px -10px rgba(99, 102, 241, 0.12);
-  --shadow-input-focus: 0 0 0 4px rgba(99, 102, 241, 0.12);
+    0 10px 15px -3px rgba(28, 25, 23, 0.08),
+    0 4px 6px -4px rgba(28, 25, 23, 0.05);
+  --shadow-premium:
+    0 4px 6px -1px rgba(28, 25, 23, 0.07), 0 2px 4px -2px rgba(28, 25, 23, 0.05);
+  --shadow-premium-hover:
+    0 10px 15px -3px rgba(28, 25, 23, 0.1),
+    0 4px 6px -4px rgba(28, 25, 23, 0.05);
+  --shadow-glow:
+    0 0 0 1px rgba(99, 102, 241, 0.1), 0 4px 12px -2px rgba(99, 102, 241, 0.25);
+  --shadow-brand: 0 4px 12px -2px rgba(79, 70, 229, 0.25);
+  --shadow-accent: 0 4px 12px -2px rgba(245, 158, 11, 0.25);
+  --shadow-input-focus: 0 0 0 3px rgba(79, 70, 229, 0.12);
 
   /* ---------- Animations ---------- */
-  --animate-fade-in: fade-in 0.5s ease-out forwards;
-  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-fade-in-scale: fade-in-scale 0.4s cubic-bezier(0.16, 1, 0.3, 1)
+  --animate-fade-in: fade-in 0.4s ease-out forwards;
+  --animate-fade-in-up: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-fade-in-scale: fade-in-scale 0.3s cubic-bezier(0.16, 1, 0.3, 1)
     forwards;
   --animate-slide-in-right: slide-in-right 0.3s ease-out forwards;
   --animate-shimmer: shimmer 2s linear infinite;
-  --animate-float: float 4s ease-in-out infinite;
+  --animate-float: float 5s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
   --animate-aurora: aurora 18s ease-in-out infinite;
   --animate-shine: shine 1.2s ease-in-out forwards;
@@ -141,7 +159,7 @@
 @keyframes fade-in-up {
   0% {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   100% {
     opacity: 1;
@@ -151,7 +169,7 @@
 @keyframes fade-in-scale {
   0% {
     opacity: 0;
-    transform: scale(0.96);
+    transform: scale(0.97);
   }
   100% {
     opacity: 1;
@@ -186,7 +204,7 @@
 @keyframes pulse-glow {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.35);
   }
   50% {
     box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
@@ -246,7 +264,7 @@
 @keyframes pulse-ring {
   0% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.6);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.55);
   }
   70% {
     transform: scale(1);
@@ -294,7 +312,7 @@ h4,
 h5,
 h6 {
   font-family: var(--font-display);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
@@ -302,10 +320,10 @@ h6 {
 *:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
-/* ---------- Scrollbar (premium) ---------- */
+/* ---------- Scrollbar (refined) ---------- */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -348,8 +366,12 @@ h6 {
   font-feature-settings: "tnum";
 }
 
-/* Text size 2xs helper */
+/* Text size helpers */
 .text-2xs {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+}
+.text-3xs {
   font-size: 0.625rem;
   line-height: 0.875rem;
 }

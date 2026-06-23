@@ -1,75 +1,100 @@
+import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
+
 /**
- * Loader — Premium Redesign
+ * Modal — Editorial Modern Redesign
  *
- * Triple-layer spinner with brand gradient, subtle pulse glow, and refined typography.
+ * Clean, restrained dialog. Solid card with subtle border, smooth spring
+ * animation, accessible close behavior (Escape + backdrop click + X button).
  *
- * Props:
- *   size     — sm | md | lg | xl
- *   label    — optional text below spinner
- *   className
+ * Props (unchanged):
+ *   isOpen    — boolean, controls visibility
+ *   onClose   — callback when modal requests close
+ *   title     — optional header title
+ *   children  — modal body content
+ *   size      — sm | md | lg | xl | 2xl | full (default: md)
+ *   showClose — show X button in header (default: true)
+ *   footer    — optional footer content (rendered in a subtle gray bar)
  */
-const Loader = ({ size = 'md', label = null, className = '' }) => {
+const Modal = ({ isOpen, onClose, title, children, size = 'md', showClose = true, footer = null }) => {
   const sizes = {
-    sm: 'w-6 h-6',
-    md: 'w-10 h-10',
-    lg: 'w-14 h-14',
-    xl: 'w-20 h-20',
+    sm:    'max-w-md',
+    md:    'max-w-lg',
+    lg:    'max-w-2xl',
+    xl:    'max-w-4xl',
+    '2xl': 'max-w-6xl',
+    full:  'max-w-[95vw]',
   };
 
-  const labelSizes = {
-    sm: 'text-2xs uppercase tracking-widest font-extrabold',
-    md: 'text-xs uppercase tracking-widest font-extrabold',
-    lg: 'text-sm uppercase tracking-widest font-extrabold',
-    xl: 'text-base uppercase tracking-widest font-extrabold',
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape' && isOpen) onClose?.();
   };
 
   return (
-    <div className={`flex flex-col items-center justify-center py-16 gap-4 select-none ${className}`}>
-      <div className="relative">
-        
-        {/* Soft backlighting pulse glow behind the spinner */}
-        <div 
-          className={`absolute inset-0 rounded-full bg-primary-500/10 dark:bg-primary-500/5 blur-lg animate-pulse ${sizes[size] || sizes.md}`} 
-        />
-
-        {/* Outer ring (Track background) */}
+    <AnimatePresence>
+      {isOpen && (
         <div
-          className={`${sizes[size] || sizes.md} rounded-full border-2 border-surface-150 dark:border-surface-850`}
-        />
-        
-        {/* Middle ring (Precision spinning sweep) */}
-        <div
-          className={`${sizes[size] || sizes.md} absolute inset-0 rounded-full border-2 border-transparent border-t-primary-600 dark:border-t-primary-400 border-r-primary-600/30 dark:border-r-primary-400/30 animate-spin`}
-          style={{ animationDuration: '0.75s', animationTimingFunction: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)' }}
-        />
-        
-        {/* Opposite direction auxiliary accent ring for premium texture */}
-        <div
-          className={`${sizes[size] || sizes.md} absolute inset-0 rounded-full border-2 border-transparent border-b-violet-500/40 dark:border-b-violet-400/40 animate-spin`}
-          style={{ animationDuration: '1.2s', animationTimingFunction: 'linear', animationDirection: 'reverse' }}
-        />
-
-        {/* Inner core pulse dot */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className={`bg-linear-to-r from-primary-500 to-violet-500 rounded-full animate-pulse shadow-glow ${
-              size === 'sm' ? 'w-1 h-1' :
-              size === 'lg' ? 'w-2.5 h-2.5' :
-              size === 'xl' ? 'w-3.5 h-3.5' :
-              'w-1.5 h-1.5'
-            }`}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onKeyDown={handleKeyDown}
+          tabIndex={-1}
+        >
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-surface-950/50 backdrop-blur-sm"
+            onClick={onClose}
           />
-        </div>
-      </div>
 
-      {/* Dynamic Pulsating Label with modern layout tokens */}
-      {label && (
-        <p className={`text-surface-450 dark:text-surface-500 text-center animate-pulse ${labelSizes[size] || labelSizes.md}`}>
-          {label}
-        </p>
+          {/* Panel */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: 12 }}
+            transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+            className={`relative w-full ${sizes[size]} bg-white dark:bg-surface-900 rounded-xl shadow-lg border border-surface-200 dark:border-surface-800 overflow-hidden`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={title ? 'modal-title' : undefined}
+          >
+            {/* Header */}
+            {(title || showClose) && (
+              <div className="flex items-center justify-between px-5 py-4 border-b border-surface-200 dark:border-surface-800">
+                {title ? (
+                  <h2 id="modal-title" className="text-base font-semibold text-surface-900 dark:text-white font-display tracking-tight">
+                    {title}
+                  </h2>
+                ) : (
+                  <div />
+                )}
+                {showClose && (
+                  <button
+                    onClick={onClose}
+                    aria-label="Close modal"
+                    className="p-1.5 -mr-1.5 rounded-md text-surface-500 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+                  >
+                    <X className="w-4.5 h-4.5" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Body */}
+            <div className="p-5 max-h-[70vh] overflow-y-auto">{children}</div>
+
+            {/* Footer (optional) */}
+            {footer && (
+              <div className="px-5 py-4 border-t border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-950/40">
+                {footer}
+              </div>
+            )}
+          </motion.div>
+        </div>
       )}
-    </div>
+    </AnimatePresence>
   );
 };
 
-export default Loader;
+export default Modal;

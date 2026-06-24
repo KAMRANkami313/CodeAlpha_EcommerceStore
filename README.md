@@ -1,123 +1,281 @@
-# ShopVerse — Full-Stack E-Commerce Store
+# ShopVerse — Full Stack E-Commerce Platform
 
-A complete e-commerce platform built with the MERN stack (MongoDB, Express, React, Node.js) as part of the CodeAlpha Internship program.
+A production-ready MERN stack e-commerce platform with secure authentication, online payments, inventory management, and a complete admin dashboard.
+
+Live Demo:
+https://shopverse-ecommerce-store.vercel.app
+
+---
+
+## Overview
+
+ShopVerse is a modern full-stack online shopping platform built with React, Node.js, Express, and MongoDB.
+
+The application provides a complete shopping experience with product management, secure checkout, order processing, user accounts, and an administrative control panel.
+
+The project follows a scalable architecture with separated frontend and backend layers.
+
+---
 
 ## Features
 
-- **Product Management** — Browse, search, filter, and sort products by category, price, and ratings
-- **User Authentication** — JWT-based auth with access + refresh token rotation, account lockout protection
-- **Shopping Cart** — Real-time price sync with product database, stock validation
-- **Wishlist** — Save products for later with one-click toggle
-- **Order Management** — Place orders with COD or Stripe card payment, track order status
-- **Reviews** — Rate and review products, admin can moderate inappropriate reviews
-- **Admin Dashboard** — Stats, user management (role changes, deletion), order management, product CRUD
-- **Dark Mode** — Full dark/light theme support
-- **Responsive Design** — Mobile-first with Tailwind CSS
+### Customer Application
 
-## Tech Stack
+- Browse products with search and filtering
+- Product categories and sorting
+- Product details with reviews and ratings
+- Shopping cart management
+- Wishlist functionality
+- Secure authentication system
+- Checkout workflow
+- Stripe payment integration
+- Cash on Delivery support
+- Order history and tracking
+- Responsive user interface
 
-| Layer    | Technology                                                                          |
-| -------- | ----------------------------------------------------------------------------------- |
-| Frontend | React 19, Vite, Tailwind CSS 4, Framer Motion, React Hook Form                      |
-| Backend  | Express 5, MongoDB (Mongoose 9), JWT, Stripe, Cloudinary                            |
-| Security | Helmet, CORS, rate limiting, XSS sanitization, MongoDB injection protection, bcrypt |
+### Admin Dashboard
 
-## Quick Start
+- Product management
+- Inventory management
+- Order management
+- User management
+- Review moderation
+- Sales and order analytics
 
-### Prerequisites
+### Security Features
 
-- Node.js 18+
-- MongoDB running locally or a MongoDB Atlas connection string
-- (Optional) Cloudinary account for image uploads
-- (Optional) Stripe account for card payments
+- JWT authentication
+- Refresh token rotation
+- Role-based authorization
+- Password hashing
+- Request validation
+- Secure API middleware
+- Protected admin routes
 
-### Installation
+---
 
-```bash
-# Clone the repo
-git clone https://github.com/KAMRANkami313/CodeAlpha_EcommerceStore.git
-cd CodeAlpha_EcommerceStore
+## Technology Stack
 
-# Install all dependencies (root + server + client)
-npm run install:all
+### Frontend
+
+- React
+- Vite
+- Tailwind CSS
+- React Router
+- Axios
+- Context API
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JSON Web Token
+- Stripe API
+
+### External Services
+
+- MongoDB Atlas
+- Cloudinary
+- Vercel
+- Render
+
+---
+
+## Application Architecture
+
+```
+Client (React)
+      |
+      |
+      v
+REST API
+      |
+      |
+      v
+Server (Express)
+      |
+      |
+      +----------------+
+      |                |
+      v                v
+ MongoDB          External APIs
+ Database         Stripe / Cloudinary
 ```
 
-### Environment Setup
-
-```bash
-# Copy the example env file and fill in your values
-cp server/.env.example server/.env
-
-# Edit server/.env with your configuration
-# Minimum required: MONGODB_URI, JWT_SECRET, JWT_REFRESH_SECRET
-```
-
-### Running the App
-
-```bash
-# Start both server and client concurrently
-npm run dev
-
-# Or run them separately:
-npm run dev:server   # Server on http://localhost:5000
-npm run dev:client   # Client on http://localhost:5173
-```
-
-### Seed the Database
-
-```bash
-cd server
-npm run seed
-```
-
-This creates:
-
-- **Admin user**: `admin@shopverse.com` / `Admin@123`
-- **Test user**: `test@shopverse.com` / `Test@1234`
-- **Kamran user**: `kamran@shopverse.com` / `Kamran@123`
-- 12 sample products, 10 reviews, 5 orders
+---
 
 ## Project Structure
 
-```
-CodeAlpha_EcommerceStore/
-├── server/                     # Express backend
-│   ├── src/
-│   │   ├── config/            # DB, env, Cloudinary config
-│   │   ├── controllers/       # Route handlers
-│   │   ├── middleware/         # Auth, validation, XSS, audit logging
-│   │   ├── models/            # Mongoose schemas
-│   │   ├── routes/            # Express routes
-│   │   ├── services/          # Business logic layer
-│   │   ├── validators/        # express-validator rules
-│   │   ├── utils/             # Helpers (ApiError, ApiResponse, tokens)
-│   │   └── seed/              # Database seeding script
-│   └── server.js              # Entry point
-├── client/                     # React frontend
-│   ├── src/
-│   │   ├── components/        # UI components
-│   │   ├── context/           # React contexts (Auth, Cart, Theme, Wishlist)
-│   │   ├── hooks/             # Custom hooks
-│   │   ├── pages/             # Page components
-│   │   ├── services/          # API service layer
-│   │   ├── constants/         # Routes & API endpoints
-│   │   └── utils/             # Formatting, validation helpers
-│   └── vite.config.js
-└── package.json                # Root scripts (concurrently)
-```
+    ShopVerse/
+    |
+    |-- client/                         # Frontend application
+    |   |
+    |   |-- public/                     # Static assets
+    |   |
+    |   |-- src/
+    |       |
+    |       |-- assets/                 # Images, icons, resources
+    |       |
+    |       |-- components/             # Reusable UI components
+    |       |
+    |       |-- pages/                  # Application pages
+    |       |
+    |       |-- layouts/                # Page layouts
+    |       |
+    |       |-- context/                # Global state management
+    |       |
+    |       |-- hooks/                  # Custom React hooks
+    |       |
+    |       |-- services/               # API communication layer
+    |       |
+    |       |-- utils/                  # Helper functions
+    |       |
+    |       |-- App.jsx
+    |       |-- main.jsx
+    |
+    |
+    |-- server/                         # Backend application
+        |
+        |-- src/
+            |
+            |-- config/                 # Database and service configs
+            |
+            |-- controllers/            # Request handlers
+            |
+            |-- routes/                 # API route definitions
+            |
+            |-- models/                 # MongoDB schemas
+            |
+            |-- middleware/             # Auth and security middleware
+            |
+            |-- services/               # Business logic layer
+            |
+            |-- validators/             # Request validation
+            |
+            |-- utils/                  # Helper utilities
+            |
+            |-- app.js
+            |-- server.js
 
-## Security Features
+---
 
-- **JWT Token Rotation** — Short-lived access tokens (15 min) with refresh token rotation
-- **Account Lockout** — 5 failed login attempts locks the account for 15 minutes
-- **XSS Protection** — All input sanitized via `xss` library
-- **NoSQL Injection** — MongoDB operator characters stripped from input
-- **Rate Limiting** — Tiered limits per route type (auth, payment, API, search)
-- **Helmet** — Hardened HTTP headers with CSP
-- **File Upload Security** — MIME type + extension validation, size limits
-- **Mass Assignment Protection** — Whitelisted fields for profile updates
-- **Audit Logging** — Admin actions logged with timestamp, user, and target
+## Installation
 
-## License
+Clone repository:
 
-MIT
+    git clone https://github.com/KAMRANkami313/CodeAlpha_EcommerceStore.git
+
+    cd CodeAlpha_EcommerceStore
+
+Install dependencies:
+
+    npm run install:all
+
+---
+
+## Environment Configuration
+
+Create environment variables for the backend.
+
+Example:
+
+    MONGODB_URI=your_mongodb_connection
+
+    JWT_SECRET=your_secret_key
+
+    JWT_REFRESH_SECRET=your_refresh_secret
+
+    STRIPE_SECRET_KEY=your_stripe_secret
+
+    CLOUDINARY_API_KEY=your_api_key
+
+    CLOUDINARY_API_SECRET=your_api_secret
+
+    CLIENT_URL=http://localhost:5173
+
+---
+
+## Running the Application
+
+Start development mode:
+
+    npm run dev
+
+Frontend:
+
+    http://localhost:5173
+
+Backend:
+
+    http://localhost:5000
+
+---
+
+## API Modules
+
+Authentication
+
+- Register and login
+- Token management
+- User profile management
+
+Products
+
+- Product listing
+- Search and filtering
+- Product administration
+
+Orders
+
+- Order creation
+- Payment handling
+- Order tracking
+
+Admin
+
+- Dashboard statistics
+- Product control
+- User management
+
+---
+
+## Deployment
+
+Frontend:
+
+Vercel
+
+Backend:
+
+Render
+
+Database:
+
+MongoDB Atlas
+
+---
+
+## Engineering Highlights
+
+- Clean separation of frontend and backend
+- Scalable REST API design
+- Secure authentication flow
+- Reusable component architecture
+- Optimized database operations
+- Production deployment setup
+
+---
+
+## Author
+
+Muhammad Kamran
+
+GitHub:
+https://github.com/KAMRANkami313
+
+LinkedIn:
+https://linkedin.com/in/muhammad-kamran-aa7620296
+
+---
